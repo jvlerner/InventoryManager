@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+
+    <title>Cadastrar Produto</title>
+    <style>
+        body {
+            overflow-x: hidden;
+        }
+        .sidebar {
+            height: 100vh;
+            background-color: #f8f9fa;
+            padding: 20px;
+            position: fixed;
+            width: 250px;
+            transition: transform 0.3s ease;
+        }
+        .main-content {
+            margin-left: 260px;
+            padding: 20px;
+            transition: margin-left 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row flex-nowrap">
+        <div class="sidebar">
+            <a href="/" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
+                <span class="fs-3">Inventory Hub</span>
+            </a>
+            <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-start" id="menu">
+                <li class="nav-item">
+                    <a href="/" class="nav-link px-0"><i class="bi bi-bar-chart-fill"></i> <span class="ms-1 d-none d-sm-inline">Dashboard</span></a>
+                </li>
+                <li>
+                  <span class="nav-link px-0 align-middle text-muted fs-5">
+                    <span class="ms-1 d-none d-sm-inline">Cadastrar</span>
+                  </span>
+                    <ul class="nav flex-column ms-1">
+                        <li class="w-100">
+                            <i class="bi bi-box-seam-fill"></i><span class="d-none d-sm-inline"> Produto</span>
+                        </li>
+                        <li>
+                            <a href="/categorias/cadastrar" class="nav-link px-0"><i class="bi bi-tag-fill"></i><span class="d-none d-sm-inline"> Categoria</span></a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                  <span class="nav-link px-0 align-middle text-muted fs-5">
+                    <span class="ms-1 d-none d-sm-inline">Produtos</span>
+                  </span>
+                    <ul class="nav flex-column ms-1">
+                        <li class="w-100">
+                            <a href="/produtos/entrada" class="nav-link px-0"><i class="bi bi-box-arrow-in-left"></i><span class="d-none d-sm-inline"> Registrar Entrada</span></a>
+                        </li>
+                        <li>
+                            <a href="/produtos/saida" class="nav-link px-0"><i class="bi bi-box-arrow-in-right"></i><span class="d-none d-sm-inline"> Registrar Saída</span></a>
+                        </li>
+                        <li>
+                            <a href="/produtos" class="nav-link px-0"><i class="bi bi-list-task"></i><span class="d-none d-sm-inline"> Todos produtos</span></a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                  <span class="nav-link px-0 align-middle text-muted fs-5">
+                    <span class="ms-1 d-none d-sm-inline">Relatórios</span>
+                  </span>
+                    <ul class="nav flex-column ms-1">
+                        <li class="w-100">
+                            <a href="/relatorios/baixo-estoque" class="nav-link px-0"><i class="bi bi-exclamation-triangle-fill"></i><span class="d-none d-sm-inline"> Estoque baixo</span></a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <div class="col py-3 main-content">
+            <header class="mb-4">
+                <h1>Cadastrar Novo Produto</h1>
+                <p>Preencha os dados abaixo para cadastrar um novo produto.</p>
+            </header>
+            <form action="/produtos" method="post">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Nome:</label>
+                    <input type="text" id="name" name="name" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Descrição:</label>
+                    <textarea id="description" name="description" class="form-control"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="price" class="form-label">Preço:</label>
+                    <input type="number" step="0.01" id="price" name="price" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="quantity" class="form-label">Quantidade:</label>
+                    <input type="number" id="quantity" name="quantity" class="form-control" min="0" required>
+                </div>
+                <div class="mb-3">
+                    <label for="category" class="form-label">Categoria:</label>
+                    <select id="category" name="category" class="form-select" required>
+                        <option value="" disabled selected>Selecione uma categoria</option>
+                        <option th:each="category : ${categories}" th:value="${category.id}"
+                                th:title="${category.name}"
+                                th:text="${category.name}"></option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Cadastrar Produto</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+<script>
+    document.getElementById('quantity').addEventListener('input', function() {
+        if (this.value < 0) {
+            alert('A quantidade não pode ser negativa.');
+            this.value = 0; // Reseta o valor para 0
+        }
+    });
+    document.getElementById('price').addEventListener('input', function() {
+        if (this.value < 0) {
+            alert('O preço não pode ser negativo.');
+            this.value = 0; // Reseta o valor para 0
+        }
+    });
+    document.getElementById('name').addEventListener('input', function() {
+        if (this.value.length > 100) {
+            alert('O limite de caracteres do nome é 100.');
+            this.value.substring(0,100)
+        }
+    });
+    document.getElementById('description').addEventListener('input', function() {
+        if (this.value.length > 255) {
+            alert('O limite de caracteres da descrição é 255.');
+            this.value.substring(0,255)
+        }
+    });
+</script>
+</body>
+</html>

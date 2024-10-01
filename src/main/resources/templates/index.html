@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+
+  <title>Dashboard - Controle de Estoque</title>
+  <style>
+    body {
+      overflow-x: hidden;
+    }
+    .sidebar {
+      height: 100vh;
+      background-color: #f8f9fa;
+      padding: 20px;
+      position: fixed;
+      width: 250px;
+    }
+    .main-content {
+      margin-left: 260px;
+      padding: 20px;
+    }
+    h1 {
+      margin-bottom: 20px;
+      font-size: 2rem;
+    }
+    h4 {
+      margin-bottom: 15px;
+      font-size: 1.5rem;
+    }
+    .text-muted {
+      font-size: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <a href="/" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
+      <span class="fs-3">Inventory Hub</span>
+    </a>
+    <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-start" id="menu">
+      <li class="nav-item">
+        <i class="bi bi-bar-chart-fill"></i> <span class="ms-1 d-none d-sm-inline">Dashboard</span>
+      </li>
+      <li>
+        <span class="nav-link px-0 align-middle text-muted fs-5">
+          <span class="ms-1 d-none d-sm-inline">Cadastrar</span>
+        </span>
+        <ul class="nav flex-column ms-1">
+          <li class="w-100">
+            <a href="/produtos/cadastrar" class="nav-link px-0"><i class="bi bi-box-seam-fill"></i><span class="d-none d-sm-inline"> Produto</span></a>
+          </li>
+          <li>
+            <a href="/categorias/cadastrar" class="nav-link px-0"><i class="bi bi-tag-fill"></i><span class="d-none d-sm-inline"> Categoria</span></a>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <span class="nav-link px-0 align-middle text-muted fs-5">
+          <span class="ms-1 d-none d-sm-inline">Produtos</span>
+        </span>
+        <ul class="nav flex-column ms-1">
+          <li class="w-100">
+            <a href="/produtos/entrada" class="nav-link px-0"><i class="bi bi-box-arrow-in-left"></i><span class="d-none d-sm-inline"> Registrar Entrada</span></a>
+          </li>
+          <li>
+            <a href="/produtos/saida" class="nav-link px-0"><i class="bi bi-box-arrow-in-right"></i><span class="d-none d-sm-inline"> Registrar Saída</span></a>
+          </li>
+          <li>
+            <a href="/produtos" class="nav-link px-0"><i class="bi bi-list-task"></i><span class="d-none d-sm-inline"> Todos Produtos</span></a>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <span class="nav-link px-0 align-middle text-muted fs-5">
+          <span class="ms-1 d-none d-sm-inline">Categorias</span>
+        </span>
+        <ul class="nav flex-column ms-1">
+          <li>
+            <a href="/categorias" class="nav-link px-0"><i class="bi bi-list-task"></i><span class="d-none d-sm-inline"> Todas Categorias</span></a>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <span class="nav-link px-0 align-middle text-muted fs-5">
+          <span class="ms-1 d-none d-sm-inline">Relatórios</span>
+        </span>
+        <ul class="nav flex-column ms-1">
+          <li class="w-100">
+            <a href="/relatorios/baixo-estoque" class="nav-link px-0"><i class="bi bi-exclamation-triangle-fill"></i><span class="d-none d-sm-inline"> Estoque baixo</span></a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <div class="main-content">
+    <header>
+      <h1>Dashboard - Controle de Estoque</h1>
+      <p class="text-muted">Visão geral das movimentações e relatórios do estoque.</p>
+    </header>
+    <div class="row">
+      <div class="col-md-6">
+        <h4>Total Saídas por Dia</h4>
+        <canvas id="saidaChart"></canvas>
+      </div>
+      <div class="col-md-6">
+        <h4>Total Entradas por Dia</h4>
+        <canvas id="entradaChart"></canvas>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <h4>Quantidade de Itens por Categoria</h4>
+        <canvas id="categoriaChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    // Gráfico de Saídas
+    var ctx = document.getElementById('saidaChart').getContext('2d');
+    var saidaChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab', 'Dom'],
+        datasets: [{
+          label: 'Total Saídas',
+          data: [12, 19, 3, 5, 2, 3, 7],
+          borderColor: 'rgba(255, 99, 132, 1)',
+          borderWidth: 1,
+          fill: false
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+
+    // Gráfico de Entradas
+    var ctx2 = document.getElementById('entradaChart').getContext('2d');
+    var entradaChart = new Chart(ctx2, {
+      type: 'line',
+      data: {
+        labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab', 'Dom'],
+        datasets: [{
+          label: 'Total Entradas',
+          data: [10, 15, 5, 20, 12, 10, 8],
+          borderColor: 'rgba(54, 162, 235, 1)',
+          borderWidth: 1,
+          fill: false
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+
+    // Gráfico de Categorias
+    var ctx3 = document.getElementById('categoriaChart').getContext('2d');
+    var categoriaChart = new Chart(ctx3, {
+      type: 'bar',
+      data: {
+        labels: ['Categoria 1', 'Categoria 2', 'Categoria 3'],
+        datasets: [{
+          label: 'Quantidade de Itens',
+          data: [5, 15, 10],
+          backgroundColor: [
+            'rgba(75, 192, 192, 0.2)',
+            'rgba(255, 159, 64, 0.2)',
+            'rgba(153, 102, 255, 0.2)'
+          ],
+          borderColor: [
+            'rgba(75, 192, 192, 1)',
+            'rgba(255, 159, 64, 1)',
+            'rgba(153, 102, 255, 1)'
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>
