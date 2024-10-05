@@ -33,6 +33,10 @@ services:
       - SPRING_HIKARI_IDLE_TIMEOUT_MSECS=15000
       - SPRING_HIKARI_CONNECTION_TIMEOUT_MSECS=30000
       - SPRING_HIKARI_CONNECTION_MAX_LIFETIME_MSECS=60000
+      - SWAGGER_API_DOCS=/v3/api-docs
+      - SWAGGER_UI_PATH=/swagger-ui.html
+      - SWAGGER_UI_CONFIG=/v3/api-docs/swagger-config
+      - SWAGGER_SHOW_REQUEST_DURATION=true
     depends_on:
       - db
 
