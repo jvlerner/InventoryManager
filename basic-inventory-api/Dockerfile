@@ -28,7 +28,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN mvn clean package -DskipTests
+RUN mvn clean package -DskipTests -e
 
 FROM debian:bookworm-20240904-slim
 

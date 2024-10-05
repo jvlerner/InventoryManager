@@ -3,7 +3,7 @@ version: '3.8'
 services:
   # view:
   #   build:
-  #     context: basic_inventory-view/
+  #     context: basic-inventory-view/
   #     dockerfile: Dockerfile
   #   restart: on-failure
   #   ports:
@@ -16,7 +16,7 @@ services:
 
   api:
     build:
-      context: basic_inventory-api/
+      context: basic-inventory-api/
       dockerfile: Dockerfile
     restart: on-failure
     ports:
@@ -47,6 +47,14 @@ services:
       - MARIADB_PASSWORD=api123
     ports:
       - "3001:3306"
+    volumes:
+      - db_data:/var/lib/mysql
 
-
+volumes:
+  db_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: C:\db
+      o: bind
 
