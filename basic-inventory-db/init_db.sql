@@ -1,3 +1,9 @@
+-- Criação do banco de dados
+CREATE DATABASE IF NOT EXISTS basic_inventory;
+
+-- Seleciona o banco de dados
+USE basic_inventory;
+
 -- Criação da tabela de categorias
 CREATE TABLE IF NOT EXISTS categories (
     id INT AUTO_INCREMENT PRIMARY KEY,
