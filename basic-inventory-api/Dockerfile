@@ -26,9 +26,10 @@ RUN curl -O https://downloads.apache.org/maven/maven-4/4.0.0-beta-4/binaries/apa
 
 WORKDIR /app
 
-COPY . .
+COPY pom.xml .
+COPY src ./src
 
-RUN mvn clean package -DskipTests -e
+RUN mvn clean package -DskipTests
 
 FROM debian:bookworm-20240904-slim
 

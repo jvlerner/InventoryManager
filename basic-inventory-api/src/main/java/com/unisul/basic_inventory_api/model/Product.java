@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
  */
 @Entity
 @Table(name = "products") // Tabela de produtos
-@Data // Gera getters, setters, toString, equals e hashCode
+@Data
 @NoArgsConstructor // Construtor sem parâmetros
 public class Product {
 
@@ -50,10 +50,5 @@ public class Product {
      */
     public boolean isAvailable() {
         return quantity > 0;
-    }
-
-    @Override
-    public String toString() {
-        return String.format("Product[id=%d, name='%s', price=%.2f, quantity=%d]", id, name, price, quantity);
     }
 }

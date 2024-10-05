@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
  */
 @Entity
 @Table(name = "categories") // Tabela de categorias
-@Data // Gera getters, setters, toString, equals e hashCode
+@Data
 @NoArgsConstructor // Construtor sem parâmetros
 public class Category {
 
@@ -28,9 +28,4 @@ public class Category {
     @Size(max = 255, message = "A descrição deve ter no máximo 255 caracteres") // Validação para o tamanho da descrição
     private String description;
 
-    // Opcional: Um método para retornar uma representação amigável da categoria
-    @Override
-    public String toString() {
-        return String.format("Category[id=%d, name='%s']", id, name);
-    }
 }

@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
  */
 @Entity
 @Table(name = "product_in") // Tabela de entradas de produtos
-@Data // Gera getters, setters, toString, equals e hashCode
+@Data
 @NoArgsConstructor // Construtor sem parâmetros
 public class ProductIn {
 
@@ -37,9 +37,4 @@ public class ProductIn {
     @ManyToOne // Várias entradas podem referenciar um produto
     @JoinColumn(name = "product_id", nullable = false, insertable = false, updatable = false)
     private Product product; // Referência ao produto
-
-    @Override
-    public String toString() {
-        return String.format("ProductIn[id=%d, productId=%d, quantity=%d, entryDate=%s]", id, productId, quantity, entryDate);
-    }
 }

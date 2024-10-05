@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
  */
 @Entity
 @Table(name = "product_out") // Tabela de saídas de produtos
-@Data // Gera getters, setters, toString, equals e hashCode
+@Data
 @NoArgsConstructor // Construtor sem parâmetros
 public class ProductOut {
 
