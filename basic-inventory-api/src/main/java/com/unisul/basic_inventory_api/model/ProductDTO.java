@@ -5,9 +5,11 @@ import java.util.List;
 public class ProductDTO {
     private List<Product> products;
     private long totalItems;
-    private int quantity; // Novo campo para quantidade
 
-    // Getters e Setters
+    public ProductDTO(List<Product> products, long totalItems) {
+        this.products = products;
+        this.totalItems = totalItems;
+    }
     public List<Product> getProducts() {
         return products;
     }
@@ -22,13 +24,5 @@ public class ProductDTO {
 
     public void setTotalItems(long totalItems) {
         this.totalItems = totalItems;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
     }
 }

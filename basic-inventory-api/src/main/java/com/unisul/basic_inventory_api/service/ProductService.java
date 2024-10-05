@@ -3,6 +3,7 @@ package com.unisul.basic_inventory_api.service;
 import com.unisul.basic_inventory_api.model.Product;
 import com.unisul.basic_inventory_api.model.ProductDTO;
 import com.unisul.basic_inventory_api.repository.ProductRepository;
+import jakarta.persistence.Tuple;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -25,32 +26,29 @@ public class ProductService {
     // Metodo para listar produtos com paginação e busca
     public ProductDTO getPaginatedProducts(int page, int rowsPerPage, String search, String sortField, String sortDirection) {
         PageRequest pageable = PageRequest.of(page - 1, rowsPerPage, Sort.by(Sort.Direction.fromString(sortDirection), sortField));
-        List<ProductDTO> results = productRepository.findProductsAndCount(search, pageable);
+        List<Tuple> results = productRepository.findProductsAndCount(search, pageable);
 
-        long totalItems = results.isEmpty() ? 0 : results.get(0).getTotalItems();
-        List<Product> products = results.stream().map(ProductDTO::getProducts).flatMap(List::stream).toList();
+        List<Product> products = results.stream()
+            .map(tuple -> tuple.get(0, Product.class)) // Pega o primeiro elemento como Product
+            .toList();
 
-        ProductDTO productDTO = new ProductDTO();
-        productDTO.setProducts(products);
-        productDTO.setTotalItems(totalItems);
+        long totalItems = results.isEmpty() ? 0 : results.getFirst().get(1, Long.class); // Assume que o segundo elemento é o total de itens
 
-        return productDTO;
+        // Assume que o construtor está presente
+        return new ProductDTO(products, totalItems);
     }
-
-    // Metodo para listar produtos com paginação e busca e < "quantity"
+      // Metodo para listar produtos com paginação e busca e quantidade menor que "quantity"
     public ProductDTO getPaginatedProductsLowStock(int page, int rowsPerPage, String search, int quantity, String sortField, String sortDirection) {
-        PageRequest pageable = PageRequest.of(page - 1, rowsPerPage, Sort.by(Sort.Direction.fromString(sortDirection), sortField)); // PageRequest é 0-indexed
-        List<ProductDTO> results = productRepository.findProductsWithCategoriesLowStock(search, quantity, pageable);
+        PageRequest pageable = PageRequest.of(page - 1, rowsPerPage, Sort.by(Sort.Direction.fromString(sortDirection), sortField));
+        List<Tuple> results = productRepository.findProductsWithCategoriesLowStock(search, quantity, pageable);
 
-        long totalItems = results.isEmpty() ? 0 : results.get(0).getTotalItems();
-        List<Product> products = results.stream().map(ProductDTO::getProducts).flatMap(List::stream).toList();
+        List<Product> products = results.stream()
+            .map(tuple -> tuple.get(0, Product.class)) // Pega o primeiro elemento como Product
+            .toList();
 
-        ProductDTO productDTO = new ProductDTO();
-        productDTO.setProducts(products);
-        productDTO.setTotalItems(totalItems);
-        productDTO.setQuantity(quantity);
+        long totalItems = results.isEmpty() ? 0 : results.get(0).get(1, Long.class); // Assume que o segundo elemento é o total de itens
 
-        return productDTO;
+        return new ProductDTO(products, totalItems);
     }
 
     // Metodo para salvar uma novo produto

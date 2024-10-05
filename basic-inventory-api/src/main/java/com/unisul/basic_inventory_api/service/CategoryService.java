@@ -3,6 +3,7 @@ package com.unisul.basic_inventory_api.service;
 import com.unisul.basic_inventory_api.model.Category;
 import com.unisul.basic_inventory_api.model.CategoryDTO;
 import com.unisul.basic_inventory_api.repository.CategoryRepository;
+import jakarta.persistence.Tuple;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -22,15 +23,15 @@ public class CategoryService {
     // Metodo para listar categorias com paginação e busca
     public CategoryDTO getPaginatedCategories(int page, int rowsPerPage, String search, String sortField, String sortDirection) {
         PageRequest pageable = PageRequest.of(page - 1, rowsPerPage, Sort.by(Sort.Direction.fromString(sortDirection), sortField)); // PageRequest é 0-indexed
+        List<Tuple> results = categoryRepository.findCategoriesAndCount(search, pageable);
 
-        List<Category> categories = categoryRepository.findCategoriesWithSearch(search, pageable);
-        long totalItems = categoryRepository.countCategoriesBySearch(search);
+        List<Category> categories = results.stream()
+            .map(tuple -> tuple.get(0, Category.class))
+            .toList();
 
-        CategoryDTO categoryDTO = new CategoryDTO();
-        categoryDTO.setCategories(categories);
-        categoryDTO.setTotalItems(totalItems);
+        long totalItems = results.isEmpty() ? 0 : results.getFirst().get(1, Long.class);
 
-        return categoryDTO;
+        return new CategoryDTO(categories, totalItems);
     }
 
     // Metodo para salvar uma nova categoria
