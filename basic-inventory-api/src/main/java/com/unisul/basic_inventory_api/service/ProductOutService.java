@@ -1,5 +1,7 @@
 package com.unisul.basic_inventory_api.service;
 
+import com.unisul.basic_inventory_api.exception.ProductNotFoundException;
+import com.unisul.basic_inventory_api.exception.InsufficientStockException;
 import com.unisul.basic_inventory_api.model.ProductOut;
 import com.unisul.basic_inventory_api.model.ProductOutListDTO;
 import com.unisul.basic_inventory_api.repository.ProductOutRepository;
@@ -17,7 +19,7 @@ import java.util.Optional;
 public class ProductOutService {
 
     private final ProductOutRepository productOutRepository;
-    private final ProductService productService; // Assuming you have a ProductService
+    private final ProductService productService;
 
     @Autowired
     public ProductOutService(ProductOutRepository productOutRepository, ProductService productService) {
@@ -31,10 +33,10 @@ public class ProductOutService {
         List<Tuple> results = productOutRepository.findProductsOutAndCount(search, pageable);
 
         List<ProductOut> productsOut = results.stream()
-                .map(tuple -> tuple.get(0, ProductOut.class)) // Pega o primeiro elemento como ProductOut
+                .map(tuple -> tuple.get(0, ProductOut.class))
                 .toList();
 
-        long totalItems = results.isEmpty() ? 0 : results.get(0).get(1, Long.class); // Usa o primeiro resultado para obter o total de itens
+        long totalItems = results.isEmpty() ? 0 : results.get(0).get(1, Long.class);
 
         return new ProductOutListDTO(productsOut, totalItems);
     }
@@ -42,9 +44,20 @@ public class ProductOutService {
     // Metodo para salvar um novo produto
     @Transactional
     public void saveProductOut(ProductOut productOut) {
-        productOutRepository.save(productOut);
-        // Decrease quantity for the product being removed
-        productService.updateProductQuantity(productOut.getProduct().getId(), -productOut.getQuantity());
+        // Verifica a quantidade disponível do produto
+        int productId = productOut.getProduct().getId();
+        if (!productService.getProductById(productId).isPresent()) {
+            throw new ProductNotFoundException("Produto não encontrado com ID: " + productId);
+        }
+
+        // Atualiza a quantidade do produto com base na saída
+        int quantityChange = -productOut.getQuantity();
+        try {
+            productService.updateProductQuantity(productId, quantityChange);
+            productOutRepository.save(productOut);
+        } catch (IllegalArgumentException e) {
+            throw new InsufficientStockException("Estoque insuficiente para o produto ID: " + productId);
+        }
     }
 
     // Metodo para atualizar uma saída de produto
@@ -52,15 +65,15 @@ public class ProductOutService {
     public Optional<ProductOut> updateProductOut(int id, ProductOut productOut) {
         return productOutRepository.findById(id).map(existingProductOut -> {
             int quantityChange = existingProductOut.getQuantity() - productOut.getQuantity();
-            existingProductOut.setProduct(productOut.getProduct()); // Updated to set the whole product
+            existingProductOut.setProduct(productOut.getProduct());
             existingProductOut.setQuantity(productOut.getQuantity());
 
             productOutRepository.save(existingProductOut);
-            // Update the product quantity based on the change
+            // Atualiza a quantidade do produto baseado na mudança
             productService.updateProductQuantity(productOut.getProduct().getId(), quantityChange);
 
             return existingProductOut;
-        });
+        }).orElseThrow(() -> new ProductNotFoundException("Saída de produto não encontrada com ID: " + id));
     }
 
     // Metodo para obter uma saída de produto específica
@@ -73,10 +86,10 @@ public class ProductOutService {
     public boolean setProductOutDeleted(int id) {
         return productOutRepository.findById(id)
                 .map(productOut -> {
-                    productOut.setDeleted(true); // Marca a saída de produto como deletada
-                    productOutRepository.save(productOut); // Salva a saída de produto atualizada
-                    return true; // Retorna true se a operação for bem-sucedida
+                    productOut.setDeleted(true);
+                    productOutRepository.save(productOut);
+                    return true;
                 })
-                .orElse(false); // Retorna false se a saída de produto não existir
+                .orElseThrow(() -> new ProductNotFoundException("Saída de produto não encontrada com ID: " + id));
     }
 }

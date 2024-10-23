@@ -1,11 +1,12 @@
 package com.unisul.basic_inventory_api.controller;
 
+import com.unisul.basic_inventory_api.exception.ProductOutNotFoundException;
 import com.unisul.basic_inventory_api.model.ProductOut;
 import com.unisul.basic_inventory_api.model.ProductOutListDTO;
 import com.unisul.basic_inventory_api.service.ProductOutService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,19 +42,21 @@ public class ProductOutController {
     @ApiResponse(responseCode = "404", description = "Produto não encontrado.")
     @GetMapping("/{id}")
     public ResponseEntity<ProductOut> getProductOut(@PathVariable int id) {
-        return productOutService.getProductOutById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build()); // Retorna 404 se não encontrado
+        try {
+            ProductOut productOut = productOutService.getProductOutById(id);
+            return ResponseEntity.ok(productOut);
+        } catch (ProductOutNotFoundException ex) {
+            return ResponseEntity.notFound().build(); // Retorna 404 se não encontrado
+        }
     }
-
 
     // Cadastrar novo produto vendido
     @Operation(summary = "Cadastrar um novo produto vendido", description = "Cria um novo produto vendido.")
     @ApiResponse(responseCode = "201", description = "Produto vendido criado com sucesso.")
     @PostMapping
     public ResponseEntity<ProductOut> createProductOut(@RequestBody ProductOut productOut) {
-        productOutService.saveProductOut(productOut);
-        return ResponseEntity.status(201).body(productOut); // Retorna 201 Created
+        ProductOut savedProductOut = productOutService.saveProductOut(productOut);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedProductOut); // Retorna 201 Created
     }
 
     // Atualizar produto vendido existente
@@ -62,9 +65,12 @@ public class ProductOutController {
     @ApiResponse(responseCode = "404", description = "Produto vendido não encontrado.")
     @PutMapping("/{id}")
     public ResponseEntity<ProductOut> updateProductOut(@PathVariable int id, @RequestBody ProductOut productOut) {
-        return productOutService.updateProductOut(id, productOut)
-                .map(ResponseEntity::ok) // Retorna produto vendido atualizado
-                .orElse(ResponseEntity.notFound().build()); // Retorna 404 se não encontrado
+        try {
+            ProductOut updatedProductOut = productOutService.updateProductOut(id, productOut);
+            return ResponseEntity.ok(updatedProductOut); // Retorna produto vendido atualizado
+        } catch (ProductOutNotFoundException ex) {
+            return ResponseEntity.notFound().build(); // Retorna 404 se não encontrado
+        }
     }
 
     // Deletar produto vendido (exclusão lógica)
@@ -73,7 +79,6 @@ public class ProductOutController {
     @ApiResponse(responseCode = "404", description = "Produto vendido não encontrado.")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProductOut(@PathVariable int id) {
-        // Verifica se a exclusão foi bem-sucedida
         if (productOutService.setProductOutDeleted(id)) {
             return ResponseEntity.noContent().build(); // Retorna 204 No Content
         }

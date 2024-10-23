@@ -1,5 +1,7 @@
 package com.unisul.basic_inventory_api.service;
 
+import com.unisul.basic_inventory_api.exception.ProductNotFoundException;
+import com.unisul.basic_inventory_api.exception.InsufficientStockException;
 import com.unisul.basic_inventory_api.model.Product;
 import com.unisul.basic_inventory_api.model.ProductListDTO;
 import com.unisul.basic_inventory_api.repository.ProductRepository;
@@ -58,29 +60,28 @@ public class ProductService {
     }
 
     // Metodo para obter um produto especifico
-    public Product getProductById(int id) {
-        return productRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Produto nao encontrado com ID: " + id));
+    public Optional<Product> getProductById(int id) {
+        return productRepository.findById(id);
     }
 
     // Metodo para atualizar um produto
     @Transactional
     public Optional<Product> updateProduct(int id, Product product) {
         if (!productRepository.existsById(id)) {
-            return Optional.empty(); // Retorna vazio se nao encontrado
+            throw new ProductNotFoundException("Produto não encontrado com ID: " + id); // Throw exception if not found
         }
         product.setId(id);
-        return Optional.of(productRepository.save(product)); // Envolve o produto salvo em Optional
+        return Optional.of(productRepository.save(product));
     }
 
     // Metodo para deletar um produto (delecao logica)
     @Transactional
     public boolean setProductDeleted(int id) {
         return productRepository.findById(id).map(product -> {
-            product.setDeleted(true); // Marca o produto como deletado
-            productRepository.save(product); // Salva o produto atualizado
-            return true; // Retorna verdadeiro se o produto foi encontrado e marcado como deletado
-        }).orElse(false); // Retorna falso se o produto nao foi encontrado
+            product.setDeleted(true);
+            productRepository.save(product);
+            return true;
+        }).orElseThrow(() -> new ProductNotFoundException("Produto não encontrado com ID: " + id)); // Throw exception if not found
     }
 
     // Metodo para verificar se um produto existe pelo nome
@@ -91,14 +92,20 @@ public class ProductService {
     // Metodo para atualizar a quantidade de um produto
     @Transactional
     public void updateProductQuantity(int productId, int quantityChange) {
-        Product product = getProductById(productId);
-        int newQuantity = product.getQuantity() + quantityChange;
+        Optional<Product> optionalProduct = getProductById(productId);
 
-        if (newQuantity < 0) {
-            throw new IllegalArgumentException("Estoque insuficiente para o produto ID: " + productId);
+        if (optionalProduct.isPresent()) {
+            Product product = optionalProduct.get();
+            int newQuantity = product.getQuantity() + quantityChange;
+
+            if (newQuantity < 0) {
+                throw new InsufficientStockException("Estoque insuficiente para o produto ID: " + productId);
+            }
+
+            product.setQuantity(newQuantity);
+            productRepository.save(product);
+        } else {
+            throw new ProductNotFoundException("Produto não encontrado com ID: " + productId); // Throw exception if not found
         }
-
-        product.setQuantity(newQuantity);
-        productRepository.save(product);
     }
 }

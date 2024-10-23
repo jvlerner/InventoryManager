@@ -53,7 +53,7 @@ public class ProductInController {
     @PostMapping
     public ResponseEntity<ProductIn> createProductIn(@RequestBody ProductIn productIn) {
         productInService.saveProductIn(productIn);
-        return ResponseEntity.status(201).body(productIn); // Retorna 201 Created
+        return ResponseEntity.status(HttpStatus.CREATED).body(productIn); // Retorna 201 Created
     }
 
     // Atualizar produto recebido existente

@@ -1,5 +1,7 @@
 package com.unisul.basic_inventory_api.controller;
 
+import com.unisul.basic_inventory_api.exception.CategoryNotFoundException;
+import com.unisul.basic_inventory_api.exception.CategoryAlreadyExistsException;
 import com.unisul.basic_inventory_api.model.Category;
 import com.unisul.basic_inventory_api.model.CategoryListDTO;
 import com.unisul.basic_inventory_api.service.CategoryService;
@@ -41,13 +43,12 @@ public class CategoryController {
     @ApiResponse(responseCode = "409", description = "Conflito: a categoria já existe.")
     @PostMapping
     public ResponseEntity<Category> createCategory(@Valid @RequestBody Category category) {
-        // Verifica se a categoria já existe
-        if (categoryService.categoryExists(category.getName())) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build(); // Retorna 409 Conflict
+        try {
+            Category savedCategory = categoryService.saveCategory(category);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedCategory); // Retorna 201 Created
+        } catch (CategoryAlreadyExistsException ex) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(null); // Retorna 409 Conflict
         }
-
-        Category savedCategory = categoryService.saveCategory(category);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedCategory); // Retorna 201 Created
     }
 
     // Obter uma categoria específica
@@ -56,9 +57,12 @@ public class CategoryController {
     @ApiResponse(responseCode = "404", description = "Categoria não encontrada.")
     @GetMapping("/{id}")
     public ResponseEntity<Category> getCategory(@PathVariable int id) {
-        return categoryService.getCategoryById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build()); // Retorna 404 se não encontrada
+        try {
+            Category category = categoryService.getCategoryById(id);
+            return ResponseEntity.ok(category);
+        } catch (CategoryNotFoundException ex) {
+            return ResponseEntity.notFound().build(); // Retorna 404 se não encontrada
+        }
     }
 
     // Atualizar uma categoria existente
@@ -67,9 +71,12 @@ public class CategoryController {
     @ApiResponse(responseCode = "404", description = "Categoria não encontrada.")
     @PutMapping("/{id}")
     public ResponseEntity<Category> updateCategory(@PathVariable int id, @Valid @RequestBody Category category) {
-        return categoryService.updateCategory(id, category)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build()); // Retorna 404 se não encontrada
+        try {
+            Category updatedCategory = categoryService.updateCategory(id, category);
+            return ResponseEntity.ok(updatedCategory); // Retorna produto atualizado
+        } catch (CategoryNotFoundException ex) {
+            return ResponseEntity.notFound().build(); // Retorna 404 se não encontrada
+        }
     }
 
     // Deletar uma categoria (exclusão lógica)

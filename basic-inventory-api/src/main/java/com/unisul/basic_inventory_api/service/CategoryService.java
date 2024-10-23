@@ -1,5 +1,7 @@
 package com.unisul.basic_inventory_api.service;
 
+import com.unisul.basic_inventory_api.exception.CategoryNotFoundException;
+import com.unisul.basic_inventory_api.exception.CategoryAlreadyExistsException;
 import com.unisul.basic_inventory_api.model.Category;
 import com.unisul.basic_inventory_api.model.CategoryListDTO;
 import com.unisul.basic_inventory_api.repository.CategoryRepository;
@@ -39,22 +41,26 @@ public class CategoryService {
     // Metodo para salvar uma nova categoria
     @Transactional
     public Category saveCategory(Category category) {
+        if (categoryExists(category.getName())) {
+            throw new CategoryAlreadyExistsException("Categoria já existe: " + category.getName());
+        }
         return categoryRepository.save(category);
     }
 
     // Metodo para obter uma categoria específica
-    public Optional<Category> getCategoryById(int id) {
-        return categoryRepository.findById(id);
+    public Category getCategoryById(int id) {
+        return categoryRepository.findById(id)
+                .orElseThrow(() -> new CategoryNotFoundException("Categoria não encontrada com ID: " + id));
     }
 
     // Metodo para atualizar uma categoria
     @Transactional
-    public Optional<Category> updateCategory(int id, Category category) {
+    public Category updateCategory(int id, Category category) {
         if (!categoryRepository.existsById(id)) {
-            return Optional.empty(); // Retorna vazio se a categoria não existir
+            throw new CategoryNotFoundException("Categoria não encontrada com ID: " + id);
         }
         category.setId(id); // Define o ID da categoria a ser atualizada
-        return Optional.of(categoryRepository.save(category));
+        return categoryRepository.save(category);
     }
 
     // Metodo para deletar uma categoria (exclusão lógica)
@@ -66,7 +72,7 @@ public class CategoryService {
                     categoryRepository.save(category); // Salva a categoria atualizada
                     return true; // Retorna true se a operação for bem-sucedida
                 })
-                .orElse(false); // Retorna false se a categoria não existir
+                .orElseThrow(() -> new CategoryNotFoundException("Categoria não encontrada com ID: " + id));
     }
 
     // Metodo para verificar se uma categoria já existe

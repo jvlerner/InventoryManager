@@ -1,5 +1,7 @@
 package com.unisul.basic_inventory_api.service;
 
+import com.unisul.basic_inventory_api.exception.ProductNotFoundException;
+import com.unisul.basic_inventory_api.exception.InsufficientStockException;
 import com.unisul.basic_inventory_api.model.ProductIn;
 import com.unisul.basic_inventory_api.model.ProductInListDTO;
 import com.unisul.basic_inventory_api.repository.ProductInRepository;
@@ -25,7 +27,7 @@ public class ProductInService {
         this.productService = productService;
     }
 
-    // Metodo para listar produtos com paginacao e busca
+    // Metodo para listar produtos com paginação e busca
     public ProductInListDTO getPaginatedProductsIn(int page, int rowsPerPage, String search, String sortField, String sortDirection) {
         PageRequest pageable = PageRequest.of(page - 1, rowsPerPage, Sort.by(Sort.Direction.fromString(sortDirection), sortField));
         List<Tuple> results = productInRepository.findProductsInAndCount(search, pageable);
@@ -42,9 +44,16 @@ public class ProductInService {
     // Metodo para salvar uma nova entrada de produto
     @Transactional
     public void saveProductIn(ProductIn productIn) {
-        productInRepository.save(productIn);
+        int productId = productIn.getProduct().getId();
+
+        // Verifica se o produto existe
+        if (!productService.getProductById(productId).isPresent()) {
+            throw new ProductNotFoundException("Produto não encontrado com ID: " + productId);
+        }
+
         // Atualiza a quantidade do produto com base na entrada
-        productService.updateProductQuantity(productIn.getProduct().getId(), productIn.getQuantity());
+        productInRepository.save(productIn);
+        productService.updateProductQuantity(productId, productIn.getQuantity());
     }
 
     // Metodo para atualizar uma entrada de produto
@@ -60,15 +69,15 @@ public class ProductInService {
             productService.updateProductQuantity(productIn.getProduct().getId(), quantityChange);
 
             return existingProductIn;
-        });
+        }).orElseThrow(() -> new ProductNotFoundException("Entrada de produto não encontrada com ID: " + id));
     }
 
-    // Metodo para obter uma entrada de produto especifica
+    // Metodo para obter uma entrada de produto específica
     public Optional<ProductIn> getProductInById(int id) {
         return productInRepository.findById(id);
     }
 
-    // Metodo para deletar uma entrada de produto (delecao logica)
+    // Metodo para deletar uma entrada de produto (exclusão lógica)
     @Transactional
     public boolean setProductInDeleted(int id) {
         return productInRepository.findById(id)
@@ -77,6 +86,6 @@ public class ProductInService {
                     productInRepository.save(productIn);
                     return true;
                 })
-                .orElseThrow(() -> new IllegalArgumentException("ProductIn nao encontrado com ID: " + id));
+                .orElseThrow(() -> new ProductNotFoundException("Entrada de produto não encontrada com ID: " + id));
     }
 }
