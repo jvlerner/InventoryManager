@@ -68,7 +68,7 @@ public class ProductInService {
             // Atualiza a quantidade do produto
             productService.updateProductQuantity(productIn.getProduct().getId(), quantityChange);
 
-            return existingProductIn;
+            return Optional.of(existingProductIn); // Wrap the result in Optional
         }).orElseThrow(() -> new ProductNotFoundException("Entrada de produto não encontrada com ID: " + id));
     }
 

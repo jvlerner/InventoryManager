@@ -1,48 +1,11 @@
+package com.unisul.basic_inventory_api.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-package com.unisul.basic_inventory_api.exception;
-
-public class CategoryNotFoundException extends RuntimeException {
-    public CategoryNotFoundException(String message) {
-        super(message);
-    }
-}
-
-public class CategoryAlreadyExistsException extends RuntimeException {
-    public CategoryAlreadyExistsException(String message) {
-        super(message);
-    }
-}
-
-public class ProductInException extends RuntimeException {
-    public ProductInException(String message) {
-        super(message);
-    }
-}
-
-public class ProductOutException extends RuntimeException {
-    public ProductOutException(String message) {
-        super(message);
-    }
-}
-
-public class ProductNotFoundException extends RuntimeException {
-    public ProductNotFoundException(String message) {
-        super(message);
-    }
-}
-
-public class InsufficientStockException extends RuntimeException {
-    public InsufficientStockException(String message) {
-        super(message);
-    }
-}
-
-
+// Global exception handler
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -81,4 +44,3 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
 }
-

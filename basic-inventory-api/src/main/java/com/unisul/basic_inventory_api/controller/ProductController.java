@@ -1,7 +1,6 @@
 package com.unisul.basic_inventory_api.controller;
 
 import com.unisul.basic_inventory_api.exception.ProductNotFoundException;
-import com.unisul.basic_inventory_api.exception.InsufficientStockException;
 import com.unisul.basic_inventory_api.model.Product;
 import com.unisul.basic_inventory_api.model.ProductListDTO;
 import com.unisul.basic_inventory_api.service.ProductService;
@@ -11,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/products")
@@ -44,12 +45,9 @@ public class ProductController {
     @ApiResponse(responseCode = "404", description = "Produto não encontrado com o ID fornecido.")
     @GetMapping("/{id}")
     public ResponseEntity<Product> getProduct(@PathVariable int id) {
-        try {
-            Product product = productService.getProductById(id);
-            return ResponseEntity.ok(product);
-        } catch (ProductNotFoundException ex) {
-            return ResponseEntity.notFound().build(); // Retorna 404 se não encontrado
-        }
+        return productService.getProductById(id)
+                .map(ResponseEntity::ok) // Retorna 200 se encontrado
+                .orElse(ResponseEntity.notFound().build()); // Retorna 404 se não encontrado
     }
 
     // Cadastrar novo produto
@@ -72,12 +70,9 @@ public class ProductController {
     @ApiResponse(responseCode = "404", description = "Produto não encontrado.")
     @PutMapping("/{id}")
     public ResponseEntity<Product> updateProduct(@PathVariable int id, @RequestBody Product product) {
-        try {
-            Product updatedProduct = productService.updateProduct(id, product);
-            return ResponseEntity.ok(updatedProduct); // Retorna produto atualizado
-        } catch (ProductNotFoundException ex) {
-            return ResponseEntity.notFound().build(); // Retorna 404 se não encontrado
-        }
+        return productService.updateProduct(id, product)
+                .map(ResponseEntity::ok) // Retorna produto atualizado
+                .orElse(ResponseEntity.notFound().build()); // Retorna 404 se não encontrado); // Retorna produto atualizado
     }
 
     // Deletar produto (exclusão lógica)

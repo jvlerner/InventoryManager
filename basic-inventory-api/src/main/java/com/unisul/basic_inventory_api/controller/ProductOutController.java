@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @RestController
 @RequestMapping("/products-out")
@@ -42,12 +43,9 @@ public class ProductOutController {
     @ApiResponse(responseCode = "404", description = "Produto não encontrado.")
     @GetMapping("/{id}")
     public ResponseEntity<ProductOut> getProductOut(@PathVariable int id) {
-        try {
-            ProductOut productOut = productOutService.getProductOutById(id);
-            return ResponseEntity.ok(productOut);
-        } catch (ProductOutNotFoundException ex) {
-            return ResponseEntity.notFound().build(); // Retorna 404 se não encontrado
-        }
+        return productOutService.getProductOutById(id)
+                .map(ResponseEntity::ok) // Map the optional to a ResponseEntity
+                .orElse(ResponseEntity.notFound().build()); // Return 404 if not found
     }
 
     // Cadastrar novo produto vendido
@@ -55,8 +53,8 @@ public class ProductOutController {
     @ApiResponse(responseCode = "201", description = "Produto vendido criado com sucesso.")
     @PostMapping
     public ResponseEntity<ProductOut> createProductOut(@RequestBody ProductOut productOut) {
-        ProductOut savedProductOut = productOutService.saveProductOut(productOut);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedProductOut); // Retorna 201 Created
+        productOutService.saveProductOut(productOut);
+        return ResponseEntity.status(201).body(productOut); // Retorna 201 Created
     }
 
     // Atualizar produto vendido existente

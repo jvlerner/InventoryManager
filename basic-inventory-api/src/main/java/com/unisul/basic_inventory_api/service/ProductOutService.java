@@ -1,5 +1,5 @@
 package com.unisul.basic_inventory_api.service;
-
+import com.unisul.basic_inventory_api.exception.ProductOutNotFoundException;
 import com.unisul.basic_inventory_api.exception.ProductNotFoundException;
 import com.unisul.basic_inventory_api.exception.InsufficientStockException;
 import com.unisul.basic_inventory_api.model.ProductOut;
@@ -27,7 +27,7 @@ public class ProductOutService {
         this.productService = productService;
     }
 
-    // Metodo para listar produtos com paginação e busca
+    // Method to list products with pagination and search
     public ProductOutListDTO getPaginatedProductsOut(int page, int rowsPerPage, String search, String sortField, String sortDirection) {
         PageRequest pageable = PageRequest.of(page - 1, rowsPerPage, Sort.by(Sort.Direction.fromString(sortDirection), sortField));
         List<Tuple> results = productOutRepository.findProductsOutAndCount(search, pageable);
@@ -41,16 +41,16 @@ public class ProductOutService {
         return new ProductOutListDTO(productsOut, totalItems);
     }
 
-    // Metodo para salvar um novo produto
+    // Method to save a new product out
     @Transactional
     public void saveProductOut(ProductOut productOut) {
-        // Verifica a quantidade disponível do produto
+        // Check the available quantity of the product
         int productId = productOut.getProduct().getId();
         if (!productService.getProductById(productId).isPresent()) {
             throw new ProductNotFoundException("Produto não encontrado com ID: " + productId);
         }
 
-        // Atualiza a quantidade do produto com base na saída
+        // Update the quantity of the product based on the output
         int quantityChange = -productOut.getQuantity();
         try {
             productService.updateProductQuantity(productId, quantityChange);
@@ -60,28 +60,23 @@ public class ProductOutService {
         }
     }
 
-    // Metodo para atualizar uma saída de produto
+    // Method to update a product out
     @Transactional
-    public Optional<ProductOut> updateProductOut(int id, ProductOut productOut) {
+    public ProductOut updateProductOut(int id, ProductOut productOut) {
         return productOutRepository.findById(id).map(existingProductOut -> {
-            int quantityChange = existingProductOut.getQuantity() - productOut.getQuantity();
             existingProductOut.setProduct(productOut.getProduct());
             existingProductOut.setQuantity(productOut.getQuantity());
-
-            productOutRepository.save(existingProductOut);
-            // Atualiza a quantidade do produto baseado na mudança
-            productService.updateProductQuantity(productOut.getProduct().getId(), quantityChange);
-
-            return existingProductOut;
-        }).orElseThrow(() -> new ProductNotFoundException("Saída de produto não encontrada com ID: " + id));
+            return productOutRepository.save(existingProductOut);
+        }).orElseThrow(() -> new ProductOutNotFoundException("Produto vendido não encontrado com ID: " + id));
     }
 
-    // Metodo para obter uma saída de produto específica
+
+    // Method to get a specific product out
     public Optional<ProductOut> getProductOutById(int id) {
         return productOutRepository.findById(id);
     }
 
-    // Metodo para deletar uma saída de produto (exclusão lógica)
+    // Method to delete a product out (logical deletion)
     @Transactional
     public boolean setProductOutDeleted(int id) {
         return productOutRepository.findById(id)
