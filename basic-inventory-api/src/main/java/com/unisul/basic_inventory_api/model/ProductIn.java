@@ -27,10 +27,20 @@ public class ProductIn {
     private int quantity;
 
     @Column(name = "entry_date", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
-    private LocalDateTime entryDate = LocalDateTime.now(); // Define a data de entrada padrão como a hora atual
+    private LocalDateTime entryDate;
 
     @NotNull(message = "O produto é obrigatório") // Validação para o produto
     @ManyToOne // Várias entradas podem referenciar um produto
-    @JoinColumn(name = "product_id",foreignKey = @ForeignKey(name = "fk_category"))
+    @JoinColumn(name = "product_id", foreignKey = @ForeignKey(name = "fk_product"))
     private Product product; // Referência ao produto
+
+    @PrePersist
+    public void prePersist() {
+        entryDate = LocalDateTime.now();
+    }
+
+    @Override
+    public String toString() {
+        return String.format("ProductIn[id=%d, quantity=%d, entryDate=%s, product=%s]", id, quantity, entryDate, product);
+    }
 }

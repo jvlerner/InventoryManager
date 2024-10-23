@@ -14,10 +14,13 @@ import java.util.Optional;
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Integer> {
 
-    @Query("SELECT c, COUNT(c) OVER() AS totalItems " +
+    @Query(value = "SELECT c, COUNT(c) OVER() AS totalItems " +
             "FROM Category c " +
             "WHERE (:search IS NULL OR c.name LIKE %:search%) " +
-            "AND c.deleted = false")
+            "AND c.deleted = false",
+            countQuery = "SELECT COUNT(c) FROM Category c " +
+                    "WHERE (:search IS NULL OR c.name LIKE %:search%) " +
+                    "AND c.deleted = false")
     List<Tuple> findCategoriesAndCount(@Param("search") String search, Pageable pageable);
 
     @Query("SELECT c FROM Category c " +
@@ -30,7 +33,6 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
             "AND c.deleted = false")
     long countCategoriesBySearch(@Param("search") String search);
 
-    // Método para encontrar uma categoria pelo nome
     @Query("SELECT c FROM Category c WHERE c.name = :name AND c.deleted = false")
     Optional<Category> findByName(@Param("name") String name);
 }

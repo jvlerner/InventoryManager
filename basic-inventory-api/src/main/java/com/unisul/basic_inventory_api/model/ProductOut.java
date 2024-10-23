@@ -22,24 +22,25 @@ public class ProductOut {
 
     private boolean deleted = false; // Indica se a saída está excluída logicamente
 
-    @NotNull(message = "O ID do produto não pode ser nulo") // Validação para o ID do produto
-    @Column(name = "product_id", nullable = false)
-    private int productId;
-
     @NotNull(message = "A quantidade não pode ser nula") // Validação para a quantidade
     @Column(nullable = false)
     private int quantity;
 
     @Column(name = "exit_date", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
-    private LocalDateTime exitDate = LocalDateTime.now(); // Define a data de saída padrão como a hora atual
+    private LocalDateTime exitDate;
 
     @NotNull(message = "O produto é obrigatório") // Validação para o produto
     @ManyToOne(fetch = FetchType.EAGER) // Várias saídas podem referenciar um produto
-    @JoinColumn(name = "product_id",foreignKey = @ForeignKey(name = "fk_category"))
+    @JoinColumn(name = "product_id", foreignKey = @ForeignKey(name = "fk_product"))
     private Product product; // Referência ao produto
+
+    @PrePersist
+    public void prePersist() {
+        exitDate = LocalDateTime.now();
+    }
 
     @Override
     public String toString() {
-        return String.format("ProductOut[id=%d, productId=%d, quantity=%d, exitDate=%s]", id, productId, quantity, exitDate);
+        return String.format("ProductOut[id=%d, quantity=%d, exitDate=%s, product=%s]", id, quantity, exitDate, product);
     }
 }

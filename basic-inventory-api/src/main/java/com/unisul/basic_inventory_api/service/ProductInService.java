@@ -17,61 +17,66 @@ import java.util.Optional;
 public class ProductInService {
 
     private final ProductInRepository productInRepository;
+    private final ProductService productService;
 
     @Autowired
-    public ProductInService(ProductInRepository productInRepository) {
+    public ProductInService(ProductInRepository productInRepository, ProductService productService) {
         this.productInRepository = productInRepository;
+        this.productService = productService;
     }
 
-    // Método para listar produtos com paginação e busca
+    // Method to list products with pagination and search
     public ProductInListDTO getPaginatedProductsIn(int page, int rowsPerPage, String search, String sortField, String sortDirection) {
         PageRequest pageable = PageRequest.of(page - 1, rowsPerPage, Sort.by(Sort.Direction.fromString(sortDirection), sortField));
         List<Tuple> results = productInRepository.findProductsInAndCount(search, pageable);
 
         List<ProductIn> productsIn = results.stream()
-                .map(tuple -> tuple.get(0, ProductIn.class)) // Pega o primeiro elemento como ProductIn
+                .map(tuple -> tuple.get(0, ProductIn.class))
                 .toList();
 
-        long totalItems = results.isEmpty() ? 0 : results.get(0).get(1, Long.class); // Usa o primeiro resultado para obter o total de itens
+        long totalItems = results.isEmpty() ? 0 : results.get(0).get(1, Long.class);
 
         return new ProductInListDTO(productsIn, totalItems);
     }
 
-    // Método para salvar um novo produto
+    // Method to save a new product entry
     @Transactional
     public void saveProductIn(ProductIn productIn) {
         productInRepository.save(productIn);
-        updateProductQuantity(productIn.getProductId(), productIn.getQuantity()); // Assuming productId and quantity fields exist
+        // Update the product quantity based on the entry
+        productService.updateProductQuantity(productIn.getProduct().getId(), productIn.getQuantity());
     }
 
+    // Method to update a product entry
     @Transactional
     public Optional<ProductIn> updateProductIn(int id, ProductIn productIn) {
         return productInRepository.findById(id).map(existingProductIn -> {
             int quantityChange = productIn.getQuantity() - existingProductIn.getQuantity();
-            existingProductIn.setProductId(productIn.getProductId());
+            existingProductIn.setProduct(productIn.getProduct());
             existingProductIn.setQuantity(productIn.getQuantity());
 
             productInRepository.save(existingProductIn);
-            productService.updateProductQuantity(productIn.getProductId(), quantityChange);
+            // Update the product quantity
+            productService.updateProductQuantity(productIn.getProduct().getId(), quantityChange);
 
             return existingProductIn;
         });
     }
 
-    // Método para obter um produto específico
+    // Method to get a specific product entry
     public Optional<ProductIn> getProductInById(int id) {
         return productInRepository.findById(id);
     }
 
-    // Método para deletar uma entrada de produto (exclusão lógica)
+    // Method to delete a product entry (logical deletion)
     @Transactional
     public boolean setProductInDeleted(int id) {
         return productInRepository.findById(id)
                 .map(productIn -> {
-                    productIn.setDeleted(true); // Marca a entrada de produto como deletada
-                    productInRepository.save(productIn); // Salva a entrada de produto atualizada
-                    return true; // Retorna true se a operação for bem-sucedida
+                    productIn.setDeleted(true);
+                    productInRepository.save(productIn);
+                    return true;
                 })
-                .orElse(false); // Retorna false se a entrada de produto não existir
+                .orElseThrow(() -> new IllegalArgumentException("ProductIn not found with ID: " + id));
     }
 }

@@ -16,90 +16,91 @@ import java.util.Optional;
 @Service
 public class ProductService {
 
-    @Autowired
-    private final ProductService productService;
+    private final ProductRepository productRepository;
 
-    public ProductInService(ProductInRepository productInRepository, ProductService productService) {
-        this.productInRepository = productInRepository;
-        this.productService = productService;
+    @Autowired
+    public ProductService(ProductRepository productRepository) {
+        this.productRepository = productRepository;
     }
 
-    // Método para listar produtos com paginação e busca
+    // Method to list products with pagination and search
     public ProductListDTO getPaginatedProducts(int page, int rowsPerPage, String search, String sortField, String sortDirection) {
         PageRequest pageable = PageRequest.of(page - 1, rowsPerPage, Sort.by(Sort.Direction.fromString(sortDirection), sortField));
         List<Tuple> results = productRepository.findProductsAndCount(search, pageable);
 
         List<Product> products = results.stream()
-                .map(tuple -> tuple.get(0, Product.class)) // Pega o primeiro elemento como Product
+                .map(tuple -> tuple.get(0, Product.class))
                 .toList();
 
-        long totalItems = results.isEmpty() ? 0 : results.get(0).get(1, Long.class); // Assume que o segundo elemento é o total de itens
+        long totalItems = results.isEmpty() ? 0 : results.get(0).get(1, Long.class);
 
         return new ProductListDTO(products, totalItems);
     }
 
-    // Método para listar produtos em baixa quantidade com paginação e busca
+    // Method to list low-stock products with pagination and search
     public ProductListDTO getPaginatedProductsLowStock(int page, int rowsPerPage, String search, int quantity, String sortField, String sortDirection) {
         PageRequest pageable = PageRequest.of(page - 1, rowsPerPage, Sort.by(Sort.Direction.fromString(sortDirection), sortField));
         List<Tuple> results = productRepository.findProductsWithCategoriesLowStock(search, quantity, pageable);
 
         List<Product> products = results.stream()
-                .map(tuple -> tuple.get(0, Product.class)) // Pega o primeiro elemento como Product
+                .map(tuple -> tuple.get(0, Product.class))
                 .toList();
 
-        long totalItems = results.isEmpty() ? 0 : results.get(0).get(1, Long.class); // Assume que o segundo elemento é o total de itens
+        long totalItems = results.isEmpty() ? 0 : results.get(0).get(1, Long.class);
 
         return new ProductListDTO(products, totalItems);
     }
 
-    // Método para salvar um novo produto
+    // Method to save a new product
     @Transactional
     public Product saveProduct(Product product) {
-        return productRepository.save(product); // Retorna o produto salvo
+        return productRepository.save(product);
     }
 
-    // Método para obter um produto específico
-    public Optional<Product> getProductById(int id) {
-        return productRepository.findById(id);
+    // Method to get a specific product
+    public Product getProductById(int id) {
+        return productRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Product not found with ID: " + id));
     }
 
-    // Método para atualizar um produto
+    // Method to update a product
     @Transactional
     public Optional<Product> updateProduct(int id, Product product) {
         if (!productRepository.existsById(id)) {
-            return Optional.empty();
+            return Optional.empty(); // Return empty if not found
         }
         product.setId(id);
-        return Optional.of(productRepository.save(product));
+        return Optional.of(productRepository.save(product)); // Wrap the saved product in Optional
     }
 
-    // Método para deletar um produto (exclusão lógica)
+
+    // Method to delete a product (logical deletion)
     @Transactional
     public boolean setProductDeleted(int id) {
-        return productRepository.findById(id)
-                .map(product -> {
-                    product.setDeleted(true); // Marca o produto como deletado
-                    productRepository.save(product); // Salva o produto atualizado
-                    return true; // Retorna true se a operação for bem-sucedida
-                })
-                .orElse(false); // Retorna false se o produto não existir
+        return productRepository.findById(id).map(product -> {
+            product.setDeleted(true); // Mark the product as deleted
+            productRepository.save(product); // Save the updated product
+            return true; // Return true if the product was found and marked as deleted
+        }).orElse(false); // Return false if the product was not found
     }
 
-    // Método para verificar se um produto já existe
+
+    // Method to check if a product exists by name
     public boolean productExists(String name) {
         return productRepository.findByName(name).isPresent();
     }
 
+    // Method to update the quantity of a product
+    @Transactional
     public void updateProductQuantity(int productId, int quantityChange) {
-        productRepository.findById(productId).ifPresent(product -> {
-            int newQuantity = product.getQuantity() + quantityChange;
-            if (newQuantity < 0) {
-                throw new IllegalArgumentException("Insufficient stock for product ID: " + productId);
-            }
-            product.setQuantity(newQuantity);
-            productRepository.save(product);
-        });
+        Product product = getProductById(productId);
+        int newQuantity = product.getQuantity() + quantityChange;
+
+        if (newQuantity < 0) {
+            throw new IllegalArgumentException("Insufficient stock for product ID: " + productId);
+        }
+
+        product.setQuantity(newQuantity);
+        productRepository.save(product);
     }
-
-
 }

@@ -24,7 +24,7 @@ public class CategoryService {
 
     // Método para listar categorias com paginação e busca
     public CategoryListDTO getPaginatedCategories(int page, int rowsPerPage, String search, String sortField, String sortDirection) {
-        PageRequest pageable = PageRequest.of(page - 1, rowsPerPage, Sort.by(Sort.Direction.fromString(sortDirection), sortField)); // PageRequest é 0-indexed
+        PageRequest pageable = PageRequest.of(page - 1, rowsPerPage, Sort.by(Sort.Direction.fromString(sortDirection), sortField));
         List<Tuple> results = categoryRepository.findCategoriesAndCount(search, pageable);
 
         List<Category> categories = results.stream()
@@ -51,9 +51,9 @@ public class CategoryService {
     @Transactional
     public Optional<Category> updateCategory(int id, Category category) {
         if (!categoryRepository.existsById(id)) {
-            return Optional.empty();
+            return Optional.empty(); // Retorna vazio se a categoria não existir
         }
-        category.setId(id);
+        category.setId(id); // Define o ID da categoria a ser atualizada
         return Optional.of(categoryRepository.save(category));
     }
 

@@ -17,14 +17,21 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     @Query(value = "SELECT p, COUNT(p) OVER() AS totalItems " +
             "FROM Product p LEFT JOIN p.category c " +
             "WHERE (:search IS NULL OR p.name LIKE %:search% OR c.name LIKE %:search%) " +
-            "AND p.deleted = false")
+            "AND p.deleted = false",
+            countQuery = "SELECT COUNT(p) FROM Product p LEFT JOIN p.category c " +
+                    "WHERE (:search IS NULL OR p.name LIKE %:search% OR c.name LIKE %:search%) " +
+                    "AND p.deleted = false")
     List<Tuple> findProductsAndCount(@Param("search") String search, Pageable pageable);
 
     @Query(value = "SELECT p, COUNT(p) OVER() AS totalItems " +
             "FROM Product p LEFT JOIN p.category c " +
             "WHERE p.quantity < :quantity AND p.deleted = false " +
-            "AND (c.deleted = false) " +
-            "AND (:search IS NULL OR p.name LIKE %:search% OR c.name LIKE %:search%)")
+            "AND c.deleted = false " +
+            "AND (:search IS NULL OR p.name LIKE %:search% OR c.name LIKE %:search%)",
+            countQuery = "SELECT COUNT(p) FROM Product p LEFT JOIN p.category c " +
+                    "WHERE p.quantity < :quantity AND p.deleted = false " +
+                    "AND c.deleted = false " +
+                    "AND (:search IS NULL OR p.name LIKE %:search% OR c.name LIKE %:search%)")
     List<Tuple> findProductsWithCategoriesLowStock(@Param("search") String search,
                                                    @Param("quantity") int quantity,
                                                    Pageable pageable);

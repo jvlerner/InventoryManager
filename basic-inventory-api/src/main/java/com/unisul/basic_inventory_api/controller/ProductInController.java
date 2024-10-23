@@ -3,64 +3,80 @@ package com.unisul.basic_inventory_api.controller;
 import com.unisul.basic_inventory_api.model.ProductIn;
 import com.unisul.basic_inventory_api.model.ProductInListDTO;
 import com.unisul.basic_inventory_api.service.ProductInService;
-import org.springframework.http.HttpStatus;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
 @RestController
-@RequestMapping("/v1/product/in")
+@RequestMapping("/products-in")
 public class ProductInController {
 
     private final ProductInService productInService;
 
+    @Autowired
     public ProductInController(ProductInService productInService) {
         this.productInService = productInService;
     }
 
-    // Listar produtos com paginação e busca
-    @GetMapping("/list")
-    public ResponseEntity<ProductInListDTO> listInProducts(
-            @RequestParam(required = false, defaultValue = "") String search,
+    // Listar produtos recebidos com paginação e busca
+    @Operation(summary = "Listar produtos recebidos", description = "Obtém uma lista de produtos recebidos com opções de busca, paginação e ordenação.")
+    @ApiResponse(responseCode = "200", description = "Lista de produtos recebidos retornada com sucesso.")
+    @GetMapping
+    public ResponseEntity<ProductInListDTO> getAllProductsIn(
+            @RequestParam(required = false) String search,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int rowsPerPage,
-            @RequestParam(defaultValue = "name") String sortField,
+            @RequestParam(defaultValue = "id") String sortField,
             @RequestParam(defaultValue = "asc") String sortDirection) {
 
-        ProductInListDTO productInListDTO = productInService.getPaginatedProductsIn(page, rowsPerPage, search, sortField, sortDirection);
-        return ResponseEntity.ok(productInListDTO);
+        ProductInListDTO productInList = productInService.getPaginatedProductsIn(page, rowsPerPage, search, sortField, sortDirection);
+        return ResponseEntity.ok(productInList);
     }
 
-    // Obter um produtoIn específico
+    // Obter um produto específico
+    @Operation(summary = "Obter produto em estoque por ID", description = "Retorna os detalhes de um produto específico em estoque.")
+    @ApiResponse(responseCode = "200", description = "Produto encontrado.")
+    @ApiResponse(responseCode = "404", description = "Produto não encontrado.")
     @GetMapping("/{id}")
     public ResponseEntity<ProductIn> getProductIn(@PathVariable int id) {
         return productInService.getProductInById(id)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElse(ResponseEntity.notFound().build()); // Retorna 404 se não encontrado
     }
 
-    // Cadastrar um novo produtoIn
-    @PostMapping("/create")
+
+    // Cadastrar novo produto recebido
+    @Operation(summary = "Cadastrar um novo produto recebido", description = "Cria um novo produto recebido.")
+    @ApiResponse(responseCode = "201", description = "Produto recebido criado com sucesso.")
+    @PostMapping
     public ResponseEntity<ProductIn> createProductIn(@RequestBody ProductIn productIn) {
-        ProductIn createdProductIn = productInService.saveProductIn(productIn);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdProductIn);
+        productInService.saveProductIn(productIn);
+        return ResponseEntity.status(201).body(productIn); // Retorna 201 Created
     }
 
+    // Atualizar produto recebido existente
+    @Operation(summary = "Atualizar um produto recebido", description = "Atualiza um produto recebido existente pelo ID.")
+    @ApiResponse(responseCode = "200", description = "Produto recebido atualizado com sucesso.")
+    @ApiResponse(responseCode = "404", description = "Produto recebido não encontrado.")
     @PutMapping("/{id}")
     public ResponseEntity<ProductIn> updateProductIn(@PathVariable int id, @RequestBody ProductIn productIn) {
-        Optional<ProductIn> updatedProductIn = productInService.updateProductIn(id, productIn);
-        return updatedProductIn
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return productInService.updateProductIn(id, productIn)
+                .map(ResponseEntity::ok) // Retorna produto atualizado
+                .orElse(ResponseEntity.notFound().build()); // Retorna 404 se não encontrado
     }
 
-    // Deletar um produtoIn (exclusão lógica)
+    // Deletar produto recebido (exclusão lógica)
+    @Operation(summary = "Deletar um produto recebido", description = "Realiza a exclusão lógica de um produto recebido pelo ID.")
+    @ApiResponse(responseCode = "204", description = "Produto recebido deletado com sucesso.")
+    @ApiResponse(responseCode = "404", description = "Produto recebido não encontrado.")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProductIn(@PathVariable int id) {
-        if (productInService.setProductDeleted(id)) {
-            return ResponseEntity.noContent().build();
+        // Verifica se a exclusão foi bem-sucedida
+        if (productInService.setProductInDeleted(id)) {
+            return ResponseEntity.noContent().build(); // Retorna 204 No Content
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.notFound().build(); // Retorna 404 se não encontrado
     }
 }

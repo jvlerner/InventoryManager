@@ -17,10 +17,12 @@ import java.util.Optional;
 public class ProductOutService {
 
     private final ProductOutRepository productOutRepository;
+    private final ProductService productService; // Assuming you have a ProductService
 
     @Autowired
-    public ProductOutService(ProductOutRepository productOutRepository) {
+    public ProductOutService(ProductOutRepository productOutRepository, ProductService productService) {
         this.productOutRepository = productOutRepository;
+        this.productService = productService;
     }
 
     // Método para listar produtos com paginação e busca
@@ -41,37 +43,40 @@ public class ProductOutService {
     @Transactional
     public void saveProductOut(ProductOut productOut) {
         productOutRepository.save(productOut);
-        updateProductQuantity(productOut.getProductId(), -productOut.getQuantity()); // Decrease quantity for product out
+        // Decrease quantity for the product being removed
+        productService.updateProductQuantity(productOut.getProduct().getId(), -productOut.getQuantity());
     }
 
+    // Método para atualizar uma saída de produto
     @Transactional
     public Optional<ProductOut> updateProductOut(int id, ProductOut productOut) {
         return productOutRepository.findById(id).map(existingProductOut -> {
             int quantityChange = existingProductOut.getQuantity() - productOut.getQuantity();
-            existingProductOut.setProductId(productOut.getProductId());
+            existingProductOut.setProduct(productOut.getProduct()); // Updated to set the whole product
             existingProductOut.setQuantity(productOut.getQuantity());
 
             productOutRepository.save(existingProductOut);
-            productService.updateProductQuantity(productOut.getProductId(), quantityChange);
+            // Update the product quantity based on the change
+            productService.updateProductQuantity(productOut.getProduct().getId(), quantityChange);
 
             return existingProductOut;
         });
     }
 
-    // Método para obter um produto específico
+    // Método para obter uma saída de produto específica
     public Optional<ProductOut> getProductOutById(int id) {
         return productOutRepository.findById(id);
     }
 
-    // Método para deletar um produto (exclusão lógica)
+    // Método para deletar uma saída de produto (exclusão lógica)
     @Transactional
     public boolean setProductOutDeleted(int id) {
         return productOutRepository.findById(id)
                 .map(productOut -> {
-                    productOut.setDeleted(true); // Marca o produto como deletado
-                    productOutRepository.save(productOut); // Salva o produto atualizado
+                    productOut.setDeleted(true); // Marca a saída de produto como deletada
+                    productOutRepository.save(productOut); // Salva a saída de produto atualizada
                     return true; // Retorna true se a operação for bem-sucedida
                 })
-                .orElse(false); // Retorna false se o produto não existir
+                .orElse(false); // Retorna false se a saída de produto não existir
     }
 }
