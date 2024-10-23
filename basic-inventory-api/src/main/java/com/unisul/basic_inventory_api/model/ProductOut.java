@@ -35,7 +35,7 @@ public class ProductOut {
 
     @NotNull(message = "O produto é obrigatório") // Validação para o produto
     @ManyToOne(fetch = FetchType.EAGER) // Várias saídas podem referenciar um produto
-    @JoinColumn(name = "product_id", insertable = false, updatable = false)
+    @JoinColumn(name = "product_id",foreignKey = @ForeignKey(name = "fk_category"))
     private Product product; // Referência ao produto
 
     @Override

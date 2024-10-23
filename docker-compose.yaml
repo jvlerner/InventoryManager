@@ -1,18 +1,18 @@
 version: '3.8'
 
 services:
-  # view:
-  #   build:
-  #     context: basic-inventory-view/
-  #     dockerfile: Dockerfile
-  #   restart: on-failure
-  #   ports:
-  #     - "3003:3000"
-  #   environment:
-  #     - DB_USERNAME=root
-  #   depends_on:
-  #     - api
-  #     - db
+#   view:
+#     build:
+#       context: basic-inventory-view/
+#       dockerfile: Dockerfile
+#     restart: on-failure
+#     ports:
+#       - "3003:3000"
+#     environment:
+#       - API_URL=null
+#     depends_on:
+#       - api
+#       - db
 
   api:
     build:

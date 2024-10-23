@@ -26,8 +26,8 @@ RUN curl -O https://downloads.apache.org/maven/maven-4/4.0.0-beta-4/binaries/apa
 
 WORKDIR /app
 
-COPY pom.xml .
-COPY src ./src
+COPY pom.xml pom.xml
+COPY src src
 
 RUN mvn clean package -DskipTests
 

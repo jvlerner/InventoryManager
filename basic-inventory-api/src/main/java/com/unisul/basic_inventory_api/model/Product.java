@@ -8,9 +8,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * Representa um produto no sistema.
- */
+
 @Entity
 @Table(name = "products") // Tabela de produtos
 @Data
@@ -43,11 +41,6 @@ public class Product {
     @JoinColumn(name = "category_id", foreignKey = @ForeignKey(name = "fk_category")) // Chave estrangeira
     private Category category;
 
-    /**
-     * Verifica se o produto está disponível em estoque.
-     *
-     * @return true se a quantidade for maior que zero, caso contrário false.
-     */
     public boolean isAvailable() {
         return quantity > 0;
     }

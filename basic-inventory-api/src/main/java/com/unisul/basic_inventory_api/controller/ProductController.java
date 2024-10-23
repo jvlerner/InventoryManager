@@ -1,14 +1,14 @@
 package com.unisul.basic_inventory_api.controller;
 
 import com.unisul.basic_inventory_api.model.Product;
-import com.unisul.basic_inventory_api.model.ProductDTO;
+import com.unisul.basic_inventory_api.model.ProductListDTO;
 import com.unisul.basic_inventory_api.service.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/products")
+@RequestMapping("/v1/product")
 public class ProductController {
 
     private final ProductService productService;
@@ -18,30 +18,30 @@ public class ProductController {
     }
 
     // Listar produtos com paginação e busca
-    @GetMapping
-    public ResponseEntity<ProductDTO> listProducts(
-            @RequestParam(required = false) String search,
+    @GetMapping("/list")
+    public ResponseEntity<ProductListDTO> listProducts(
+            @RequestParam(required = false, defaultValue = "") String search,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int rowsPerPage,
             @RequestParam(defaultValue = "name") String sortField,
             @RequestParam(defaultValue = "asc") String sortDirection) {
 
-        ProductDTO productDTO = productService.getPaginatedProducts(page, rowsPerPage, search, sortField, sortDirection);
-        return ResponseEntity.ok(productDTO);
+        ProductListDTO productListDTO = productService.getPaginatedProducts(page, rowsPerPage, search, sortField, sortDirection);
+        return ResponseEntity.ok(productListDTO);
     }
 
     // Listar produtos em baixa quantidade com paginação e busca
-    @GetMapping("/low-stock")
-    public ResponseEntity<ProductDTO> listLowStockProducts(
-            @RequestParam(required = false) String search,
+    @GetMapping("/lowstock")
+    public ResponseEntity<ProductListDTO> listLowStockProducts(
+            @RequestParam(required = false, defaultValue = "") String search,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int rowsPerPage,
-            @RequestParam int quantity,
+            @RequestParam(defaultValue = "10") int quantity,
             @RequestParam(defaultValue = "name") String sortField,
             @RequestParam(defaultValue = "asc") String sortDirection) {
 
-        ProductDTO productDTO = productService.getPaginatedProductsLowStock(page, rowsPerPage, search, quantity, sortField, sortDirection);
-        return ResponseEntity.ok(productDTO);
+        ProductListDTO productListDTO = productService.getPaginatedProductsLowStock(page, rowsPerPage, search, quantity, sortField, sortDirection);
+        return ResponseEntity.ok(productListDTO);
     }
 
     // Obter um produto específico
@@ -53,14 +53,15 @@ public class ProductController {
     }
 
     // Cadastrar um novo produto
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<Product> createProduct(@RequestBody Product product) {
         // Verificar se o produto já existe
         if (productService.productExists(product.getName())) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(null); // 409 Conflict
+            return ResponseEntity.status(HttpStatus.CONFLICT).build(); // 409 Conflict
         }
-        productService.saveProduct(product);
-        return ResponseEntity.status(HttpStatus.CREATED).body(product);
+
+        Product createdProduct = productService.saveProduct(product);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdProduct);
     }
 
     // Atualizar um produto

@@ -1,7 +1,7 @@
 package com.unisul.basic_inventory_api.controller;
 
 import com.unisul.basic_inventory_api.model.Category;
-import com.unisul.basic_inventory_api.model.CategoryDTO;
+import com.unisul.basic_inventory_api.model.CategoryListDTO;
 import com.unisul.basic_inventory_api.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/categories")
+@RequestMapping("/v1/category")
 public class CategoryController {
 
     private final CategoryService categoryService;
@@ -22,29 +22,29 @@ public class CategoryController {
     // Listar categorias com paginação e busca
     @Operation(summary = "Obter categorias com paginação e busca, paramêtros: int page, int rowsPerPage, String search, String sortField, String sortDirection")
     @ApiResponse(responseCode = "200", description = "Lista de Categorias, Total de categorias")
-    @GetMapping
-    public ResponseEntity<CategoryDTO> listCategories(
+    @GetMapping("/list")
+    public ResponseEntity<CategoryListDTO> listCategories(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int rowsPerPage,
             @RequestParam(required = false) String search,
             @RequestParam(defaultValue = "name") String sortField,
             @RequestParam(defaultValue = "asc") String sortDirection) {
 
-        CategoryDTO categoryDTO = categoryService.getPaginatedCategories(page, rowsPerPage, search, sortField, sortDirection);
+        CategoryListDTO categoryDTO = categoryService.getPaginatedCategories(page, rowsPerPage, search, sortField, sortDirection);
         return ResponseEntity.ok(categoryDTO);
     }
 
     // Cadastrar nova categoria
     @Operation(summary = "Obter categorias com paginação e busca, paramêtros: int page, int rowsPerPage, String search, String sortField, String sortDirection")
     @ApiResponse(responseCode = "200", description = "Lista de Categorias, Total de categorias")
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<Category> createCategory(@RequestBody Category category) {
         // Verificar se a categoria já existe
         if (categoryService.categoryExists(category.getName())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(null); // 409 Conflict
         }
         Category savedCategory = categoryService.saveCategory(category);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedCategory);
+        return ResponseEntity.status(HttpStatus.CREATED).body(null);
     }
 
     // Obter uma categoria específica

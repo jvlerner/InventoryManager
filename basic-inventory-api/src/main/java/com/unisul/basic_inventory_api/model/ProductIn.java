@@ -22,10 +22,6 @@ public class ProductIn {
 
     private boolean deleted = false; // Indica se a entrada está excluída logicamente
 
-    @NotNull(message = "O ID do produto não pode ser nulo") // Validação para o ID do produto
-    @Column(name = "product_id", nullable = false)
-    private int productId;
-
     @NotNull(message = "A quantidade não pode ser nula") // Validação para a quantidade
     @Column(nullable = false)
     private int quantity;
@@ -35,6 +31,6 @@ public class ProductIn {
 
     @NotNull(message = "O produto é obrigatório") // Validação para o produto
     @ManyToOne // Várias entradas podem referenciar um produto
-    @JoinColumn(name = "product_id", nullable = false, insertable = false, updatable = false)
+    @JoinColumn(name = "product_id",foreignKey = @ForeignKey(name = "fk_category"))
     private Product product; // Referência ao produto
 }

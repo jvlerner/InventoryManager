@@ -15,19 +15,22 @@ import java.util.Optional;
 public interface CategoryRepository extends JpaRepository<Category, Integer> {
 
     @Query("SELECT c, COUNT(c) OVER() AS totalItems " +
-           "FROM Category c " +
-           "WHERE (:search IS NULL OR c.name LIKE %:search%) " +
-           "AND c.deleted = false")
+            "FROM Category c " +
+            "WHERE (:search IS NULL OR c.name LIKE %:search%) " +
+            "AND c.deleted = false")
     List<Tuple> findCategoriesAndCount(@Param("search") String search, Pageable pageable);
 
-    @Query("SELECT c FROM Category c WHERE (:search IS NULL OR c.name LIKE %:search%) AND c.deleted = false")
+    @Query("SELECT c FROM Category c " +
+            "WHERE (:search IS NULL OR c.name LIKE %:search%) " +
+            "AND c.deleted = false")
     List<Category> findCategoriesWithSearch(@Param("search") String search, Pageable pageable);
 
-    @Query("SELECT COUNT(c) FROM Category c WHERE (:search IS NULL OR c.name LIKE %:search%) AND c.deleted = false")
+    @Query("SELECT COUNT(c) FROM Category c " +
+            "WHERE (:search IS NULL OR c.name LIKE %:search%) " +
+            "AND c.deleted = false")
     long countCategoriesBySearch(@Param("search") String search);
 
-    // Metodo para encontrar uma categoria pelo nome
-    @Query("SELECT c FROM Category c WHERE c.name = :name")
+    // Método para encontrar uma categoria pelo nome
+    @Query("SELECT c FROM Category c WHERE c.name = :name AND c.deleted = false")
     Optional<Category> findByName(@Param("name") String name);
-
 }

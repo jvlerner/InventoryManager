@@ -1,7 +1,7 @@
 package com.unisul.basic_inventory_api.service;
 
 import com.unisul.basic_inventory_api.model.Product;
-import com.unisul.basic_inventory_api.model.ProductDTO;
+import com.unisul.basic_inventory_api.model.ProductListDTO;
 import com.unisul.basic_inventory_api.repository.ProductRepository;
 import jakarta.persistence.Tuple;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,53 +16,54 @@ import java.util.Optional;
 @Service
 public class ProductService {
 
-    private final ProductRepository productRepository;
-
     @Autowired
-    public ProductService(ProductRepository productRepository) {
-        this.productRepository = productRepository;
+    private final ProductService productService;
+
+    public ProductInService(ProductInRepository productInRepository, ProductService productService) {
+        this.productInRepository = productInRepository;
+        this.productService = productService;
     }
 
-    // Metodo para listar produtos com paginação e busca
-    public ProductDTO getPaginatedProducts(int page, int rowsPerPage, String search, String sortField, String sortDirection) {
+    // Método para listar produtos com paginação e busca
+    public ProductListDTO getPaginatedProducts(int page, int rowsPerPage, String search, String sortField, String sortDirection) {
         PageRequest pageable = PageRequest.of(page - 1, rowsPerPage, Sort.by(Sort.Direction.fromString(sortDirection), sortField));
         List<Tuple> results = productRepository.findProductsAndCount(search, pageable);
 
         List<Product> products = results.stream()
-            .map(tuple -> tuple.get(0, Product.class)) // Pega o primeiro elemento como Product
-            .toList();
+                .map(tuple -> tuple.get(0, Product.class)) // Pega o primeiro elemento como Product
+                .toList();
 
-        long totalItems = results.isEmpty() ? 0 : results.getFirst().get(1, Long.class); // Assume que o segundo elemento é o total de itens
+        long totalItems = results.isEmpty() ? 0 : results.get(0).get(1, Long.class); // Assume que o segundo elemento é o total de itens
 
-        // Assume que o construtor está presente
-        return new ProductDTO(products, totalItems);
+        return new ProductListDTO(products, totalItems);
     }
-      // Metodo para listar produtos com paginação e busca e quantidade menor que "quantity"
-    public ProductDTO getPaginatedProductsLowStock(int page, int rowsPerPage, String search, int quantity, String sortField, String sortDirection) {
+
+    // Método para listar produtos em baixa quantidade com paginação e busca
+    public ProductListDTO getPaginatedProductsLowStock(int page, int rowsPerPage, String search, int quantity, String sortField, String sortDirection) {
         PageRequest pageable = PageRequest.of(page - 1, rowsPerPage, Sort.by(Sort.Direction.fromString(sortDirection), sortField));
         List<Tuple> results = productRepository.findProductsWithCategoriesLowStock(search, quantity, pageable);
 
         List<Product> products = results.stream()
-            .map(tuple -> tuple.get(0, Product.class)) // Pega o primeiro elemento como Product
-            .toList();
+                .map(tuple -> tuple.get(0, Product.class)) // Pega o primeiro elemento como Product
+                .toList();
 
         long totalItems = results.isEmpty() ? 0 : results.get(0).get(1, Long.class); // Assume que o segundo elemento é o total de itens
 
-        return new ProductDTO(products, totalItems);
+        return new ProductListDTO(products, totalItems);
     }
 
-    // Metodo para salvar uma novo produto
+    // Método para salvar um novo produto
     @Transactional
-    public void saveProduct(Product product) {
-        productRepository.save(product);
+    public Product saveProduct(Product product) {
+        return productRepository.save(product); // Retorna o produto salvo
     }
 
-    // Metodo para obter um produto específico
+    // Método para obter um produto específico
     public Optional<Product> getProductById(int id) {
         return productRepository.findById(id);
     }
 
-    // Metodo para atualizar um produto
+    // Método para atualizar um produto
     @Transactional
     public Optional<Product> updateProduct(int id, Product product) {
         if (!productRepository.existsById(id)) {
@@ -72,22 +73,33 @@ public class ProductService {
         return Optional.of(productRepository.save(product));
     }
 
-    // Metodo para deletar um produto (exclusão lógica)
+    // Método para deletar um produto (exclusão lógica)
     @Transactional
     public boolean setProductDeleted(int id) {
-        Optional<Product> productOptional = productRepository.findById(id);
-        if (productOptional.isPresent()) {
-            Product product = productOptional.get();
-            product.setDeleted(true); // Marca a categoria como deletada
-            productRepository.save(product); // Salva a categoria atualizada
-            return true; // Retorna true se a operação for bem-sucedida
-        }
-        return false; // Retorna false se a categoria não existir
+        return productRepository.findById(id)
+                .map(product -> {
+                    product.setDeleted(true); // Marca o produto como deletado
+                    productRepository.save(product); // Salva o produto atualizado
+                    return true; // Retorna true se a operação for bem-sucedida
+                })
+                .orElse(false); // Retorna false se o produto não existir
     }
 
-    // Metodo para verificar se um produto já existe
+    // Método para verificar se um produto já existe
     public boolean productExists(String name) {
         return productRepository.findByName(name).isPresent();
     }
+
+    public void updateProductQuantity(int productId, int quantityChange) {
+        productRepository.findById(productId).ifPresent(product -> {
+            int newQuantity = product.getQuantity() + quantityChange;
+            if (newQuantity < 0) {
+                throw new IllegalArgumentException("Insufficient stock for product ID: " + productId);
+            }
+            product.setQuantity(newQuantity);
+            productRepository.save(product);
+        });
+    }
+
 
 }
