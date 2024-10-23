@@ -23,7 +23,7 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    // Method to list products with pagination and search
+    // Metodo para listar produtos com paginacao e busca
     public ProductListDTO getPaginatedProducts(int page, int rowsPerPage, String search, String sortField, String sortDirection) {
         PageRequest pageable = PageRequest.of(page - 1, rowsPerPage, Sort.by(Sort.Direction.fromString(sortDirection), sortField));
         List<Tuple> results = productRepository.findProductsAndCount(search, pageable);
@@ -37,7 +37,7 @@ public class ProductService {
         return new ProductListDTO(products, totalItems);
     }
 
-    // Method to list low-stock products with pagination and search
+    // Metodo para listar produtos com baixo estoque com paginacao e busca
     public ProductListDTO getPaginatedProductsLowStock(int page, int rowsPerPage, String search, int quantity, String sortField, String sortDirection) {
         PageRequest pageable = PageRequest.of(page - 1, rowsPerPage, Sort.by(Sort.Direction.fromString(sortDirection), sortField));
         List<Tuple> results = productRepository.findProductsWithCategoriesLowStock(search, quantity, pageable);
@@ -51,53 +51,51 @@ public class ProductService {
         return new ProductListDTO(products, totalItems);
     }
 
-    // Method to save a new product
+    // Metodo para salvar um novo produto
     @Transactional
     public Product saveProduct(Product product) {
         return productRepository.save(product);
     }
 
-    // Method to get a specific product
+    // Metodo para obter um produto especifico
     public Product getProductById(int id) {
         return productRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Product not found with ID: " + id));
+                .orElseThrow(() -> new IllegalArgumentException("Produto nao encontrado com ID: " + id));
     }
 
-    // Method to update a product
+    // Metodo para atualizar um produto
     @Transactional
     public Optional<Product> updateProduct(int id, Product product) {
         if (!productRepository.existsById(id)) {
-            return Optional.empty(); // Return empty if not found
+            return Optional.empty(); // Retorna vazio se nao encontrado
         }
         product.setId(id);
-        return Optional.of(productRepository.save(product)); // Wrap the saved product in Optional
+        return Optional.of(productRepository.save(product)); // Envolve o produto salvo em Optional
     }
 
-
-    // Method to delete a product (logical deletion)
+    // Metodo para deletar um produto (delecao logica)
     @Transactional
     public boolean setProductDeleted(int id) {
         return productRepository.findById(id).map(product -> {
-            product.setDeleted(true); // Mark the product as deleted
-            productRepository.save(product); // Save the updated product
-            return true; // Return true if the product was found and marked as deleted
-        }).orElse(false); // Return false if the product was not found
+            product.setDeleted(true); // Marca o produto como deletado
+            productRepository.save(product); // Salva o produto atualizado
+            return true; // Retorna verdadeiro se o produto foi encontrado e marcado como deletado
+        }).orElse(false); // Retorna falso se o produto nao foi encontrado
     }
 
-
-    // Method to check if a product exists by name
+    // Metodo para verificar se um produto existe pelo nome
     public boolean productExists(String name) {
         return productRepository.findByName(name).isPresent();
     }
 
-    // Method to update the quantity of a product
+    // Metodo para atualizar a quantidade de um produto
     @Transactional
     public void updateProductQuantity(int productId, int quantityChange) {
         Product product = getProductById(productId);
         int newQuantity = product.getQuantity() + quantityChange;
 
         if (newQuantity < 0) {
-            throw new IllegalArgumentException("Insufficient stock for product ID: " + productId);
+            throw new IllegalArgumentException("Estoque insuficiente para o produto ID: " + productId);
         }
 
         product.setQuantity(newQuantity);

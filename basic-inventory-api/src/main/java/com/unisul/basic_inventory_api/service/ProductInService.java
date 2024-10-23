@@ -25,7 +25,7 @@ public class ProductInService {
         this.productService = productService;
     }
 
-    // Method to list products with pagination and search
+    // Metodo para listar produtos com paginacao e busca
     public ProductInListDTO getPaginatedProductsIn(int page, int rowsPerPage, String search, String sortField, String sortDirection) {
         PageRequest pageable = PageRequest.of(page - 1, rowsPerPage, Sort.by(Sort.Direction.fromString(sortDirection), sortField));
         List<Tuple> results = productInRepository.findProductsInAndCount(search, pageable);
@@ -39,15 +39,15 @@ public class ProductInService {
         return new ProductInListDTO(productsIn, totalItems);
     }
 
-    // Method to save a new product entry
+    // Metodo para salvar uma nova entrada de produto
     @Transactional
     public void saveProductIn(ProductIn productIn) {
         productInRepository.save(productIn);
-        // Update the product quantity based on the entry
+        // Atualiza a quantidade do produto com base na entrada
         productService.updateProductQuantity(productIn.getProduct().getId(), productIn.getQuantity());
     }
 
-    // Method to update a product entry
+    // Metodo para atualizar uma entrada de produto
     @Transactional
     public Optional<ProductIn> updateProductIn(int id, ProductIn productIn) {
         return productInRepository.findById(id).map(existingProductIn -> {
@@ -56,19 +56,19 @@ public class ProductInService {
             existingProductIn.setQuantity(productIn.getQuantity());
 
             productInRepository.save(existingProductIn);
-            // Update the product quantity
+            // Atualiza a quantidade do produto
             productService.updateProductQuantity(productIn.getProduct().getId(), quantityChange);
 
             return existingProductIn;
         });
     }
 
-    // Method to get a specific product entry
+    // Metodo para obter uma entrada de produto especifica
     public Optional<ProductIn> getProductInById(int id) {
         return productInRepository.findById(id);
     }
 
-    // Method to delete a product entry (logical deletion)
+    // Metodo para deletar uma entrada de produto (delecao logica)
     @Transactional
     public boolean setProductInDeleted(int id) {
         return productInRepository.findById(id)
@@ -77,6 +77,6 @@ public class ProductInService {
                     productInRepository.save(productIn);
                     return true;
                 })
-                .orElseThrow(() -> new IllegalArgumentException("ProductIn not found with ID: " + id));
+                .orElseThrow(() -> new IllegalArgumentException("ProductIn nao encontrado com ID: " + id));
     }
 }

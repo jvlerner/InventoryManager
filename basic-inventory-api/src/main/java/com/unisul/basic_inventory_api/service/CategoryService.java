@@ -22,7 +22,7 @@ public class CategoryService {
         this.categoryRepository = categoryRepository;
     }
 
-    // Método para listar categorias com paginação e busca
+    // Metodo para listar categorias com paginação e busca
     public CategoryListDTO getPaginatedCategories(int page, int rowsPerPage, String search, String sortField, String sortDirection) {
         PageRequest pageable = PageRequest.of(page - 1, rowsPerPage, Sort.by(Sort.Direction.fromString(sortDirection), sortField));
         List<Tuple> results = categoryRepository.findCategoriesAndCount(search, pageable);
@@ -36,18 +36,18 @@ public class CategoryService {
         return new CategoryListDTO(categories, totalItems);
     }
 
-    // Método para salvar uma nova categoria
+    // Metodo para salvar uma nova categoria
     @Transactional
     public Category saveCategory(Category category) {
         return categoryRepository.save(category);
     }
 
-    // Método para obter uma categoria específica
+    // Metodo para obter uma categoria específica
     public Optional<Category> getCategoryById(int id) {
         return categoryRepository.findById(id);
     }
 
-    // Método para atualizar uma categoria
+    // Metodo para atualizar uma categoria
     @Transactional
     public Optional<Category> updateCategory(int id, Category category) {
         if (!categoryRepository.existsById(id)) {
@@ -57,7 +57,7 @@ public class CategoryService {
         return Optional.of(categoryRepository.save(category));
     }
 
-    // Método para deletar uma categoria (exclusão lógica)
+    // Metodo para deletar uma categoria (exclusão lógica)
     @Transactional
     public boolean setCategoryDeleted(int id) {
         return categoryRepository.findById(id)
@@ -69,7 +69,7 @@ public class CategoryService {
                 .orElse(false); // Retorna false se a categoria não existir
     }
 
-    // Método para verificar se uma categoria já existe
+    // Metodo para verificar se uma categoria já existe
     public boolean categoryExists(String name) {
         return categoryRepository.findByName(name).isPresent();
     }

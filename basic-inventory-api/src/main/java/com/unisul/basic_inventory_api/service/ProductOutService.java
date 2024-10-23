@@ -25,7 +25,7 @@ public class ProductOutService {
         this.productService = productService;
     }
 
-    // Método para listar produtos com paginação e busca
+    // Metodo para listar produtos com paginação e busca
     public ProductOutListDTO getPaginatedProductsOut(int page, int rowsPerPage, String search, String sortField, String sortDirection) {
         PageRequest pageable = PageRequest.of(page - 1, rowsPerPage, Sort.by(Sort.Direction.fromString(sortDirection), sortField));
         List<Tuple> results = productOutRepository.findProductsOutAndCount(search, pageable);
@@ -39,7 +39,7 @@ public class ProductOutService {
         return new ProductOutListDTO(productsOut, totalItems);
     }
 
-    // Método para salvar um novo produto
+    // Metodo para salvar um novo produto
     @Transactional
     public void saveProductOut(ProductOut productOut) {
         productOutRepository.save(productOut);
@@ -47,7 +47,7 @@ public class ProductOutService {
         productService.updateProductQuantity(productOut.getProduct().getId(), -productOut.getQuantity());
     }
 
-    // Método para atualizar uma saída de produto
+    // Metodo para atualizar uma saída de produto
     @Transactional
     public Optional<ProductOut> updateProductOut(int id, ProductOut productOut) {
         return productOutRepository.findById(id).map(existingProductOut -> {
@@ -63,12 +63,12 @@ public class ProductOutService {
         });
     }
 
-    // Método para obter uma saída de produto específica
+    // Metodo para obter uma saída de produto específica
     public Optional<ProductOut> getProductOutById(int id) {
         return productOutRepository.findById(id);
     }
 
-    // Método para deletar uma saída de produto (exclusão lógica)
+    // Metodo para deletar uma saída de produto (exclusão lógica)
     @Transactional
     public boolean setProductOutDeleted(int id) {
         return productOutRepository.findById(id)
