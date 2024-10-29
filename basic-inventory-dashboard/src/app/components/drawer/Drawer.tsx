@@ -5,10 +5,8 @@ import Box from "@mui/material/Box";
 import MuiDrawer from "@mui/material/Drawer";
 import CssBaseline from "@mui/material/CssBaseline";
 import Divider from "@mui/material/Divider";
-import { ThemeContext } from "@/app/context/ThemeContext";
 import DrawerList from "./DrawerList";
 import DrawerToggleButton from "./DrawerToggleButton";
-import DrawerConfigList from "./DrawerConfigList";
 import ToggleThemeButton from "./ToggleThemeButton";
 
 const drawerWidth = 240;
