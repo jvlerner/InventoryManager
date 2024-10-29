@@ -1,5 +1,6 @@
 import "@/styles/globals.css";
 import ContextProviders from "./context";
+import CustomDrawer from "./components/drawer/Drawer";
 
 export default function RootLayout({
   children,
@@ -9,7 +10,9 @@ export default function RootLayout({
   return (
     <html>
       <body>
-        <ContextProviders>{children}</ContextProviders>
+        <ContextProviders>
+          <CustomDrawer>{children}</CustomDrawer>
+        </ContextProviders>
       </body>
     </html>
   );

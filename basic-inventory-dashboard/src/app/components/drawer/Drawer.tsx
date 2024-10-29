@@ -65,7 +65,7 @@ const Drawer = styled(MuiDrawer, {
   ],
 }));
 
-export default function MiniDrawer({
+export default function CustomDrawer({
   children,
 }: Readonly<{
   children: React.ReactNode;
