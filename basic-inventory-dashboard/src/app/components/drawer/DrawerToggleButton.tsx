@@ -15,7 +15,7 @@ const DrawerToggleButton: React.FC<DrawerToggleButtonProps> = ({
   open,
 }) => {
   return (
-    <IconButton onClick={action}>
+    <IconButton aria-label="Abrir/fechar menu" onClick={action}>
       {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
     </IconButton>
   );

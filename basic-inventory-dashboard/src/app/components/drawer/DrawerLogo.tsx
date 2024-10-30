@@ -12,6 +12,7 @@ const DrawerLogo: React.FC<DrawerLogoProps> = ({ open }) => {
     <Box
       bgcolor={"#263238"}
       sx={{
+        pointerEvents: "none",
         padding: "0px 5px",
         borderRadius: "4px",
       }}

@@ -90,7 +90,7 @@ export default function CustomDrawer({
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            margin: "10px 0px",
+            margin: "15px 0px",
           }}
         >
           <DrawerLogo open={open}></DrawerLogo>
@@ -109,8 +109,9 @@ export default function CustomDrawer({
             sx={{
               display: "flex",
               flexDirection: "column",
-              alignItems: "start",
+              alignItems: "center",
               width: "100%",
+              margin: "10px 0px",
             }}
           >
             <DrawerList open={open} />

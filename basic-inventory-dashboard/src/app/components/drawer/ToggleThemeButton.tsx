@@ -13,7 +13,7 @@ const ToggleThemeButton: React.FC = () => {
   };
 
   return (
-    <IconButton onClick={toggleTheme} color="inherit" aria-label="toggle theme">
+    <IconButton onClick={toggleTheme} color="inherit" aria-label="Alterar tema">
       {mode ? <LightMode /> : <DarkMode />}
     </IconButton>
   );
