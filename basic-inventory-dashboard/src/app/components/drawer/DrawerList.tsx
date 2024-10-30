@@ -7,15 +7,16 @@ import {
 } from "@mui/material";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
+import Link from "next/link";
 interface DrawerConfigListProps {
   open: boolean; // Accepting open state as a prop
 }
 
 // Define the button items with their respective icons and labels
 const buttons = [
-  { text: "Inicio", icon: <InboxIcon /> },
-  { text: "Categorias", icon: <MailIcon /> },
-  { text: "Produtos", icon: <InboxIcon /> },
+  { text: "Inicio", icon: <InboxIcon />, url: "/" },
+  { text: "Categorias", icon: <MailIcon />, url: "/categorias" },
+  { text: "Produtos", icon: <InboxIcon />, url: "/produtos" },
 ];
 
 export default function DrawerConfigList({ open }: DrawerConfigListProps) {
@@ -31,6 +32,8 @@ export default function DrawerConfigList({ open }: DrawerConfigListProps) {
       {buttons.map((button) => (
         <ListItem key={button.text} disablePadding sx={{ display: "flex" }}>
           <ListItemButton
+            component={Link} 
+            href={button.url}
             sx={[
               { minHeight: 48, px: 2.5 },
               open

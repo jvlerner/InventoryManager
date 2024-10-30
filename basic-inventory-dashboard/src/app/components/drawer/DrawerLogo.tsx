@@ -3,12 +3,12 @@
 import React from "react";
 import { Typography } from "@mui/material";
 
-const DrawerTitle: React.FC = () => {
+const DrawerLogo: React.FC = () => {
   return (
     <Typography variant="h6" noWrap component="div">
-      Basic Inventory Control
+      BIC
     </Typography>
   );
 };
 
-export default DrawerTitle;
+export default DrawerLogo;

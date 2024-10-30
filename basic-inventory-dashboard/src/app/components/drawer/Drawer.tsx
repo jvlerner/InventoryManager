@@ -8,6 +8,7 @@ import Divider from "@mui/material/Divider";
 import DrawerList from "./DrawerList";
 import DrawerToggleButton from "./DrawerToggleButton";
 import ToggleThemeButton from "./ToggleThemeButton";
+import DrawerLogo from "./DrawerLogo";
 
 const drawerWidth = 240;
 
@@ -80,21 +81,32 @@ export default function CustomDrawer({
       <CssBaseline />
       <Drawer variant="permanent" open={open}>
         <DrawerHeader>
+          <DrawerLogo></DrawerLogo>
           <DrawerToggleButton action={toggleDrawer} open={open} />
         </DrawerHeader>
         <Divider />
-        <Box sx={{display:"flex", flexDirection:"column", alignItems: "start", justifyContent: "space-between", height:"100%"}}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "start",
+            justifyContent: "space-between",
+            height: "100%",
+          }}
+        >
           <Box
             sx={{
               display: "flex",
               flexDirection: "column",
               alignItems: "start",
-              width: "100%"
+              width: "100%",
             }}
           >
             <DrawerList open={open} />
           </Box>
-          <Box sx={{ display: "flex", alignSelf: "center", marginBottom: "5px" }}>
+          <Box
+            sx={{ display: "flex", alignSelf: "center", marginBottom: "5px" }}
+          >
             <ToggleThemeButton />
           </Box>
         </Box>
