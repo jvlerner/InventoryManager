@@ -1,3 +1,10 @@
+import FormBoxHandler from "@/app/components/forms/FormBoxHandler";
+import ProductRegisterForm from "@/app/components/forms/ProductRegisterForm";
+
 export default function ProdutosCadastrar() {
-  return <div className=""></div>;
+  return (
+    <FormBoxHandler>
+      <ProductRegisterForm />
+    </FormBoxHandler>
+  );
 }
