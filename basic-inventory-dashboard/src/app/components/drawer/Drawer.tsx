@@ -72,6 +72,7 @@ export default function CustomDrawer({
   children: React.ReactNode;
 }>) {
   const [open, setOpen] = React.useState(false);
+
   const toggleDrawer = () => {
     setOpen((prevMode) => !prevMode);
   };
@@ -81,9 +82,19 @@ export default function CustomDrawer({
       <CssBaseline />
       <Drawer variant="permanent" open={open}>
         <DrawerHeader>
-          <DrawerLogo></DrawerLogo>
           <DrawerToggleButton action={toggleDrawer} open={open} />
         </DrawerHeader>
+        <Divider />
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            margin: "10px 0px",
+          }}
+        >
+          <DrawerLogo open={open}></DrawerLogo>
+        </Box>
         <Divider />
         <Box
           sx={{
