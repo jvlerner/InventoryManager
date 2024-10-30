@@ -9,9 +9,9 @@ import Link from "next/link";
 import HomeIcon from "@mui/icons-material/Home";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import TurnedInIcon from "@mui/icons-material/TurnedIn";
-import ArchiveIcon from "@mui/icons-material/Archive";
-import UnarchiveIcon from "@mui/icons-material/Unarchive";
 import AssessmentIcon from "@mui/icons-material/Assessment";
+import CallReceivedIcon from '@mui/icons-material/CallReceived';
+import CallMadeIcon from '@mui/icons-material/CallMade';
 
 interface DrawerConfigListProps {
   open: boolean;
@@ -21,8 +21,8 @@ const buttons = [
   { text: "Inicio", icon: <HomeIcon />, url: "/" },
   { text: "Categorias", icon: <TurnedInIcon />, url: "/categorias" },
   { text: "Produtos", icon: <InventoryIcon />, url: "/produtos" },
-  { text: "Saídas", icon: <UnarchiveIcon />, url: "/saidas" },
-  { text: "Entradas", icon: <ArchiveIcon />, url: "/entradas" },
+  { text: "Entradas", icon: <CallReceivedIcon />, url: "/entradas" },
+  { text: "Saídas", icon: <CallMadeIcon />, url: "/saidas" },
   { text: "Relatório", icon: <AssessmentIcon />, url: "/relatorios" },
 ];
 
