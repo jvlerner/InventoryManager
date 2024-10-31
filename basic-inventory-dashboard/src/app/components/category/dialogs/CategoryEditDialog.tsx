@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   Dialog,
   DialogActions,
@@ -9,6 +9,7 @@ import {
   TextField,
   Button,
 } from "@mui/material";
+import { useForm, Controller } from "react-hook-form";
 import { Category } from "@/app/categorias/page";
 
 interface CategoryEditDialogProps {
@@ -24,66 +25,88 @@ const CategoryEditDialog: React.FC<CategoryEditDialogProps> = ({
   category,
   onEdit,
 }) => {
-  const [formData, setFormData] = useState<Category | null>(null);
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<Category>();
 
   useEffect(() => {
     if (category) {
-      setFormData(category);
+      reset(category); // Resetar os campos do formulário com os dados da categoria
     }
-  }, [category]);
+  }, [category, reset]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    if (formData) {
-      setFormData({ ...formData, [name]: value });
-    }
+  const onSubmit = (data: Category) => {
+    onEdit(data);
+    onClose();
   };
-
-  const handleSubmit = () => {
-    if (formData) {
-      onEdit(formData);
-      onClose();
-    }
-  };
-
-  if (!formData) {
-    console.log("Erro ao abrir dialogo de editar categoria");
-    return null;
-  }
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Editar Produto</DialogTitle>
+      <DialogTitle>Editar Categoria</DialogTitle>
       <DialogContent>
-        <TextField
-          margin="dense"
-          label="Nome"
-          type="text"
-          fullWidth
-          variant="outlined"
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-        />
-        <TextField
-          margin="dense"
-          label="Descrição"
-          type="text"
-          fullWidth
-          variant="outlined"
-          name="description"
-          value={formData.description}
-          onChange={handleChange}
-        />
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Controller
+            name="name"
+            control={control}
+            rules={{
+              required: "Nome é obrigatório",
+              maxLength: {
+                value: 50,
+                message: "Nome deve ter no máximo 50 caracteres",
+              },
+            }}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Nome*"
+                variant="outlined"
+                error={!!errors.name}
+                helperText={errors.name ? errors.name.message : ""}
+                fullWidth
+                margin="dense"
+              />
+            )}
+          />
+
+          <Controller
+            name="description"
+            control={control}
+            rules={{
+              maxLength: {
+                value: 254,
+                message: "Descrição deve ter no máximo 254 caracteres",
+              },
+            }}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Descrição"
+                variant="outlined"
+                multiline
+                rows={4}
+                error={!!errors.description}
+                helperText={
+                  errors.description ? errors.description.message : ""
+                }
+                fullWidth
+                margin="dense"
+              />
+            )}
+          />
+
+          <DialogActions>
+            <Button onClick={onClose} color="primary">
+              Cancelar
+            </Button>
+            <Button type="submit" color="primary">
+              Salvar
+            </Button>
+          </DialogActions>
+        </form>
       </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose} color="primary">
-          Cancelar
-        </Button>
-        <Button onClick={handleSubmit} color="primary">
-          Salvar
-        </Button>
-      </DialogActions>
     </Dialog>
   );
 };

@@ -21,6 +21,18 @@ export interface Product {
   };
 }
 
+interface SizeProduct {
+  name: number;
+  description: number;
+  price: number;
+}
+
+export const maxSizeProduct: SizeProduct = {
+  name: 50,
+  description: 100,
+  price: 2^40,
+};
+
 const initialProducts: Product[] = [
   {
     id: 1,

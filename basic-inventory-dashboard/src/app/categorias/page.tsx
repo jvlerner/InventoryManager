@@ -14,6 +14,16 @@ export interface Category {
   description?: string | null;
 }
 
+interface SizeCategory {
+  name: number;
+  description: number;
+}
+
+export const maxSizeCategory: SizeCategory = {
+  name: 50,
+  description: 100,
+};
+
 const initialCategories: Category[] = [
   {
     id: 1,
