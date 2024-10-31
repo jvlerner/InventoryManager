@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import {
   Dialog,
   DialogActions,
@@ -9,7 +9,8 @@ import {
   TextField,
   Button,
 } from "@mui/material";
-import { Category } from "@/app/categorias/page";
+import { useForm, Controller } from "react-hook-form";
+import { Category, maxSizeCategory } from "@/app/categorias/page";
 
 interface CategoryCreateDialogProps {
   open: boolean;
@@ -22,51 +23,74 @@ const CategoryCreateDialog: React.FC<CategoryCreateDialogProps> = ({
   onClose,
   onCreate,
 }) => {
-  const [formData, setFormData] = useState<Category>({
-    name: "",
-    description: "",
-  });
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<Category>();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const handleSubmit = () => {
-    onCreate({ ...formData } as Category);
+  const onSubmit = (data: Category) => {
+    onCreate(data);
     onClose();
   };
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Cadastrar Produto</DialogTitle>
+      <DialogTitle>Cadastrar Categoria</DialogTitle>
       <DialogContent>
-        <TextField
-          margin="dense"
-          label="Nome"
-          type="text"
-          fullWidth
-          variant="outlined"
+        <Controller
           name="name"
-          value={formData.name}
-          onChange={handleChange}
+          control={control}
+          rules={{
+            maxLength: {
+              value: maxSizeCategory.name,
+              message: `Nome deve ter no máximo ${maxSizeCategory.name} caracteres`,
+            },
+            required: "Nome é obrigatório",
+          }}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              margin="dense"
+              label="Nome*"
+              type="text"
+              fullWidth
+              variant="outlined"
+              error={!!errors.name}
+              helperText={errors.name ? errors.name.message : ""}
+            />
+          )}
         />
-        <TextField
-          margin="dense"
-          label="Descrição"
-          type="text"
-          fullWidth
-          variant="outlined"
+        <Controller
           name="description"
-          value={formData.description}
-          onChange={handleChange}
+          control={control}
+          rules={{
+            maxLength: {
+              value: maxSizeCategory.description,
+              message: `Descrição deve ter no máximo ${maxSizeCategory.description} caracteres`,
+            },
+          }}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              margin="dense"
+              label="Descrição"
+              type="text"
+              fullWidth
+              variant="outlined"
+              multiline
+              rows={4}
+              error={!!errors.description}
+              helperText={errors.description ? errors.description.message : ""}
+            />
+          )}
         />
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} color="primary">
           Cancelar
         </Button>
-        <Button onClick={handleSubmit} color="primary">
+        <Button onClick={handleSubmit(onSubmit)} color="primary">
           Cadastrar
         </Button>
       </DialogActions>

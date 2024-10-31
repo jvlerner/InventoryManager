@@ -10,7 +10,7 @@ import {
   Button,
 } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
-import { Category } from "@/app/categorias/page";
+import { Category, maxSizeCategory } from "@/app/categorias/page";
 
 interface CategoryEditDialogProps {
   open: boolean;
@@ -34,7 +34,7 @@ const CategoryEditDialog: React.FC<CategoryEditDialogProps> = ({
 
   useEffect(() => {
     if (category) {
-      reset(category); // Resetar os campos do formulário com os dados da categoria
+      reset(category); 
     }
   }, [category, reset]);
 
@@ -54,8 +54,8 @@ const CategoryEditDialog: React.FC<CategoryEditDialogProps> = ({
             rules={{
               required: "Nome é obrigatório",
               maxLength: {
-                value: 50,
-                message: "Nome deve ter no máximo 50 caracteres",
+                value: maxSizeCategory.name,
+                message: `Nome deve ter no máximo ${maxSizeCategory.name} caracteres`,
               },
             }}
             render={({ field }) => (
@@ -76,8 +76,8 @@ const CategoryEditDialog: React.FC<CategoryEditDialogProps> = ({
             control={control}
             rules={{
               maxLength: {
-                value: 254,
-                message: "Descrição deve ter no máximo 254 caracteres",
+                value: maxSizeCategory.description,
+                message: `Descrição deve ter no máximo ${maxSizeCategory.description} caracteres`,
               },
             }}
             render={({ field }) => (

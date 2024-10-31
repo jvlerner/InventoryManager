@@ -6,6 +6,7 @@ import ProductTable from "@/app/components/product/tables/ProductTable";
 import ProductCreateDialog from "@/app/components/product/dialogs/ProductCreateDialog";
 import ProductEditDialog from "@/app/components/product/dialogs/ProductEditDialog";
 import ProductDeleteDialog from "@/app/components/product/dialogs/ProductDeleteDialog";
+import { Category } from "../categorias/page";
 
 export interface Product {
   id?: number;
@@ -30,7 +31,7 @@ interface SizeProduct {
 export const maxSizeProduct: SizeProduct = {
   name: 50,
   description: 100,
-  price: 2^40,
+  price: 9999999.99,
 };
 
 const initialProducts: Product[] = [
@@ -46,6 +47,10 @@ const initialProducts: Product[] = [
       description: "null",
     },
   },
+];
+
+const initialCategories: Category[] = [
+
 ];
 
 const ProductPage: React.FC = () => {
@@ -126,6 +131,7 @@ const ProductPage: React.FC = () => {
         open={openCreateDialog}
         onClose={handleCloseCreateDialog}
         onCreate={handleCreateProduct}
+        categories={initialCategories}
       />
       <ProductEditDialog
         open={openEditDialog}

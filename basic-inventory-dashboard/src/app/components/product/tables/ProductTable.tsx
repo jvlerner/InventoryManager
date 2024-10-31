@@ -53,13 +53,21 @@ const ProductTable: React.FC<ProductTableProps> = ({
             .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
             .map((product) => (
               <TableRow key={product.id}>
-                <TableCell>{product.id}</TableCell>
-                <TableCell>{product.name}</TableCell>
-                <TableCell>{product.description}</TableCell>
-                <TableCell>{product.price.toFixed(2)}</TableCell>
-                <TableCell>{product.quantity}</TableCell>
-                <TableCell>{product.category.name}</TableCell>
-                <TableCell>
+                <TableCell style={{ width: "50px" }}>{product.id}</TableCell>
+                <TableCell style={{ width: "150px" }}>{product.name}</TableCell>
+                <TableCell style={{ width: "200px" }}>
+                  {product.description}
+                </TableCell>
+                <TableCell style={{ width: "100px" }}>
+                  {product.price.toFixed(2)}
+                </TableCell>
+                <TableCell style={{ width: "90px" }}>
+                  {product.quantity}
+                </TableCell>
+                <TableCell style={{ width: "150px" }}>
+                  {product.category.name}
+                </TableCell>
+                <TableCell style={{ width: "90px" }}>
                   <Button onClick={() => onEdit(product)}>Editar</Button>
                   <Button onClick={() => onDelete(product)}>Excluir</Button>
                 </TableCell>

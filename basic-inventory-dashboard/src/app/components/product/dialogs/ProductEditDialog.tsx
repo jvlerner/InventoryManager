@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   Dialog,
   DialogActions,
@@ -9,7 +9,8 @@ import {
   TextField,
   Button,
 } from "@mui/material";
-import { Product } from "@/app/produtos/page";
+import { useForm, Controller } from "react-hook-form";
+import { Product, maxSizeProduct } from "@/app/produtos/page";
 
 interface ProductEditDialogProps {
   open: boolean;
@@ -24,86 +25,118 @@ const ProductEditDialog: React.FC<ProductEditDialogProps> = ({
   product,
   onEdit,
 }) => {
-  const [formData, setFormData] = useState<Product | null>(null);
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<Product>();
 
   useEffect(() => {
     if (product) {
-      setFormData(product);
+      reset(product);
     }
-  }, [product]);
+  }, [product, reset]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    if (formData) {
-      setFormData({ ...formData, [name]: value });
-    }
+  const onSubmit = (data: Product) => {
+    onEdit(data);
+    onClose();
   };
-
-  const handleSubmit = () => {
-    if (formData) {
-      onEdit(formData);
-      onClose();
-    }
-  };
-
-  if (!formData) {
-    console.log("Erro ao abrir dialogo de editar produto")
-    return null;
-  }
 
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>Editar Produto</DialogTitle>
       <DialogContent>
-        <TextField
-          margin="dense"
-          label="Nome"
-          type="text"
-          fullWidth
-          variant="outlined"
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-        />
-        <TextField
-          margin="dense"
-          label="Descrição"
-          type="text"
-          fullWidth
-          variant="outlined"
-          name="description"
-          value={formData.description}
-          onChange={handleChange}
-        />
-        <TextField
-          margin="dense"
-          label="Preço"
-          type="number"
-          fullWidth
-          variant="outlined"
-          name="price"
-          value={formData.price}
-          onChange={handleChange}
-        />
-        <TextField
-          margin="dense"
-          label="Quantidade"
-          type="number"
-          fullWidth
-          variant="outlined"
-          name="quantity"
-          value={formData.quantity}
-          onChange={handleChange}
-        />
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Controller
+            name="name"
+            control={control}
+            rules={{
+              required: "Nome é obrigatório",
+              maxLength: {
+                value: maxSizeProduct.name,
+                message: `Nome deve ter no máximo ${maxSizeProduct.name} caracteres`,
+              },
+            }}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                margin="dense"
+                label="Nome*"
+                fullWidth
+                variant="outlined"
+                error={!!errors.name}
+                helperText={errors.name?.message}
+              />
+            )}
+          />
+          <Controller
+            name="description"
+            control={control}
+            rules={{
+              maxLength: {
+                value: maxSizeProduct.description,
+                message: `Descrição deve ter no máximo ${maxSizeProduct.description} caracteres`,
+              },
+            }}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                margin="dense"
+                label="Descrição"
+                fullWidth
+                variant="outlined"
+                error={!!errors.description}
+                helperText={errors.description?.message}
+              />
+            )}
+          />
+          <Controller
+            name="price"
+            control={control}
+            rules={{
+              required: "Preço é obrigatório",
+              validate: (value) =>
+                (value > 0 && value < maxSizeProduct.price) ||
+                `Preço deve ser maior que zero e menor que ${maxSizeProduct.price}`,
+            }}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                margin="dense"
+                label="Preço*"
+                type="number"
+                fullWidth
+                variant="outlined"
+                error={!!errors.price}
+                helperText={errors.price?.message}
+              />
+            )}
+          />
+          <Controller
+            name="quantity"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                margin="dense"
+                label="Quantidade"
+                type="number"
+                fullWidth
+                variant="outlined"
+              />
+            )}
+          />
+          <DialogActions>
+            <Button onClick={onClose} color="primary">
+              Cancelar
+            </Button>
+            <Button type="submit" color="primary">
+              Salvar
+            </Button>
+          </DialogActions>
+        </form>
       </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose} color="primary">
-          Cancelar
-        </Button>
-        <Button onClick={handleSubmit} color="primary">
-          Salvar
-        </Button>
-      </DialogActions>
     </Dialog>
   );
 };

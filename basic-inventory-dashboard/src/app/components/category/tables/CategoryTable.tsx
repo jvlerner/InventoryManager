@@ -50,10 +50,10 @@ const CategoryTable: React.FC<CategoryTableProps> = ({
             .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
             .map((category) => (
               <TableRow key={category.id}>
-                <TableCell>{category.id}</TableCell>
-                <TableCell>{category.name}</TableCell>
-                <TableCell>{category.description}</TableCell>
-                <TableCell>
+                <TableCell sx={{ width: "50px" }}>{category.id}</TableCell>
+                <TableCell sx={{ width: "200px" }}>{category.name}</TableCell>
+                <TableCell sx={{ width: "200px" }}>{category.description}</TableCell>
+                <TableCell sx={{ width: "90px" }}>
                   <Button onClick={() => onEdit(category)}>Editar</Button>
                   <Button onClick={() => onDelete(category)}>Excluir</Button>
                 </TableCell>
