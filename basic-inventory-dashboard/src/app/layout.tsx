@@ -1,6 +1,6 @@
 import "@/styles/globals.css";
-import ContextProviders from "./context";
-import CustomDrawer from "./components/drawer/Drawer";
+import ContextProviders from "@/app/context";
+import CustomDrawer from "@/app/components/commom/drawer/Drawer";
 
 export default function RootLayout({
   children,
