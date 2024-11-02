@@ -1,7 +1,5 @@
 package com.unisul.basic_inventory_api.service;
 
-import com.unisul.basic_inventory_api.exception.CategoryNotFoundException;
-import com.unisul.basic_inventory_api.exception.CategoryAlreadyExistsException;
 import com.unisul.basic_inventory_api.model.Category;
 import com.unisul.basic_inventory_api.model.CategoryListDTO;
 import com.unisul.basic_inventory_api.repository.CategoryRepository;
@@ -13,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CategoryService {
@@ -57,7 +54,7 @@ public class CategoryService {
     @Transactional
     public Category saveCategory(Category category) {
         if (categoryExists(category.getName())) {
-            throw new CategoryAlreadyExistsException("Categoria já existe: " + category.getName());
+            throw new RuntimeException("Category already exists" + category.getName());
         }
         return categoryRepository.save(category);
     }
@@ -65,14 +62,14 @@ public class CategoryService {
     // Metodo para obter uma categoria específica
     public Category getCategoryById(int id) {
         return categoryRepository.findById(id)
-                .orElseThrow(() -> new CategoryNotFoundException("Categoria não encontrada com ID: " + id));
+                .orElseThrow(() -> new RuntimeException("Category not found" + id ));
     }
 
     // Metodo para atualizar uma categoria
     @Transactional
     public Category updateCategory(int id, Category category) {
         if (!categoryRepository.existsById(id)) {
-            throw new CategoryNotFoundException("Categoria não encontrada com ID: " + id);
+            throw new RuntimeException("Category not found " + id);
         }
         category.setId(id); // Define o ID da categoria a ser atualizada
         return categoryRepository.save(category);
@@ -87,7 +84,7 @@ public class CategoryService {
                     categoryRepository.save(category); // Salva a categoria atualizada
                     return true; // Retorna true se a operação for bem-sucedida
                 })
-                .orElseThrow(() -> new CategoryNotFoundException("Categoria não encontrada com ID: " + id));
+                .orElseThrow(() -> new RuntimeException("Category not found " + id ));
     }
 
     // Metodo para verificar se uma categoria já existe

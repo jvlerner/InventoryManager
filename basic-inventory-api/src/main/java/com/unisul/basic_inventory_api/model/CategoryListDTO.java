@@ -1,29 +1,18 @@
 package com.unisul.basic_inventory_api.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.List;
 
+@Setter
+@Getter
 public class CategoryListDTO {
     private List<Category> categories;
     private long totalItems;
 
     public CategoryListDTO(List<Category> categories, long totalItems) {
         this.categories = categories;
-        this.totalItems = totalItems;
-    }
-
-    public List<Category> getCategories() {
-        return categories;
-    }
-
-    public void setCategories(List<Category> categories) {
-        this.categories = categories;
-    }
-
-    public long getTotalItems() {
-        return totalItems;
-    }
-
-    public void setTotalItems(long totalItems) {
         this.totalItems = totalItems;
     }
 }

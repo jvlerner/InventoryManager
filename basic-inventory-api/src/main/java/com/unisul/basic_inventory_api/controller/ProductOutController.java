@@ -1,6 +1,5 @@
 package com.unisul.basic_inventory_api.controller;
 
-import com.unisul.basic_inventory_api.exception.ProductOutNotFoundException;
 import com.unisul.basic_inventory_api.model.ProductOut;
 import com.unisul.basic_inventory_api.model.ProductOutListDTO;
 import com.unisul.basic_inventory_api.service.ProductOutService;
@@ -66,7 +65,7 @@ public class ProductOutController {
         try {
             ProductOut updatedProductOut = productOutService.updateProductOut(id, productOut);
             return ResponseEntity.ok(updatedProductOut); // Retorna produto vendido atualizado
-        } catch (ProductOutNotFoundException ex) {
+        } catch (Exception ex) {
             return ResponseEntity.notFound().build(); // Retorna 404 se não encontrado
         }
     }

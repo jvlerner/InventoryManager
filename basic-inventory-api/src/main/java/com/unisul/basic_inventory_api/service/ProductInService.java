@@ -1,7 +1,5 @@
 package com.unisul.basic_inventory_api.service;
 
-import com.unisul.basic_inventory_api.exception.ProductNotFoundException;
-import com.unisul.basic_inventory_api.exception.InsufficientStockException;
 import com.unisul.basic_inventory_api.model.ProductIn;
 import com.unisul.basic_inventory_api.model.ProductInListDTO;
 import com.unisul.basic_inventory_api.repository.ProductInRepository;
@@ -48,7 +46,7 @@ public class ProductInService {
 
         // Verifica se o produto existe
         if (!productService.getProductById(productId).isPresent()) {
-            throw new ProductNotFoundException("Produto não encontrado com ID: " + productId);
+            throw new RuntimeException("Product not found " + productId);
         }
 
         // Atualiza a quantidade do produto com base na entrada
@@ -69,7 +67,7 @@ public class ProductInService {
             productService.updateProductQuantity(productIn.getProduct().getId(), quantityChange);
 
             return Optional.of(existingProductIn); // Wrap the result in Optional
-        }).orElseThrow(() -> new ProductNotFoundException("Entrada de produto não encontrada com ID: " + id));
+        }).orElseThrow(() -> new RuntimeException("Product In not found " + id));
     }
 
     // Metodo para obter uma entrada de produto específica
@@ -86,6 +84,6 @@ public class ProductInService {
                     productInRepository.save(productIn);
                     return true;
                 })
-                .orElseThrow(() -> new ProductNotFoundException("Entrada de produto não encontrada com ID: " + id));
+                .orElseThrow(() -> new RuntimeException("Product In not found " + id));
     }
 }

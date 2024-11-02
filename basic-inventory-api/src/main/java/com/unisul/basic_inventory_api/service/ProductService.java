@@ -1,7 +1,5 @@
 package com.unisul.basic_inventory_api.service;
 
-import com.unisul.basic_inventory_api.exception.ProductNotFoundException;
-import com.unisul.basic_inventory_api.exception.InsufficientStockException;
 import com.unisul.basic_inventory_api.model.Product;
 import com.unisul.basic_inventory_api.model.ProductListDTO;
 import com.unisul.basic_inventory_api.repository.ProductRepository;
@@ -68,7 +66,7 @@ public class ProductService {
     @Transactional
     public Optional<Product> updateProduct(int id, Product product) {
         if (!productRepository.existsById(id)) {
-            throw new ProductNotFoundException("Produto não encontrado com ID: " + id); // Throw exception if not found
+            throw new RuntimeException("Product not found " + id); // Throw exception if not found
         }
         product.setId(id);
         return Optional.of(productRepository.save(product));
@@ -81,7 +79,7 @@ public class ProductService {
             product.setDeleted(true);
             productRepository.save(product);
             return true;
-        }).orElseThrow(() -> new ProductNotFoundException("Produto não encontrado com ID: " + id)); // Throw exception if not found
+        }).orElseThrow(() -> new RuntimeException("Product not found " + id)); // Throw exception if not found
     }
 
     // Metodo para verificar se um produto existe pelo nome
@@ -99,13 +97,13 @@ public class ProductService {
             int newQuantity = product.getQuantity() + quantityChange;
 
             if (newQuantity < 0) {
-                throw new InsufficientStockException("Estoque insuficiente para o produto ID: " + productId);
+                throw new RuntimeException("Insufficient stock " + productId);
             }
 
             product.setQuantity(newQuantity);
             productRepository.save(product);
         } else {
-            throw new ProductNotFoundException("Produto não encontrado com ID: " + productId); // Throw exception if not found
+            throw new RuntimeException("Product not found " + productId); // Throw exception if not found
         }
     }
 }

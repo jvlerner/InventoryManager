@@ -1,7 +1,5 @@
 package com.unisul.basic_inventory_api.service;
-import com.unisul.basic_inventory_api.exception.ProductOutNotFoundException;
-import com.unisul.basic_inventory_api.exception.ProductNotFoundException;
-import com.unisul.basic_inventory_api.exception.InsufficientStockException;
+
 import com.unisul.basic_inventory_api.model.ProductOut;
 import com.unisul.basic_inventory_api.model.ProductOutListDTO;
 import com.unisul.basic_inventory_api.repository.ProductOutRepository;
@@ -47,7 +45,7 @@ public class ProductOutService {
         // Check the available quantity of the product
         int productId = productOut.getProduct().getId();
         if (!productService.getProductById(productId).isPresent()) {
-            throw new ProductNotFoundException("Produto não encontrado com ID: " + productId);
+            throw new RuntimeException("Product not found " + productId);
         }
 
         // Update the quantity of the product based on the output
@@ -56,7 +54,7 @@ public class ProductOutService {
             productService.updateProductQuantity(productId, quantityChange);
             productOutRepository.save(productOut);
         } catch (IllegalArgumentException e) {
-            throw new InsufficientStockException("Estoque insuficiente para o produto ID: " + productId);
+            throw new RuntimeException("Insufficient stock " + productId);
         }
     }
 
@@ -67,7 +65,7 @@ public class ProductOutService {
             existingProductOut.setProduct(productOut.getProduct());
             existingProductOut.setQuantity(productOut.getQuantity());
             return productOutRepository.save(existingProductOut);
-        }).orElseThrow(() -> new ProductOutNotFoundException("Produto vendido não encontrado com ID: " + id));
+        }).orElseThrow(() -> new RuntimeException("Product out not found " + id));
     }
 
 
@@ -85,6 +83,6 @@ public class ProductOutService {
                     productOutRepository.save(productOut);
                     return true;
                 })
-                .orElseThrow(() -> new ProductNotFoundException("Saída de produto não encontrada com ID: " + id));
+                .orElseThrow(() -> new RuntimeException("Product out not found " + id));
     }
 }

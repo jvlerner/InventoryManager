@@ -1,7 +1,5 @@
 package com.unisul.basic_inventory_api.controller;
 
-import com.unisul.basic_inventory_api.exception.CategoryNotFoundException;
-import com.unisul.basic_inventory_api.exception.CategoryAlreadyExistsException;
 import com.unisul.basic_inventory_api.model.Category;
 import com.unisul.basic_inventory_api.model.CategoryListDTO;
 import com.unisul.basic_inventory_api.service.CategoryService;
@@ -12,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import java.util.Arrays;
+
 
 @RestController
 @RequestMapping("/categories")
@@ -64,7 +64,7 @@ public class CategoryController {
         try {
             Category savedCategory = categoryService.saveCategory(category);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedCategory); // Retorna 201 Created
-        } catch (CategoryAlreadyExistsException ex) {
+        } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(null); // Retorna 409 Conflict
         }
     }
@@ -78,8 +78,8 @@ public class CategoryController {
         try {
             Category category = categoryService.getCategoryById(id);
             return ResponseEntity.ok(category);
-        } catch (CategoryNotFoundException ex) {
-            return ResponseEntity.notFound().build(); // Retorna 404 se não encontrada
+        } catch (Exception ex) {
+            return ResponseEntity.notFound().build();
         }
     }
 
@@ -92,7 +92,7 @@ public class CategoryController {
         try {
             Category updatedCategory = categoryService.updateCategory(id, category);
             return ResponseEntity.ok(updatedCategory); // Retorna produto atualizado
-        } catch (CategoryNotFoundException ex) {
+        } catch (Exception ex) {
             return ResponseEntity.notFound().build(); // Retorna 404 se não encontrada
         }
     }

@@ -1,6 +1,5 @@
 package com.unisul.basic_inventory_api.controller;
 
-import com.unisul.basic_inventory_api.exception.ProductNotFoundException;
 import com.unisul.basic_inventory_api.model.Product;
 import com.unisul.basic_inventory_api.model.ProductListDTO;
 import com.unisul.basic_inventory_api.service.ProductService;
@@ -11,7 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
+import java.util.Arrays;
+import java.util.List;
 
 @RestController
 @RequestMapping("/products")
@@ -44,7 +44,7 @@ public class ProductController {
             return ResponseEntity.badRequest().build();
         }
 
-        List<String> validSortFields = Arrays.asList("id", "name", "price"); 
+        List<String> validSortFields = Arrays.asList("id", "name", "price");
         if (!validSortFields.contains(sortField)) {
             return ResponseEntity.badRequest().build();
         }

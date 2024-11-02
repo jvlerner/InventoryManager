@@ -17,11 +17,14 @@ import java.util.Optional;
 @Repository
 public interface ProductInRepository extends JpaRepository<ProductIn, Integer> {
 
-    @Query(value = "SELECT p, COUNT(p) OVER() AS totalItems " +
+    @Query(value = "SELECT p " +
             "FROM ProductIn p LEFT JOIN p.product i " + // Use product instead of productId
             "WHERE (:search IS NULL OR p.product.name LIKE %:search%) " + // Assuming product has a name field
             "AND p.deleted = false")
     List<Tuple> findProductsInAndCount(@Param("search") String search, Pageable pageable);
+
+    @Query("SELECT COUNT(p) FROM ProductIn p WHERE p.deleted = false")
+    long countAllProductsIn();
 
     @Query("SELECT p FROM ProductIn p " +
             "WHERE (:search IS NULL OR p.product.name LIKE %:search%) AND p.deleted = false")

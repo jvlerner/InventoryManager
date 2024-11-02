@@ -14,7 +14,7 @@ import java.util.Optional;
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Integer> {
 
-    @Query(value = "SELECT c" +
+    @Query(value = "SELECT c " +
             "FROM Category c " +
             "WHERE (:search IS NULL OR c.name LIKE %:search%) " +
             "AND c.deleted = false",
@@ -22,6 +22,7 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
                     "WHERE (:search IS NULL OR c.name LIKE %:search%) " +
                     "AND c.deleted = false")
     List<Tuple> findCategoriesAndCount(@Param("search") String search, Pageable pageable);
+
 
     @Query("SELECT c FROM Category c WHERE c.deleted = false ORDER BY c.name ASC")
     List<Tuple> findAllCategoriesName();
