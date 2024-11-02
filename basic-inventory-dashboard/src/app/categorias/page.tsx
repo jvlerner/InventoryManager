@@ -1,7 +1,15 @@
 "use client";
 
 import React, { useState } from "react";
-import { Button, TextField } from "@mui/material";
+import {
+  Box,
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+} from "@mui/material";
 import CategoryTable from "@/app/components/category/tables/CategoryTable";
 import CategoryCreateDialog from "@/app/components/category/dialogs/CategoryCreateDialog";
 import CategoryEditDialog from "@/app/components/category/dialogs/CategoryEditDialog";
@@ -34,12 +42,20 @@ interface CategoriesResponse {
   totalItems: number;
 }
 
+interface CategoryApi {
+  page: number; // começa em 1
+  rowsPerPage: number; // >5  tem que ser maior que cinco
+  searchQuery: string;
+  sortField: "id" | "name" | "description";
+  sortDirection: "asc" | "desc";
+}
+
 const fetchCategories = async (
   page: number,
   rowsPerPage: number,
   searchQuery: string,
-  sortField: string = "id",
-  sortDirection: string = "asc"
+  sortField: string,
+  sortDirection: string
 ): Promise<CategoriesResponse> => {
   const response = await api.get(`/categories`, {
     params: {
@@ -80,26 +96,35 @@ const CategoryPage: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(
     null
   );
-  const [page, setPage] = useState<number>(1);
+  const [page, setPage] = useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = useState<number>(10);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [sortField, setSortField] = useState<string>("id");
-  const [sortDirection, setSortDirection] = useState<string>("asc");
+  const [searchHandler, setSearchHandler] = useState<string>("");
+  const [sortField, setSortField] = useState<CategoryApi["sortField"]>("name");
+  const [sortDirection, setSortDirection] =
+    useState<CategoryApi["sortDirection"]>("asc");
 
   const queryClient = useQueryClient();
-  const queryKey: [string, number, number, string, string] = [
+  const queryKey: [string, number, number, string, string, string] = [
     "categories",
     page,
     rowsPerPage,
     searchQuery,
     sortField,
+    sortDirection,
   ];
 
   const { data, error, isLoading } = useQuery<CategoriesResponse, Error>({
     queryKey,
     queryFn: () =>
-      fetchCategories(page, rowsPerPage, searchQuery, sortField, sortDirection),
-    staleTime: 5 * 60 * 1000, //2 minutos cache
+      fetchCategories(
+        page + 1,
+        rowsPerPage,
+        searchQuery,
+        sortField,
+        sortDirection
+      ),
+    staleTime: 60 * 1000, //cache
   });
 
   // Mutação para criar um produto
@@ -180,59 +205,118 @@ const CategoryPage: React.FC = () => {
     handleCloseDeleteDialog();
   };
 
+  const handleSearch = () => {
+    setSearchQuery(searchHandler);
+  };
+
   if (isLoading) return <LoadingScreen />;
   if (error) return <ErrorScreen />;
 
   return (
     <div>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={handleOpenCreateDialog}
-      >
-        Cadastrar Categoria
-      </Button>
-      <select onChange={(e) => setSortField(e.target.value)} value={sortField}>
-        <option value="Id">ID</option>
-        <option value="Name">Name</option>
-        <option value="Price">Price</option>
-      </select>
-      <select
-        onChange={(e) => setSortDirection(e.target.value)}
-        value={sortDirection}
-      >
-        <option value="Asc">Ascending</option>
-        <option value="Desc">Descending</option>
-      </select>
-      <TextField
-        label="Search Product"
-        variant="outlined"
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-      />
+      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+        <Box>
+          <FormControl
+            variant="outlined"
+            style={{ margin: "8px", width: "20%", minWidth: "180px" }}
+          >
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleOpenCreateDialog}
+              style={{ width: "100%", padding: "15px 0", fontWeight: "500" }} // Botão com largura total
+            >
+              Cadastrar Categoria
+            </Button>
+          </FormControl>
+
+          <FormControl
+            variant="outlined"
+            style={{ margin: "8px", width: "10%", minWidth: "90px" }}
+          >
+            <InputLabel id="sort-field-label">Sort Field</InputLabel>
+            <Select
+              labelId="sort-field-label"
+              value={sortField}
+              onChange={(e) =>
+                setSortField(e.target.value as CategoryApi["sortField"])
+              }
+              label="Sort Field"
+            >
+              <MenuItem value="id">ID</MenuItem>
+              <MenuItem value="name">Name</MenuItem>
+            </Select>
+          </FormControl>
+
+          <FormControl
+            variant="outlined"
+            style={{ margin: "8px", width: "15%", minWidth: "140px" }}
+          >
+            <InputLabel id="sort-direction-label">Sort Direction</InputLabel>
+            <Select
+              labelId="sort-direction-label"
+              value={sortDirection}
+              onChange={(e) =>
+                setSortDirection(e.target.value as CategoryApi["sortDirection"])
+              }
+              label="Sort Direction"
+            >
+              <MenuItem value="asc">Ascending</MenuItem>
+              <MenuItem value="desc">Descending</MenuItem>
+            </Select>
+          </FormControl>
+        </Box>
+
+        <Box>
+          <TextField
+            label="Search Product"
+            variant="outlined"
+            value={searchHandler}
+            onChange={(e) => setSearchHandler(e.target.value)}
+            style={{ margin: "8px", width: "20%", minWidth: "300px" }}
+          />
+          <FormControl
+            variant="outlined"
+            style={{ margin: "8px", width: "10%", minWidth: "90px" }}
+          >
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleSearch}
+              style={{ width: "100%", padding: "15px 0", fontWeight: "500" }}
+            >
+              Pesquisar
+            </Button>
+          </FormControl>
+        </Box>
+      </Box>
       <CategoryTable
         categories={data?.categories || []}
         page={page}
+        count={data?.totalItems || 0}
         rowsPerPage={rowsPerPage}
         handleChangePage={(event, newPage) => setPage(newPage)}
         handleChangeRowsPerPage={(event) => {
           setRowsPerPage(parseInt(event.target.value, 10));
-          setPage(0);
+          setPage(1);
         }}
         onEdit={handleOpenEditDialog}
         onDelete={handleOpenDeleteDialog}
       />
+
       <CategoryCreateDialog
         open={openCreateDialog}
         onClose={handleCloseCreateDialog}
         onCreate={handleCreateCategory}
       />
+
       <CategoryEditDialog
         open={openEditDialog}
         onClose={handleCloseEditDialog}
         category={selectedCategory!}
         onEdit={handleEditCategory}
       />
+
       <CategoryDeleteDialog
         open={openDeleteDialog}
         onClose={handleCloseDeleteDialog}

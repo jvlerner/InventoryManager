@@ -18,6 +18,7 @@ import { Category } from "@/app/categorias/page";
 interface CategoryTableProps {
   categories: Category[];
   page: number;
+  count: number;
   rowsPerPage: number;
   handleChangePage: (event: unknown, newPage: number) => void;
   handleChangeRowsPerPage: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -29,6 +30,7 @@ const CategoryTable: React.FC<CategoryTableProps> = ({
   categories,
   page,
   rowsPerPage,
+  count,
   handleChangePage,
   handleChangeRowsPerPage,
   onEdit,
@@ -47,7 +49,6 @@ const CategoryTable: React.FC<CategoryTableProps> = ({
         </TableHead>
         <TableBody>
           {categories
-            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
             .map((category) => (
               <TableRow key={category.id}>
                 <TableCell sx={{ width: "50px" }}>{category.id}</TableCell>
@@ -64,7 +65,7 @@ const CategoryTable: React.FC<CategoryTableProps> = ({
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={categories.length}
+        count={count}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
