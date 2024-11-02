@@ -15,7 +15,7 @@ import java.util.Optional;
 
 @Service
 public class ProductOutService {
-
+    @Autowired
     private final ProductOutRepository productOutRepository;
     private final ProductService productService;
 

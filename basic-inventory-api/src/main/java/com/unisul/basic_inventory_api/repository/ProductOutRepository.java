@@ -17,22 +17,17 @@ import java.util.Optional;
 @Repository
 public interface ProductOutRepository extends JpaRepository<ProductOut, Integer> {
 
-    @Query(value = "SELECT p " +
+    @Query(value = "SELECT p, COUNT(p) OVER() AS totalItems " +
             "FROM ProductOut p LEFT JOIN p.product i " + // Use product instead of productId
             "WHERE (:search IS NULL OR p.product.name LIKE %:search%) " + // Assuming product has a name field
-            "AND p.deleted = false")
+            "AND p.deleted = false",
+            countQuery = "SELECT COUNT(p) FROM ProductOut p " +
+                    "WHERE (:search IS NULL OR p.product.name LIKE %:search%) " +
+                    "AND p.deleted = false")
     List<Tuple> findProductsOutAndCount(@Param("search") String search, Pageable pageable);
-
-    @Query("SELECT p FROM ProductOut p " +
-            "WHERE (:search IS NULL OR p.product.name LIKE %:search%) AND p.deleted = false")
-    List<ProductOut> findProductsOutWithSearch(@Param("search") String search, Pageable pageable);
 
     @Query("SELECT COUNT(p) FROM ProductOut p WHERE p.deleted = false")
     long countAllProductsOut();
-
-    @Query("SELECT COUNT(p) FROM ProductOut p " +
-            "WHERE (:search IS NULL OR p.product.name LIKE %:search%) AND p.deleted = false")
-    long countProductOutBySearch(@Param("search") String search);
 
     @Query("SELECT p FROM ProductOut p WHERE p.product.name = :name AND p.deleted = false")
     Optional<ProductOut> findByName(@Param("name") String name);

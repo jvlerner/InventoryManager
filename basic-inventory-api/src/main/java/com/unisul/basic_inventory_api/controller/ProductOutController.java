@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @RestController
 @RequestMapping("/products-out")
 public class ProductOutController {
-
+    @Autowired
     private final ProductOutService productOutService;
 
     @Autowired

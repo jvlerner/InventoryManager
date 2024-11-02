@@ -1,15 +1,9 @@
 package com.unisul.basic_inventory_api.model;
 
-import lombok.Getter;
-import lombok.Setter;
-
 import java.util.List;
 
-@Setter
-@Getter
 public class ProductOutListDTO {
     private List<ProductOut> productsOut;
-
     private long totalItems;
 
     public ProductOutListDTO(List<ProductOut> productsOut, long totalItems) {
@@ -24,4 +18,10 @@ public class ProductOutListDTO {
         this.productsOut = productsOut;
     }
 
+    public long getTotalItems() {
+        return totalItems;
+    }
+    public void setTotalItems(long totalItems) {
+        this.totalItems = totalItems;
+    }
 }

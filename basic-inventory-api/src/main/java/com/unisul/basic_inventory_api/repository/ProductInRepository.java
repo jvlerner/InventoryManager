@@ -17,10 +17,14 @@ import java.util.Optional;
 @Repository
 public interface ProductInRepository extends JpaRepository<ProductIn, Integer> {
 
-    @Query(value = "SELECT p " +
-            "FROM ProductIn p LEFT JOIN p.product i " + // Use product instead of productId
-            "WHERE (:search IS NULL OR p.product.name LIKE %:search%) " + // Assuming product has a name field
-            "AND p.deleted = false")
+
+    @Query(value = "SELECT p, COUNT(p) OVER() AS totalItems " +
+            "FROM ProductIn p LEFT JOIN p.product i " +
+            "WHERE (:search IS NULL OR p.product.name LIKE %:search%) " +
+            "AND p.deleted = false",
+            countQuery = "SELECT COUNT(c) FROM Category c " +
+            "WHERE (:search IS NULL OR c.name LIKE %:search%) " +
+            "AND c.deleted = false")
     List<Tuple> findProductsInAndCount(@Param("search") String search, Pageable pageable);
 
     @Query("SELECT COUNT(p) FROM ProductIn p WHERE p.deleted = false")
@@ -28,11 +32,7 @@ public interface ProductInRepository extends JpaRepository<ProductIn, Integer> {
 
     @Query("SELECT p FROM ProductIn p " +
             "WHERE (:search IS NULL OR p.product.name LIKE %:search%) AND p.deleted = false")
-    List<ProductIn> findProductsInWithSearch(@Param("search") String search, Pageable pageable);
-
-    @Query("SELECT COUNT(p) FROM ProductIn p " +
-            "WHERE (:search IS NULL OR p.product.name LIKE %:search%) AND p.deleted = false")
-    long countProductsInBySearch(@Param("search") String search);
+    List<Tuple> findProductsInWithSearch(@Param("search") String search, Pageable pageable);
 
     @Query("SELECT p FROM ProductIn p WHERE p.product.name = :name AND p.deleted = false")
     Optional<ProductIn> findByName(@Param("name") String name);

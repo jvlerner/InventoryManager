@@ -138,6 +138,7 @@
 						</path>
 						<!-- Mapstruct should follow the lombok path(s) -->
 					</annotationProcessorPaths>
+					<compilerArgs>--enable-preview</compilerArgs>
 				</configuration>
 			</plugin>
 

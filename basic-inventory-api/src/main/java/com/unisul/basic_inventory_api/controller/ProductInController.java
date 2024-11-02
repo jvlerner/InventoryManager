@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/products-in")
 public class ProductInController {
-
+    @Autowired
     private final ProductInService productInService;
 
     @Autowired
