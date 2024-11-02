@@ -79,7 +79,6 @@ export default function CustomDrawer({
 
   return (
     <Box sx={{ display: "flex" }}>
-      <CssBaseline />
       <Drawer variant="permanent" open={open}>
         <DrawerHeader>
           <DrawerToggleButton action={toggleDrawer} open={open} />
