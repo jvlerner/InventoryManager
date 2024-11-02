@@ -35,7 +35,23 @@ public class CategoryController {
             @RequestParam(defaultValue = "name") String sortField,
             @RequestParam(defaultValue = "asc") String sortDirection) {
 
+        if (!Arrays.asList("name", "id").contains(sortField)) {
+            throw new IllegalArgumentException("Invalid sort field");
+        }
+        if (!Arrays.asList("asc", "desc").contains(sortDirection.toLowerCase())) {
+            throw new IllegalArgumentException("Invalid sort direction");
+        }
+
         CategoryListDTO categoryDTO = categoryService.getPaginatedCategories(page, rowsPerPage, search, sortField, sortDirection);
+        return ResponseEntity.ok(categoryDTO);
+    }
+
+    // Listar todas categorias (id, nome)
+    @Operation(summary = "Listar categorias (id, nome)", description = "Retorna uma lista de categorias com id e nome.")
+    @ApiResponse(responseCode = "200", description = "Lista de categorias retornada com sucesso.")
+    @GetMapping("/names")
+    public ResponseEntity<CategoryListDTO> listCategories() {
+        CategoryListDTO categoryDTO = categoryService.getAllCategories();
         return ResponseEntity.ok(categoryDTO);
     }
 

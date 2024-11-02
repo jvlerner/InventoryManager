@@ -19,6 +19,7 @@ interface ProductTableProps {
   products: Product[];
   page: number;
   rowsPerPage: number;
+  totalItems: number;
   handleChangePage: (event: unknown, newPage: number) => void;
   handleChangeRowsPerPage: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onEdit: (product: Product) => void;
@@ -29,6 +30,7 @@ const ProductTable: React.FC<ProductTableProps> = ({
   products,
   page,
   rowsPerPage,
+  totalItems,
   handleChangePage,
   handleChangeRowsPerPage,
   onEdit,
@@ -59,13 +61,13 @@ const ProductTable: React.FC<ProductTableProps> = ({
                   {product.description}
                 </TableCell>
                 <TableCell style={{ width: "100px" }}>
-                  {product.price.toFixed(2)}
+                  {product.price?.toFixed(2)}
                 </TableCell>
                 <TableCell style={{ width: "90px" }}>
                   {product.quantity}
                 </TableCell>
                 <TableCell style={{ width: "150px" }}>
-                  {product.category.name}
+                  {product.category?.name}
                 </TableCell>
                 <TableCell style={{ width: "90px" }}>
                   <Button onClick={() => onEdit(product)}>Editar</Button>
@@ -78,7 +80,7 @@ const ProductTable: React.FC<ProductTableProps> = ({
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={products.length}
+        count={totalItems}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}

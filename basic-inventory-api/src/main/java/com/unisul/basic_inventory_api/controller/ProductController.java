@@ -35,6 +35,20 @@ public class ProductController {
             @RequestParam(defaultValue = "id") String sortField,
             @RequestParam(defaultValue = "asc") String sortDirection) {
 
+        if (page < 1 || rowsPerPage < 5) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        // Validate sort direction
+        if (!sortDirection.equalsIgnoreCase("asc") && !sortDirection.equalsIgnoreCase("desc")) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        List<String> validSortFields = Arrays.asList("id", "name", "price"); 
+        if (!validSortFields.contains(sortField)) {
+            return ResponseEntity.badRequest().build();
+        }
+
         ProductListDTO productList = productService.getPaginatedProducts(page, rowsPerPage, search, sortField, sortDirection);
         return ResponseEntity.ok(productList);
     }

@@ -38,6 +38,21 @@ public class CategoryService {
         return new CategoryListDTO(categories, totalItems);
     }
 
+    
+    // Metodo para listar categorias com paginação e busca
+    public CategoryListDTO getAllCategories(n) {
+        List<Tuple> results = categoryRepository.findAllCategoriesName();
+
+        List<Category> categories = results.stream()
+                .map(tuple -> tuple.get(0, Category.class))
+                .toList();
+
+        long totalItems = 0;
+
+        return new CategoryListDTO(categories, totalItems);
+    }
+   
+
     // Metodo para salvar uma nova categoria
     @Transactional
     public Category saveCategory(Category category) {

@@ -1,6 +1,7 @@
 import "@/styles/globals.css";
 import ContextProviders from "@/app/context";
 import CustomDrawer from "@/app/components/commom/drawer/Drawer";
+import QueryProvider from "./components/commom/QueryProvider";
 
 export default function RootLayout({
   children,
@@ -11,7 +12,9 @@ export default function RootLayout({
     <html>
       <body>
         <ContextProviders>
-          <CustomDrawer>{children}</CustomDrawer>
+          <QueryProvider>
+            <CustomDrawer>{children}</CustomDrawer>
+          </QueryProvider>
         </ContextProviders>
       </body>
     </html>

@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogActions,
@@ -16,20 +16,29 @@ import {
 import { useForm, Controller } from "react-hook-form";
 import { Product, maxSizeProduct } from "@/app/produtos/page";
 import { Category } from "@/app/categorias/page";
+import axiosInstance from "@/config/axiosInstance";
 
 interface ProductCreateDialogProps {
   open: boolean;
   onClose: () => void;
   onCreate: (newProduct: Product) => void;
-  categories: Category[];
 }
+interface CategoriesResponse {
+  categories: Category[];
+  totalItems: number;
+}
+
+const fetchCategories = async (): Promise<CategoriesResponse> => {
+  const response = await axiosInstance.get(`/categories/names`);
+  return response.data;
+};
 
 const ProductCreateDialog: React.FC<ProductCreateDialogProps> = ({
   open,
   onClose,
   onCreate,
-  categories,
 }) => {
+  const [categories, setCategories] = useState<Category[]>([]);
   const {
     control,
     handleSubmit,
@@ -40,6 +49,19 @@ const ProductCreateDialog: React.FC<ProductCreateDialogProps> = ({
     onCreate(data);
     onClose();
   };
+
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const response = await fetchCategories();
+        setCategories(response.categories);
+      } catch (error) {
+        console.error("Erro ao carregar categorias:", error);
+      }
+    };
+
+    loadCategories();
+  }, []);
 
   return (
     <Dialog open={open} onClose={onClose}>
@@ -93,9 +115,15 @@ const ProductCreateDialog: React.FC<ProductCreateDialogProps> = ({
           control={control}
           rules={{
             required: "Preço é obrigatório",
-            validate: (value) =>
-              (0 < value && value < maxSizeProduct.price) ||
-              `Preço deve ser maior que zero e menor que ${maxSizeProduct.price} dígitos`,
+            validate: (value) => {
+              if (value === undefined) {
+                return "Preço é obrigatório"; // ou qualquer outra mensagem que você preferir
+              }
+              return (
+                (0 < value && value < maxSizeProduct.price) ||
+                `Preço deve ser maior que zero e menor que ${maxSizeProduct.price} dígitos`
+              );
+            },
           }}
           render={({ field }) => (
             <TextField
