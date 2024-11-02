@@ -40,7 +40,7 @@ public class CategoryService {
 
     
     // Metodo para listar categorias com paginação e busca
-    public CategoryListDTO getAllCategories(n) {
+    public CategoryListDTO getAllCategories() {
         List<Tuple> results = categoryRepository.findAllCategoriesName();
 
         List<Category> categories = results.stream()

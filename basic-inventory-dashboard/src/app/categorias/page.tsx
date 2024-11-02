@@ -99,7 +99,7 @@ const CategoryPage: React.FC = () => {
     queryKey,
     queryFn: () =>
       fetchCategories(page, rowsPerPage, searchQuery, sortField, sortDirection),
-    staleTime: 2 * 60 * 1000, //2 minutos cache
+    staleTime: 5 * 60 * 1000, //2 minutos cache
   });
 
   // Mutação para criar um produto
