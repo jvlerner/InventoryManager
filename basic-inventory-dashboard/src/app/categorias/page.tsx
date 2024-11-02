@@ -7,9 +7,9 @@ import CategoryCreateDialog from "@/app/components/category/dialogs/CategoryCrea
 import CategoryEditDialog from "@/app/components/category/dialogs/CategoryEditDialog";
 import CategoryDeleteDialog from "@/app/components/category/dialogs/CategoryDeleteDialog";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import LoadingScreen from "../components/commom/LoadingScreen";
-import ErrorScreen from "../components/commom/ErrorScreen";
-import axiosInstance from "@/config/axiosInstance";
+import LoadingScreen from "@/app/components/commom/LoadingScreen";
+import ErrorScreen from "@/app/components/commom/ErrorScreen";
+import api from "@/app/config/api";
 
 export interface Category {
   id?: number;
@@ -41,7 +41,7 @@ const fetchCategories = async (
   sortField: string = "id",
   sortDirection: string = "asc"
 ): Promise<CategoriesResponse> => {
-  const response = await axiosInstance.get(`/categories`, {
+  const response = await api.get(`/categories`, {
     params: {
       page,
       rowsPerPage,
@@ -55,13 +55,13 @@ const fetchCategories = async (
 
 // Função para criar um produto
 const createCategoryApi = async (newCategory: Category): Promise<Category> => {
-  const response = await axiosInstance.post<Category>("/categories", newCategory);
+  const response = await api.post<Category>("/categories", newCategory);
   return response.data; // Retorna o produto criado
 };
 
 // Função para editar um produto
 const editCategoryApi = async (editedCategory: Category): Promise<Category> => {
-  const response = await axiosInstance.put<Category>(
+  const response = await api.put<Category>(
     `/categories/${editedCategory.id}`,
     editedCategory
   );
@@ -70,7 +70,7 @@ const editCategoryApi = async (editedCategory: Category): Promise<Category> => {
 
 // Função para deletar um produto
 const deleteCategoryApi = async (categoryId: number): Promise<void> => {
-  await axiosInstance.delete(`/categories/${categoryId}`); // Não precisa retornar nada
+  await api.delete(`/categories/${categoryId}`); // Não precisa retornar nada
 };
 
 const CategoryPage: React.FC = () => {

@@ -16,7 +16,7 @@ import {
 import { useForm, Controller } from "react-hook-form";
 import { Product, maxSizeProduct } from "@/app/produtos/page";
 import { Category } from "@/app/categorias/page";
-import axiosInstance from "@/config/axiosInstance";
+import api from "@/app/config/api";
 
 interface ProductCreateDialogProps {
   open: boolean;
@@ -29,7 +29,7 @@ interface CategoriesResponse {
 }
 
 const fetchCategories = async (): Promise<CategoriesResponse> => {
-  const response = await axiosInstance.get(`/categories/names`);
+  const response = await api.get(`/categories/names`);
   return response.data;
 };
 

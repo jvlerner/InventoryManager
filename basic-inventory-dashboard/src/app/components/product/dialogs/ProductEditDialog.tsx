@@ -96,9 +96,15 @@ const ProductEditDialog: React.FC<ProductEditDialogProps> = ({
             control={control}
             rules={{
               required: "Preço é obrigatório",
-              validate: (value) =>
-                (value > 0 && value < maxSizeProduct.price) ||
-                `Preço deve ser maior que zero e menor que ${maxSizeProduct.price}`,
+              validate: (value) => {
+                if (value === undefined) {
+                  return "Preço é obrigatório"; // ou qualquer outra mensagem que você preferir
+                }
+                return (
+                  (0 < value && value < maxSizeProduct.price) ||
+                  `Preço deve ser maior que zero e menor que ${maxSizeProduct.price} dígitos`
+                );
+              },
             }}
             render={({ field }) => (
               <TextField

@@ -9,7 +9,7 @@ import ProductEditDialog from "@/app/components/product/dialogs/ProductEditDialo
 import ProductDeleteDialog from "@/app/components/product/dialogs/ProductDeleteDialog";
 import LoadingScreen from "../components/commom/LoadingScreen";
 import ErrorScreen from "../components/commom/ErrorScreen";
-import axiosInstance from "@/config/axiosInstance";
+import api from "@/app/config/api";
 
 // Definindo a interface para o produto
 export interface Product {
@@ -47,7 +47,7 @@ const fetchProducts = async (
   sortField: string = "id",
   sortDirection: string = "asc"
 ): Promise<ProductsResponse> => {
-  const response = await axiosInstance.get(`/api/products`, {
+  const response = await api.get(`/products`, {
     params: {
       page,
       rowsPerPage,
@@ -61,13 +61,13 @@ const fetchProducts = async (
 
 // Função para criar um produto
 const createProductApi = async (newProduct: Product): Promise<Product> => {
-  const response = await axiosInstance.post<Product>("/products", newProduct);
+  const response = await api.post<Product>("/products", newProduct);
   return response.data; // Retorna o produto criado
 };
 
 // Função para editar um produto
 const editProductApi = async (editedProduct: Product): Promise<Product> => {
-  const response = await axiosInstance.put<Product>(
+  const response = await api.put<Product>(
     `/products/${editedProduct.id}`,
     editedProduct
   );
@@ -76,7 +76,7 @@ const editProductApi = async (editedProduct: Product): Promise<Product> => {
 
 // Função para deletar um produto
 const deleteProductApi = async (productId: number): Promise<void> => {
-  await axiosInstance.delete(`/products/${productId}`); // Não precisa retornar nada
+  await api.delete(`/products/${productId}`); // Não precisa retornar nada
 };
 
 const ProductPage: React.FC = () => {
