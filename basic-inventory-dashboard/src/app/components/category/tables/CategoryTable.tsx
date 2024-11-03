@@ -11,9 +11,10 @@ import {
   TableRow,
   Paper,
   TablePagination,
-  Button,
 } from "@mui/material";
 import { Category } from "@/app/categorias/page";
+import DeleteButton from "../../commom/buttons/DeleteButton";
+import EditButton from "../../commom/buttons/EditButton";
 
 interface CategoryTableProps {
   categories: Category[];
@@ -41,25 +42,26 @@ const CategoryTable: React.FC<CategoryTableProps> = ({
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>ID</TableCell>
-            <TableCell>Nome</TableCell>
-            <TableCell>Descrição</TableCell>
-            <TableCell>Ações</TableCell>
+            <TableCell sx={{ fontWeight: 600 }}>ID</TableCell>
+            <TableCell sx={{ fontWeight: 600 }}>Nome</TableCell>
+            <TableCell sx={{ fontWeight: 600 }}>Descrição</TableCell>
+            <TableCell sx={{ fontWeight: 600 }}>Ações</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {categories
-            .map((category) => (
-              <TableRow key={category.id}>
-                <TableCell sx={{ width: "50px" }}>{category.id}</TableCell>
-                <TableCell sx={{ width: "200px" }}>{category.name}</TableCell>
-                <TableCell sx={{ width: "200px" }}>{category.description}</TableCell>
-                <TableCell sx={{ width: "90px" }}>
-                  <Button onClick={() => onEdit(category)}>Editar</Button>
-                  <Button onClick={() => onDelete(category)}>Excluir</Button>
-                </TableCell>
-              </TableRow>
-            ))}
+          {categories.map((category) => (
+            <TableRow key={category.id}>
+              <TableCell sx={{ minWidth: "50px" }}>{category.id}</TableCell>
+              <TableCell sx={{ minWidth: "200px" }}>{category.name}</TableCell>
+              <TableCell sx={{ minWidth: "200px" }}>
+                {category.description}
+              </TableCell>
+              <TableCell sx={{ minWidth: "116px" }}>
+                <EditButton onEdit={() => onEdit(category)} />
+                <DeleteButton onDelete={() => onDelete(category)} />
+              </TableCell>
+            </TableRow>
+          ))}
         </TableBody>
       </Table>
       <TablePagination

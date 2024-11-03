@@ -5,7 +5,6 @@ import com.unisul.basic_inventory_api.model.ProductOutListDTO;
 import com.unisul.basic_inventory_api.service.ProductOutService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,6 @@ public class ProductOutController {
     @Autowired
     private final ProductOutService productOutService;
 
-    @Autowired
     public ProductOutController(ProductOutService productOutService) {
         this.productOutService = productOutService;
     }

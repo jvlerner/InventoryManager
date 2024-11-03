@@ -3,7 +3,6 @@ import * as React from "react";
 import { styled, Theme, CSSObject } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import MuiDrawer from "@mui/material/Drawer";
-import CssBaseline from "@mui/material/CssBaseline";
 import Divider from "@mui/material/Divider";
 import DrawerList from "@/app/components/commom/drawer/DrawerList";
 import DrawerToggleButton from "@/app/components/commom/drawer/DrawerToggleButton";
@@ -124,7 +123,6 @@ export default function CustomDrawer({
       </Drawer>
 
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <DrawerHeader />
         {children}
       </Box>
     </Box>

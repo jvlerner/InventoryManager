@@ -16,7 +16,6 @@ public class ProductInController {
     @Autowired
     private final ProductInService productInService;
 
-    @Autowired
     public ProductInController(ProductInService productInService) {
         this.productInService = productInService;
     }

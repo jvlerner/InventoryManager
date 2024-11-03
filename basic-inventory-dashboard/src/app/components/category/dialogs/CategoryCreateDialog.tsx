@@ -10,7 +10,7 @@ import {
   Button,
 } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
-import { Category, maxSizeCategory } from "@/app/categorias/page";
+import { Category, categoryMaxSizeCategory } from "@/app/categorias/page";
 
 interface CategoryCreateDialogProps {
   open: boolean;
@@ -26,16 +26,27 @@ const CategoryCreateDialog: React.FC<CategoryCreateDialogProps> = ({
   const {
     control,
     handleSubmit,
+    reset, // Adiciona a função reset
     formState: { errors },
-  } = useForm<Category>();
+  } = useForm<Category>({
+    defaultValues: {
+      name: "", // Define default value for controlled input
+      description: "", // Define default value for controlled input
+    },
+  });
 
   const onSubmit = (data: Category) => {
     onCreate(data);
     onClose();
   };
 
+  const handleClose = () => {
+    reset(); // Reseta os campos do formulário
+    onClose();
+  };
+
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog open={open} onClose={handleClose}>
       <DialogTitle>Cadastrar Categoria</DialogTitle>
       <DialogContent>
         <Controller
@@ -43,8 +54,8 @@ const CategoryCreateDialog: React.FC<CategoryCreateDialogProps> = ({
           control={control}
           rules={{
             maxLength: {
-              value: maxSizeCategory.name,
-              message: `Nome deve ter no máximo ${maxSizeCategory.name} caracteres`,
+              value: categoryMaxSizeCategory.name,
+              message: `Nome deve ter no máximo ${categoryMaxSizeCategory.name} caracteres`,
             },
             required: "Nome é obrigatório",
           }}
@@ -66,8 +77,8 @@ const CategoryCreateDialog: React.FC<CategoryCreateDialogProps> = ({
           control={control}
           rules={{
             maxLength: {
-              value: maxSizeCategory.description,
-              message: `Descrição deve ter no máximo ${maxSizeCategory.description} caracteres`,
+              value: categoryMaxSizeCategory.description,
+              message: `Descrição deve ter no máximo ${categoryMaxSizeCategory.description} caracteres`,
             },
           }}
           render={({ field }) => (
@@ -87,7 +98,7 @@ const CategoryCreateDialog: React.FC<CategoryCreateDialogProps> = ({
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="primary">
+        <Button onClick={handleClose} color="primary">
           Cancelar
         </Button>
         <Button onClick={handleSubmit(onSubmit)} color="primary">

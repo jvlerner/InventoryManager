@@ -18,8 +18,7 @@ public class ProductOutService {
     @Autowired
     private final ProductOutRepository productOutRepository;
     private final ProductService productService;
-
-    @Autowired
+    
     public ProductOutService(ProductOutRepository productOutRepository, ProductService productService) {
         this.productOutRepository = productOutRepository;
         this.productService = productService;

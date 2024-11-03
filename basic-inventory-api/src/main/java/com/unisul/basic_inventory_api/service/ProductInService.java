@@ -20,7 +20,6 @@ public class ProductInService {
     private final ProductInRepository productInRepository;
     private final ProductService productService;
 
-    @Autowired
     public ProductInService(ProductInRepository productInRepository, ProductService productService) {
         this.productInRepository = productInRepository;
         this.productService = productService;
