@@ -1,6 +1,6 @@
 import React from "react";
-import { Box, TextField, Button } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
+import { Box, TextField } from "@mui/material";
+import SearchButton from "../../commom/buttons/SearchButton";
 
 interface ProductSearchProps {
   searchHandler: string;
@@ -14,23 +14,15 @@ const CategorySearch: React.FC<ProductSearchProps> = ({
   handleSearch,
 }) => {
   return (
-    <Box display="flex" sx={{ gap: 2, height: 60, alignItems: "center" }}>
+    <Box display="flex" sx={{ gap: 2, alignItems: "center" }}>
       <TextField
         label="Pesquisar Categoria"
         variant="outlined"
         value={searchHandler}
         onChange={(e) => setSearchHandler(e.target.value)}
-        style={{ width: "20%", minWidth: "300px" }}
+        style={{ minWidth: "350px" }}
       />
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={handleSearch}
-        endIcon={<SearchIcon />}
-        style={{ padding: "14px 14px", fontWeight: "600" }}
-      >
-        Pesquisar
-      </Button>
+      <SearchButton onSearch={handleSearch} />
     </Box>
   );
 };

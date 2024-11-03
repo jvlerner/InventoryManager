@@ -1,4 +1,4 @@
-import "@/styles/globals.css";
+import "@/app/styles/globals.css";
 import ContextProviders from "@/app/context";
 import CustomDrawer from "@/app/components/commom/drawer/Drawer";
 import QueryProvider from "./components/commom/QueryProvider";

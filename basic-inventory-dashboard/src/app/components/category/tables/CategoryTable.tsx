@@ -52,11 +52,11 @@ const CategoryTable: React.FC<CategoryTableProps> = ({
           {categories.map((category) => (
             <TableRow key={category.id}>
               <TableCell sx={{ minWidth: "50px" }}>{category.id}</TableCell>
-              <TableCell sx={{ minWidth: "200px" }}>{category.name}</TableCell>
-              <TableCell sx={{ minWidth: "200px" }}>
+              <TableCell sx={{ minWidth: "250px" }}>{category.name}</TableCell>
+              <TableCell sx={{ minWidth: "350px" }}>
                 {category.description}
               </TableCell>
-              <TableCell sx={{ minWidth: "116px" }}>
+              <TableCell sx={{ minWidth: "264px" }}>
                 <EditButton onEdit={() => onEdit(category)} />
                 <DeleteButton onDelete={() => onDelete(category)} />
               </TableCell>

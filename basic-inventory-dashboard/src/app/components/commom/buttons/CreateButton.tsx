@@ -1,29 +1,24 @@
 import React from "react";
-import { Button, FormControl } from "@mui/material";
+import { Button } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
 
 interface CreateButtonProps {
   handleOpenCreateDialog: () => void;
-  object: string;
 }
 
 const CreateButton: React.FC<CreateButtonProps> = ({
   handleOpenCreateDialog,
-  object,
 }) => {
   return (
-    <FormControl
-      variant="outlined"
-      style={{ margin: "8px", minWidth: "180px" }}
+    <Button
+      endIcon={<AddIcon />}
+      variant="contained"
+      color="primary"
+      onClick={handleOpenCreateDialog}
+      style={{ fontWeight: "600" }} // Botão com largura total
     >
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={handleOpenCreateDialog}
-        style={{ width: "100%", padding: "15px 0px", fontWeight: "600" }} // Botão com largura total
-      >
-        Cadastrar {object}
-      </Button>
-    </FormControl>
+      Cadastrar
+    </Button>
   );
 };
 

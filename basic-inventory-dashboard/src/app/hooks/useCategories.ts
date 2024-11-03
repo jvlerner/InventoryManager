@@ -79,13 +79,7 @@ export const useCategories = ({
   const { data, error, isLoading } = useQuery<CategoriesResponse, Error>({
     queryKey,
     queryFn: () =>
-      fetchCategories(
-        page,
-        rowsPerPage,
-        searchQuery,
-        sortField,
-        sortDirection
-      ),
+      fetchCategories(page, rowsPerPage, searchQuery, sortField, sortDirection),
     staleTime: 60 * 1000, //cache
   });
 
@@ -93,7 +87,7 @@ export const useCategories = ({
   const createCategory = useMutation<Category, Error, Category>({
     mutationFn: createCategoryApi, // Passa a função da API
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey }); // Invalida a query de produtos
+      queryClient.invalidateQueries({ queryKey: ["categories"] }); // Invalida a query de produtos
       handleCloseCreateDialog(); // Fecha o diálogo após a criação
     },
     onError: (error: Error) => {
