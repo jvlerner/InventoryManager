@@ -26,7 +26,6 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
     @Query("SELECT c FROM Category c WHERE c.deleted = false ORDER BY c.name ASC")
     List<Tuple> findAllCategoriesName();
 
-
     @Query("SELECT COUNT(c) FROM Category c WHERE c.deleted = false")
     long countAllCategories();
 

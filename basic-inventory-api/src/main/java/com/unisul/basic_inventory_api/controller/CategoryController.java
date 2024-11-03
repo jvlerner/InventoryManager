@@ -12,14 +12,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Arrays;
 
-
 @RestController
 @RequestMapping("/categories")
 public class CategoryController {
     @Autowired
     private final CategoryService categoryService;
 
-    
     public CategoryController(CategoryService categoryService) {
         this.categoryService = categoryService;
     }
@@ -35,14 +33,23 @@ public class CategoryController {
             @RequestParam(defaultValue = "name") String sortField,
             @RequestParam(defaultValue = "asc") String sortDirection) {
 
-        if (!Arrays.asList("name", "id").contains(sortField)) {
-            throw new IllegalArgumentException("Invalid sort field");
-        }
-        if (!Arrays.asList("asc", "desc").contains(sortDirection.toLowerCase())) {
-            throw new IllegalArgumentException("Invalid sort direction");
+        if (page < 1) {
+            return ResponseEntity.badRequest().build();
         }
 
-        CategoryListDTO categoryDTO = categoryService.getPaginatedCategories(page, rowsPerPage, search, sortField, sortDirection);
+        if (5 > rowsPerPage || rowsPerPage > 100) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        if (!Arrays.asList("name", "id").contains(sortField)) {
+            return ResponseEntity.badRequest().build();
+        }
+        if (!Arrays.asList("asc", "desc").contains(sortDirection.toLowerCase())) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        CategoryListDTO categoryDTO = categoryService.getPaginatedCategories(page, rowsPerPage, search, sortField,
+                sortDirection);
         return ResponseEntity.ok(categoryDTO);
     }
 
