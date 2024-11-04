@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import LoadingScreen from "@/app/components/commom/LoadingScreen";
-import ErrorScreen from "@/app/components/commom/ErrorScreen";
+import LoadingScreen from "@/app/components/commom/screens/LoadingScreen";
+import ErrorScreen from "@/app/components/commom/screens/ErrorScreen";
 import ProductHeader from "../components/product/ProductHeader";
 import ProductTable from "@/app/components/product/tables/ProductTable";
 import ProductDialogs from "../components/product/ProductDialogs";

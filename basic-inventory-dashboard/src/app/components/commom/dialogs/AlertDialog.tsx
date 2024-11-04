@@ -37,10 +37,24 @@ const AlertDialog: React.FC<AlertDialogProps> = ({
         return null;
     }
   };
+  const renderTitle = () => {
+    switch (type) {
+      case "success":
+        return <DialogTitle>Sucesso!</DialogTitle>;
+      case "error":
+        return <DialogTitle>Erro!</DialogTitle>;
+      case "warning":
+        return <DialogTitle>Atenção!</DialogTitle>;
+      case "info":
+        return <DialogTitle>Informação!</DialogTitle>;
+      default:
+        return null;
+    }
+  };
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>{type.charAt(0).toUpperCase() + type.slice(1)}</DialogTitle>
+      {renderTitle()}
       <DialogContent>
         <Typography
           variant="body1"

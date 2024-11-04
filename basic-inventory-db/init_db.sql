@@ -7,8 +7,7 @@ CREATE TABLE IF NOT EXISTS categories (
     id INT AUTO_INCREMENT PRIMARY KEY,
     deleted BOOLEAN DEFAULT FALSE,
     name VARCHAR(50) NOT NULL,
-    description VARCHAR(100),
-    UNIQUE (name)
+    description VARCHAR(100)
 );
 -- Criação da tabela de produtos
 CREATE TABLE IF NOT EXISTS products (
@@ -19,7 +18,6 @@ CREATE TABLE IF NOT EXISTS products (
     price DECIMAL(10, 2) NOT NULL,
     quantity INT DEFAULT 0,
     category_id INT,
-    UNIQUE (name),
     FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE
     SET NULL
 );

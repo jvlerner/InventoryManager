@@ -10,6 +10,7 @@ const LoadingScreen: React.FC = () => {
       justifyContent="center"
       alignItems="center"
       bgcolor="background.default"
+      marginTop={30}
     >
       <CircularProgress />
       <Typography variant="h6" marginTop={2}>

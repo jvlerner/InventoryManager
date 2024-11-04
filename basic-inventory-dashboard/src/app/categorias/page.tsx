@@ -1,7 +1,7 @@
 "use client";
 
-import LoadingScreen from "@/app/components/commom/LoadingScreen";
-import ErrorScreen from "@/app/components/commom/ErrorScreen";
+import LoadingScreen from "@/app/components/commom/screens/LoadingScreen";
+import ErrorScreen from "@/app/components/commom/screens/ErrorScreen";
 
 import React, { useRef, useState } from "react";
 import { useCategories } from "../hooks/useCategories";
@@ -10,6 +10,7 @@ import CategoryTable from "@/app/components/category/tables/CategoryTable";
 import CategoryDialogs from "../components/category/CategoryDialogs";
 import CategoryTableHeader from "../components/category/CategoryTableHeader";
 import CategoryPageHeader from "../components/category/CategoryPageHeader";
+import AlertDialog from "../components/commom/dialogs/AlertDialog";
 
 export interface Category {
   id?: number;
@@ -37,12 +38,11 @@ export interface CategoryApi {
 }
 
 const CategoryPage: React.FC = () => {
+  const [openSuccessDialog, setOpenSuccessDialog] = useState<boolean>(false);
+  const [openErrorDialog, setOpenErrorDialog] = useState<boolean>(false);
   const [openCreateDialog, setOpenCreateDialog] = useState<boolean>(false);
   const [openEditDialog, setOpenEditDialog] = useState<boolean>(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
-    null
-  );
   const [page, setPage] = useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = useState<number>(10);
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -50,6 +50,29 @@ const CategoryPage: React.FC = () => {
   const [sortField, setSortField] = useState<CategoryApi["sortField"]>("id");
   const [sortDirection, setSortDirection] =
     useState<CategoryApi["sortDirection"]>("asc");
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
+    null
+  );
+  const [successMessage, setSuccessMessage] = useState<string>(
+    "Sucesso ao realizar operação."
+  );
+  const [errorMessage, setErrorMessage] = useState<string>(
+    "Erro ao realizar operação."
+  );
+
+  const handleOpenSuccessDialog = (message: string) => {
+    setSuccessMessage(message);
+    setOpenSuccessDialog(true);
+  };
+  const handleCloseSuccessDialog = () => setOpenSuccessDialog(false);
+
+  const handleOpenErrorDialog = (message: string) => {
+    setErrorMessage(message);
+    setOpenErrorDialog(true);
+  };
+  const handleCloseErrorDialog = () => setOpenErrorDialog(false);
+  const handleOpenCreateDialog = () => setOpenCreateDialog(true);
+  const handleCloseCreateDialog = () => setOpenCreateDialog(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const queryKey: [string, number, number, string, string, string] = [
     "categories",
@@ -77,10 +100,9 @@ const CategoryPage: React.FC = () => {
     handleCloseCreateDialog: () => handleCloseCreateDialog,
     handleCloseEditDialog: () => handleCloseEditDialog,
     handleCloseDeleteDialog: () => handleCloseDeleteDialog,
+    handleErrorDialog: (message: string) => handleOpenErrorDialog(message),
+    handleSuccessDialog: (message: string) => handleOpenSuccessDialog(message),
   });
-
-  const handleOpenCreateDialog = () => setOpenCreateDialog(true);
-  const handleCloseCreateDialog = () => setOpenCreateDialog(false);
 
   const handleOpenEditDialog = (category: Category) => {
     setSelectedCategory(category);
@@ -102,19 +124,24 @@ const CategoryPage: React.FC = () => {
 
   const handleCreateCategory = (newCategory: Category) => {
     createCategory.mutate(newCategory);
-    handleCloseCreateDialog();
   };
 
   const handleEditCategory = (editedCategory: Category) => {
     editCategory.mutate(editedCategory);
-    handleCloseEditDialog();
   };
 
   const handleDeleteCategory = () => {
     if (selectedCategory) {
-      deleteCategory.mutate(selectedCategory.id!);
+      deleteCategory.mutate(selectedCategory.id!, {
+        onSuccess: () => {
+          if (data?.categories.length === 1 && page > 0) {
+            setPage((prevPage) => prevPage - 1); // Volta uma página
+          } else if (data?.categories.length === 0) {
+            setPage(0); // Se não houver mais categorias, vá para a página 0
+          }
+        },
+      });
     }
-    handleCloseDeleteDialog();
   };
 
   const handleInputChange = (value: string) => {
@@ -146,7 +173,9 @@ const CategoryPage: React.FC = () => {
         sortFieldItems={categorySortFieldItems}
       />
       {isLoading && <LoadingScreen />}
-      {error && <ErrorScreen />}
+      {error && (
+        <ErrorScreen message="Não foi possível carregar as categorias." />
+      )}
       {data && (
         <CategoryTable
           categories={data?.categories || []}
@@ -173,6 +202,18 @@ const CategoryPage: React.FC = () => {
         handleEditCategory={handleEditCategory}
         handleDeleteCategory={handleDeleteCategory}
         selectedCategory={selectedCategory}
+      />
+      <AlertDialog
+        type="error"
+        message={errorMessage}
+        onClose={handleCloseErrorDialog}
+        open={openErrorDialog}
+      />
+      <AlertDialog
+        type="success"
+        message={successMessage}
+        onClose={handleCloseSuccessDialog}
+        open={openSuccessDialog}
       />
     </div>
   );

@@ -37,6 +37,7 @@ const CategoryCreateDialog: React.FC<CategoryCreateDialogProps> = ({
 
   const onSubmit = (data: Category) => {
     onCreate(data);
+    reset();
   };
 
   const handleClose = () => {

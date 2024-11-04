@@ -2,9 +2,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "@/app/config/api";
 import { Category } from "../categorias/page";
-import { useRef, useEffect } from "react";
-
-type Timer = ReturnType<typeof setTimeout>;
 
 // Definindo a interface para a resposta da API
 export interface CategoriesResponse {
@@ -20,9 +17,11 @@ export interface UseCategoriesParams {
   searchQuery: string;
   sortField: string;
   sortDirection: string;
-  handleCloseCreateDialog?: () => void;
-  handleCloseEditDialog?: () => void;
-  handleCloseDeleteDialog?: () => void;
+  handleCloseCreateDialog: () => void;
+  handleCloseEditDialog: () => void;
+  handleCloseDeleteDialog: () => void;
+  handleErrorDialog: (message: string) => void;
+  handleSuccessDialog: (message: string) => void;
 }
 
 const fetchCategories = async (
@@ -76,6 +75,8 @@ export const useCategories = ({
   handleCloseCreateDialog,
   handleCloseEditDialog,
   handleCloseDeleteDialog,
+  handleErrorDialog,
+  handleSuccessDialog,
 }: UseCategoriesParams) => {
   const queryClient = useQueryClient();
 
@@ -91,10 +92,12 @@ export const useCategories = ({
     mutationFn: createCategoryApi, // Passa a função da API
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["categories"] }); // Invalida a query de produtos
-      (handleCloseCreateDialog || (() => {}))(); // Fecha o diálogo após a criação
+      handleCloseCreateDialog();
+      handleSuccessDialog("Categoria criada com sucesso.");
     },
     onError: (error: Error) => {
-      console.error("Error creating category:", error);
+      console.log("Error creating category:", error);
+      handleErrorDialog("Não foi possível criar categoria: " + error.message);
     },
   });
   // Mutação para editar um produto existente
@@ -102,11 +105,13 @@ export const useCategories = ({
     mutationFn: editCategoryApi, // Passa a função da API diretamente
 
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey }); // Invalida a query de produtos
-      (handleCloseEditDialog || (() => {}))(); // Fecha o diálogo de edição
+      queryClient.invalidateQueries({ queryKey: ["categories"] }); // Invalida a query de produtos
+      handleCloseEditDialog();
+      handleSuccessDialog("Categoria editada com sucesso.");
     },
     onError: (error: Error) => {
-      console.error("Error editing category:", error);
+      console.log("Error editing category:", error);
+      handleErrorDialog("Não foi possível editar a categoria:" + error.message);
     },
   });
 
@@ -115,11 +120,15 @@ export const useCategories = ({
     mutationFn: deleteCategoryApi, // Passa a função da API diretamente
 
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey }); // Invalida a query de produtos
-      (handleCloseDeleteDialog || (() => {}))(); // Fecha o diálogo de exclusão
+      queryClient.invalidateQueries({ queryKey: ["categories"] }); // Invalida a query de produtos
+      handleCloseDeleteDialog();
+      handleSuccessDialog("Categoria deletada com sucesso.");
     },
     onError: (error: Error) => {
-      console.error("Error deleting category:", error);
+      console.log("Error deleting category:", error);
+      handleErrorDialog(
+        "Não foi possível deletar a categoria: " + error.message
+      );
     },
   });
 
