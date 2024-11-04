@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   Dialog,
   DialogActions,
@@ -9,62 +9,102 @@ import {
   TextField,
   Button,
   FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
+  Autocomplete,
 } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
-import { Product, maxSizeProduct } from "@/app/produtos/page";
-import { Category } from "@/app/categorias/page";
-import api from "@/app/config/api";
+import { Product, productMaxSize } from "@/app/produtos/page";
+import { Category, CategoryApi, categoryMaxSize } from "@/app/categorias/page";
+import { useCategories } from "@/app/hooks/useCategories";
 
 interface ProductCreateDialogProps {
   open: boolean;
   onClose: () => void;
   onCreate: (newProduct: Product) => void;
 }
-interface CategoriesResponse {
-  categories: Category[];
-  totalItems: number;
-}
 
-const fetchCategories = async (): Promise<CategoriesResponse> => {
-  const response = await api.get(`/categories/names`);
-  return response.data;
-};
+interface FormData {
+  name: Product["name"];
+  description: Product["description"];
+  price: Product["price"];
+  category: Category;
+}
 
 const ProductCreateDialog: React.FC<ProductCreateDialogProps> = ({
   open,
   onClose,
   onCreate,
 }) => {
-  const [categories, setCategories] = useState<Category[]>([]);
+  const page = 0;
+  const rowsPerPage = 20;
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [searchQueryHandler, setSearchQueryHandler] = useState<string>("");
+  const sortField: CategoryApi["sortField"] = "name";
+  const sortDirection: CategoryApi["sortDirection"] = "asc";
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const queryKey: [string, number, number, string, string, string] = [
+    "categories",
+    page,
+    rowsPerPage,
+    searchQuery,
+    sortField,
+    sortDirection,
+  ];
+
+  const { data, isLoading } = useCategories({
+    queryKey: queryKey,
+    page: page,
+    rowsPerPage: rowsPerPage,
+    searchQuery: searchQuery,
+    sortField: sortField,
+    sortDirection: sortDirection,
+  });
+
   const {
     control,
     handleSubmit,
+    reset,
     formState: { errors },
-  } = useForm<Product>();
+  } = useForm<FormData>({
+    defaultValues: {
+      name: "",
+      description: "",
+      price: undefined,
+      category: undefined,
+    },
+  });
 
-  const onSubmit = (data: Product) => {
-    onCreate(data);
+  const handleInputChange = (value: string) => {
+    setSearchQueryHandler(value);
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+    debounceRef.current = setTimeout(() => {
+      setSearchQuery(value);
+    }, 1000);
+  };
+
+  const onSubmit = (formData: FormData) => {
+    if (formData.category.id === null || formData.category.id === undefined) {
+      console.error("Categoria não selecionada");
+      return; // Previne tentar criar um produto sem categoria selecionada
+    }
+
+    const newProduct: Product = {
+      ...formData,
+      category: { id: parseFloat(formData.category.id.toString()) }, // Garantindo que é um número
+    };
+
+    onCreate(newProduct);
+    handleClose();
+  };
+
+  const handleClose = () => {
+    reset(); // Reseta os campos do formulário
     onClose();
   };
 
-  useEffect(() => {
-    const loadCategories = async () => {
-      try {
-        const response = await fetchCategories();
-        setCategories(response.categories);
-      } catch (error) {
-        console.error("Erro ao carregar categorias:", error);
-      }
-    };
-
-    loadCategories();
-  }, []);
-
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog open={open} onClose={handleClose}>
       <DialogTitle>Cadastrar Produto</DialogTitle>
       <DialogContent>
         <Controller
@@ -72,8 +112,8 @@ const ProductCreateDialog: React.FC<ProductCreateDialogProps> = ({
           control={control}
           rules={{
             maxLength: {
-              value: maxSizeProduct.name,
-              message: `Nome deve ter no máximo ${maxSizeProduct.name} caracteres`,
+              value: productMaxSize.name,
+              message: `Nome deve ter no máximo ${productMaxSize.name} caracteres`,
             },
             required: "Nome é obrigatório",
           }}
@@ -82,10 +122,11 @@ const ProductCreateDialog: React.FC<ProductCreateDialogProps> = ({
               {...field}
               margin="dense"
               label="Nome*"
+              type="text"
               fullWidth
               variant="outlined"
               error={!!errors.name}
-              helperText={errors.name?.message}
+              helperText={errors.name ? errors.name.message : ""}
             />
           )}
         />
@@ -94,8 +135,8 @@ const ProductCreateDialog: React.FC<ProductCreateDialogProps> = ({
           control={control}
           rules={{
             maxLength: {
-              value: maxSizeProduct.description,
-              message: `Descrição deve ter no máximo ${maxSizeProduct.description} caracteres`,
+              value: productMaxSize.description,
+              message: `Descrição deve ter no máximo ${productMaxSize.description} caracteres`,
             },
           }}
           render={({ field }) => (
@@ -103,10 +144,13 @@ const ProductCreateDialog: React.FC<ProductCreateDialogProps> = ({
               {...field}
               margin="dense"
               label="Descrição"
+              type="text"
               fullWidth
               variant="outlined"
+              multiline
+              rows={4}
               error={!!errors.description}
-              helperText={errors.description?.message}
+              helperText={errors.description ? errors.description.message : ""}
             />
           )}
         />
@@ -117,11 +161,11 @@ const ProductCreateDialog: React.FC<ProductCreateDialogProps> = ({
             required: "Preço é obrigatório",
             validate: (value) => {
               if (value === undefined) {
-                return "Preço é obrigatório"; // ou qualquer outra mensagem que você preferir
+                return "Preço é obrigatório";
               }
               return (
-                (0 < value && value < maxSizeProduct.price) ||
-                `Preço deve ser maior que zero e menor que ${maxSizeProduct.price} dígitos`
+                (0 < value && value < productMaxSize.price) ||
+                `Preço deve ser maior que zero e menor que ${productMaxSize.price}`
               );
             },
           }}
@@ -141,7 +185,13 @@ const ProductCreateDialog: React.FC<ProductCreateDialogProps> = ({
         <Controller
           name="category"
           control={control}
-          rules={{ required: "Categoria é obrigatória" }}
+          rules={{
+            maxLength: {
+              value: categoryMaxSize.name,
+              message: `No máximo ${categoryMaxSize.name} caracteres`,
+            },
+            required: "Categoria é obrigatória",
+          }}
           render={({ field }) => (
             <FormControl
               fullWidth
@@ -149,34 +199,47 @@ const ProductCreateDialog: React.FC<ProductCreateDialogProps> = ({
               margin="dense"
               error={!!errors.category}
             >
-              <InputLabel>Categoria*</InputLabel>
-              <Select
+              <Autocomplete
                 {...field}
-                label="Categoria*"
-                onChange={(e) => field.onChange(e.target.value)}
-              >
-                {!categories || categories.length === 0 ? (
-                  <MenuItem disabled>
-                    Nenhuma categoria cadastrada. Por favor, cadastre uma.
-                  </MenuItem>
-                ) : (
-                  categories.map((category) => (
-                    <MenuItem key={category.id} value={category.id}>
-                      {category.name}
-                    </MenuItem>
-                  ))
+                options={data?.categories || []}
+                getOptionLabel={(option) => option.name || ""}
+                onChange={(event, newValue) => {
+                  field.onChange(newValue ? newValue.id : null);
+                }}
+                inputValue={searchQuery} // Manage the input value here
+                onInputChange={(event, newInputValue) => {
+                  handleInputChange(newInputValue);
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Categoria*"
+                    variant="outlined"
+                    error={!!errors.category}
+                    helperText={errors.category ? errors.category.message : ""}
+                  />
                 )}
-              </Select>
-              {errors.category && <span>{errors.category.message}</span>}
+                loading={isLoading}
+                noOptionsText="Nenhuma categoria encontrada."
+                renderOption={(props, option) => (
+                  <li {...props} key={option.id}>
+                    {option.name}
+                  </li>
+                )}
+              />
             </FormControl>
           )}
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="primary">
+        <Button onClick={handleClose} color="primary">
           Cancelar
         </Button>
-        <Button onClick={handleSubmit(onSubmit)} color="primary">
+        <Button
+          onClick={handleSubmit(onSubmit)}
+          variant="contained"
+          color="primary"
+        >
           Cadastrar
         </Button>
       </DialogActions>

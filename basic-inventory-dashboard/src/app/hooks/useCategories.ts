@@ -2,6 +2,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "@/app/config/api";
 import { Category } from "../categorias/page";
+import { useRef, useEffect } from "react";
+
+type Timer = ReturnType<typeof setTimeout>;
 
 // Definindo a interface para a resposta da API
 export interface CategoriesResponse {
@@ -17,9 +20,9 @@ export interface UseCategoriesParams {
   searchQuery: string;
   sortField: string;
   sortDirection: string;
-  handleCloseCreateDialog: () => void;
-  handleCloseEditDialog: () => void;
-  handleCloseDeleteDialog: () => void;
+  handleCloseCreateDialog?: () => void;
+  handleCloseEditDialog?: () => void;
+  handleCloseDeleteDialog?: () => void;
 }
 
 const fetchCategories = async (
@@ -77,10 +80,10 @@ export const useCategories = ({
   const queryClient = useQueryClient();
 
   const { data, error, isLoading } = useQuery<CategoriesResponse, Error>({
-    queryKey,
-    queryFn: () =>
+    queryKey: [...queryKey], // Adiciona searchQuery à chave da query
+    queryFn: async () =>
       fetchCategories(page, rowsPerPage, searchQuery, sortField, sortDirection),
-    staleTime: 60 * 1000, //cache
+    staleTime: 60 * 1000, // cache
   });
 
   // Mutação para criar um produto
@@ -88,7 +91,7 @@ export const useCategories = ({
     mutationFn: createCategoryApi, // Passa a função da API
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["categories"] }); // Invalida a query de produtos
-      handleCloseCreateDialog(); // Fecha o diálogo após a criação
+      (handleCloseCreateDialog || (() => {}))(); // Fecha o diálogo após a criação
     },
     onError: (error: Error) => {
       console.error("Error creating category:", error);
@@ -100,7 +103,7 @@ export const useCategories = ({
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey }); // Invalida a query de produtos
-      handleCloseEditDialog(); // Fecha o diálogo de edição
+      (handleCloseEditDialog || (() => {}))(); // Fecha o diálogo de edição
     },
     onError: (error: Error) => {
       console.error("Error editing category:", error);
@@ -113,7 +116,7 @@ export const useCategories = ({
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey }); // Invalida a query de produtos
-      handleCloseDeleteDialog(); // Fecha o diálogo de exclusão
+      (handleCloseDeleteDialog || (() => {}))(); // Fecha o diálogo de exclusão
     },
     onError: (error: Error) => {
       console.error("Error deleting category:", error);

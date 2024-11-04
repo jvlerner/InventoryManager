@@ -1,4 +1,3 @@
-// components/CategoryTable.tsx
 "use client";
 
 import React from "react";
@@ -65,7 +64,7 @@ const CategoryTable: React.FC<CategoryTableProps> = ({
         </TableBody>
       </Table>
       <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
+        rowsPerPageOptions={[10, 25, 50, 100]}
         component="div"
         count={count}
         rowsPerPage={rowsPerPage}

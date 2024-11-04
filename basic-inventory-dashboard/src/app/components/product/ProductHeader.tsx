@@ -1,24 +1,24 @@
-// components/CategoryHeader.tsx
+// components/ProductHeader.tsx
 import React from "react";
 import { Box } from "@mui/material";
-import CategorySortControl from "./sorts/CategorySortControl";
-import CategorySearch from "./sorts/CategorySearch";
-import { CategoryApi } from "@/app/categorias/page";
-import { CategoryMenuItemProps } from "./sorts/CategorySortFieldControl";
+import ProductSortControl from "./sorts/ProductSortControl";
+import ProductSearch from "./sorts/ProductSearch";
+import { ProductApi } from "@/app/produtos/page";
+import { ProductMenuItemProps } from "./sorts/ProductSortFieldControl";
 
-interface CategoryHeaderProps {
-  sortField: CategoryApi["sortField"];
-  setSortField: (value: CategoryApi["sortField"]) => void;
-  sortDirection: CategoryApi["sortDirection"];
-  setSortDirection: (value: CategoryApi["sortDirection"]) => void;
+interface ProductHeaderProps {
+  sortField: ProductApi["sortField"];
+  setSortField: (value: ProductApi["sortField"]) => void;
+  sortDirection: ProductApi["sortDirection"];
+  setSortDirection: (value: ProductApi["sortDirection"]) => void;
   searchHandler: string;
   setSearchHandler: (value: string) => void;
   handleSearch: () => void;
   handleOpenCreateDialog: () => void;
-  sortFieldItems: CategoryMenuItemProps[];
+  sortFieldItems: ProductMenuItemProps[];
 }
 
-const CategoryHeader: React.FC<CategoryHeaderProps> = ({
+const ProductHeader: React.FC<ProductHeaderProps> = ({
   sortField,
   setSortField,
   sortDirection,
@@ -39,7 +39,7 @@ const CategoryHeader: React.FC<CategoryHeaderProps> = ({
         marginBottom: 1,
       }}
     >
-      <CategorySortControl
+      <ProductSortControl
         setSortDirection={setSortDirection}
         setSortField={setSortField}
         sortDirection={sortDirection}
@@ -47,7 +47,7 @@ const CategoryHeader: React.FC<CategoryHeaderProps> = ({
         menuItems={sortFieldItems}
         handleOpenCreateDialog={handleOpenCreateDialog}
       />
-      <CategorySearch
+      <ProductSearch
         handleSearch={handleSearch}
         searchHandler={searchHandler}
         setSearchHandler={setSearchHandler}
@@ -56,4 +56,4 @@ const CategoryHeader: React.FC<CategoryHeaderProps> = ({
   );
 };
 
-export default CategoryHeader;
+export default ProductHeader;

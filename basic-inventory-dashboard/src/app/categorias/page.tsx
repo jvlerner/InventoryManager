@@ -1,12 +1,15 @@
 "use client";
 
-import React, { useState } from "react";
 import LoadingScreen from "@/app/components/commom/LoadingScreen";
 import ErrorScreen from "@/app/components/commom/ErrorScreen";
-import CategoryHeader from "../components/category/CategoryHeader";
+
+import React, { useRef, useState } from "react";
+import { useCategories } from "../hooks/useCategories";
+
 import CategoryTable from "@/app/components/category/tables/CategoryTable";
 import CategoryDialogs from "../components/category/CategoryDialogs";
-import { useCategories } from "../hooks/useCategories";
+import CategoryTableHeader from "../components/category/CategoryTableHeader";
+import CategoryPageHeader from "../components/category/CategoryPageHeader";
 
 export interface Category {
   id?: number;
@@ -15,7 +18,7 @@ export interface Category {
   description?: string | null;
 }
 
-export const categoryMaxSizeCategory: { name: number; description: number } = {
+export const categoryMaxSize: { name: number; description: number } = {
   name: 50,
   description: 100,
 };
@@ -43,11 +46,11 @@ const CategoryPage: React.FC = () => {
   const [page, setPage] = useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = useState<number>(10);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [searchHandler, setSearchHandler] = useState<string>("");
-  const [sortField, setSortField] = useState<CategoryApi["sortField"]>("name");
+  const [searchQueryHandler, setSearchQueryHandler] = useState<string>("");
+  const [sortField, setSortField] = useState<CategoryApi["sortField"]>("id");
   const [sortDirection, setSortDirection] =
     useState<CategoryApi["sortDirection"]>("asc");
-
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const queryKey: [string, number, number, string, string, string] = [
     "categories",
     page,
@@ -114,40 +117,51 @@ const CategoryPage: React.FC = () => {
     handleCloseDeleteDialog();
   };
 
-  const handleSearch = () => {
-    setSearchQuery(searchHandler);
+  const handleInputChange = (value: string) => {
+    setSearchQueryHandler(value);
+    console.log(value);
+    if (value.trim() === "") {
+      setSearchQuery("");
+    }
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+    debounceRef.current = setTimeout(() => {
+      setSearchQuery(value);
+      setPage(0);
+    }, 1000);
   };
-
-  if (isLoading) return <LoadingScreen />;
-
-  if (error) return <ErrorScreen />;
 
   return (
     <div>
-      <CategoryHeader
+      <CategoryPageHeader handleOpenCreateDialog={handleOpenCreateDialog} />
+      <CategoryTableHeader
         handleOpenCreateDialog={handleOpenCreateDialog}
-        handleSearch={handleSearch}
-        searchHandler={searchHandler}
-        setSearchHandler={setSearchHandler}
+        searchQueryHandler={searchQueryHandler}
+        setSearchQueryHandler={handleInputChange}
         setSortDirection={setSortDirection}
         setSortField={setSortField}
         sortDirection={sortDirection}
         sortField={sortField}
         sortFieldItems={categorySortFieldItems}
       />
-      <CategoryTable
-        categories={data?.categories || []}
-        page={page}
-        count={data?.totalItems || 0}
-        rowsPerPage={rowsPerPage}
-        handleChangePage={(event, newPage) => setPage(newPage)}
-        handleChangeRowsPerPage={(event) => {
-          setRowsPerPage(parseInt(event.target.value, 10));
-          setPage(0);
-        }}
-        onEdit={handleOpenEditDialog}
-        onDelete={handleOpenDeleteDialog}
-      />
+      {isLoading && <LoadingScreen />}
+      {error && <ErrorScreen />}
+      {data && (
+        <CategoryTable
+          categories={data?.categories || []}
+          page={page}
+          count={data?.totalItems || 0}
+          rowsPerPage={rowsPerPage}
+          handleChangePage={(event, newPage) => setPage(newPage)}
+          handleChangeRowsPerPage={(event) => {
+            setRowsPerPage(parseInt(event.target.value, 10));
+            setPage(0);
+          }}
+          onEdit={handleOpenEditDialog}
+          onDelete={handleOpenDeleteDialog}
+        />
+      )}
       <CategoryDialogs
         openCreateDialog={openCreateDialog}
         openEditDialog={openEditDialog}

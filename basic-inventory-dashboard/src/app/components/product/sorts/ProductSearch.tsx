@@ -8,7 +8,7 @@ interface ProductSearchProps {
   handleSearch: () => void;
 }
 
-const CategorySearch: React.FC<ProductSearchProps> = ({
+const ProductSearch: React.FC<ProductSearchProps> = ({ // FIX: PRECISA ADD DEBOUNCE
   searchHandler,
   setSearchHandler,
   handleSearch,
@@ -16,7 +16,7 @@ const CategorySearch: React.FC<ProductSearchProps> = ({
   return (
     <Box display="flex" sx={{ gap: 2, alignItems: "center" }}>
       <TextField
-        label="Pesquisar Categoria"
+        label="Pesquisar Produto"
         variant="outlined"
         value={searchHandler}
         onChange={(e) => setSearchHandler(e.target.value)}
@@ -27,4 +27,4 @@ const CategorySearch: React.FC<ProductSearchProps> = ({
   );
 };
 
-export default CategorySearch;
+export default ProductSearch;

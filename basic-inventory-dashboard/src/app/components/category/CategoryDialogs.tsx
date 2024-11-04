@@ -1,4 +1,3 @@
-// components/CategoryDialogs.tsx
 import React from "react";
 import CategoryCreateDialog from "./dialogs/CategoryCreateDialog";
 import CategoryEditDialog from "./dialogs/CategoryEditDialog";

@@ -53,15 +53,6 @@ public class CategoryController {
         return ResponseEntity.ok(categoryDTO);
     }
 
-    // Listar todas categorias (id, nome)
-    @Operation(summary = "Listar categorias (id, nome)", description = "Retorna uma lista de categorias com id e nome.")
-    @ApiResponse(responseCode = "200", description = "Lista de categorias retornada com sucesso.")
-    @GetMapping("/names")
-    public ResponseEntity<CategoryListDTO> listAllCategories() {
-        CategoryListDTO categoryDTO = categoryService.getAllCategories();
-        return ResponseEntity.ok(categoryDTO);
-    }
-
     // Cadastrar nova categoria
     @Operation(summary = "Cadastrar nova categoria", description = "Cadastra uma nova categoria no sistema.")
     @ApiResponse(responseCode = "201", description = "Categoria criada com sucesso.")

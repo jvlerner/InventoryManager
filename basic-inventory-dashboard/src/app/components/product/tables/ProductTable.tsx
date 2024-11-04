@@ -11,26 +11,27 @@ import {
   TableRow,
   Paper,
   TablePagination,
-  Button,
 } from "@mui/material";
 import { Product } from "@/app/produtos/page";
+import DeleteButton from "../../commom/buttons/DeleteButton";
+import EditButton from "../../commom/buttons/EditButton";
 
 interface ProductTableProps {
   products: Product[];
   page: number;
+  count: number;
   rowsPerPage: number;
-  totalItems: number;
   handleChangePage: (event: unknown, newPage: number) => void;
   handleChangeRowsPerPage: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onEdit: (product: Product) => void;
-  onDelete: (product: Product) => void;
+  onEdit: (Product: Product) => void;
+  onDelete: (Product: Product) => void;
 }
 
 const ProductTable: React.FC<ProductTableProps> = ({
   products,
   page,
   rowsPerPage,
-  totalItems,
+  count,
   handleChangePage,
   handleChangeRowsPerPage,
   onEdit,
@@ -41,46 +42,44 @@ const ProductTable: React.FC<ProductTableProps> = ({
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>ID</TableCell>
-            <TableCell>Nome</TableCell>
-            <TableCell>Descrição</TableCell>
-            <TableCell>Preço</TableCell>
-            <TableCell>Quantidade</TableCell>
-            <TableCell>Categoria</TableCell>
-            <TableCell>Ações</TableCell>
+            <TableCell sx={{ fontWeight: 600 }}>ID</TableCell>
+            <TableCell sx={{ fontWeight: 600 }}>Nome</TableCell>
+            <TableCell sx={{ fontWeight: 600 }}>Descrição</TableCell>
+            <TableCell sx={{ fontWeight: 600 }}>Preço</TableCell>
+            <TableCell sx={{ fontWeight: 600 }}>Quantidade</TableCell>
+            <TableCell sx={{ fontWeight: 600 }}>Categoria</TableCell>
+            <TableCell sx={{ fontWeight: 600 }}>Ações</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {products
-            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-            .map((product) => (
-              <TableRow key={product.id}>
-                <TableCell style={{ width: "50px" }}>{product.id}</TableCell>
-                <TableCell style={{ width: "150px" }}>{product.name}</TableCell>
-                <TableCell style={{ width: "200px" }}>
-                  {product.description}
-                </TableCell>
-                <TableCell style={{ width: "100px" }}>
-                  {product.price?.toFixed(2)}
-                </TableCell>
-                <TableCell style={{ width: "90px" }}>
-                  {product.quantity}
-                </TableCell>
-                <TableCell style={{ width: "150px" }}>
-                  {product.category?.name}
-                </TableCell>
-                <TableCell style={{ width: "90px" }}>
-                  <Button onClick={() => onEdit(product)}>Editar</Button>
-                  <Button onClick={() => onDelete(product)}>Excluir</Button>
-                </TableCell>
-              </TableRow>
-            ))}
+          {products.map((product) => (
+            <TableRow key={product.id}>
+              <TableCell sx={{ minWidth: "50px" }}>{product.id}</TableCell>
+              <TableCell sx={{ minWidth: "250px" }}>{product.name}</TableCell>
+              <TableCell sx={{ minWidth: "350px" }}>
+                {product.description ? product.description : "Não possui"}
+              </TableCell>
+              <TableCell style={{ width: "100px" }}>
+                {product.price?.toFixed(2)}
+              </TableCell>
+              <TableCell style={{ width: "100px" }}>
+                {product.quantity}
+              </TableCell>
+              <TableCell style={{ width: "250px" }}>
+                {product.category?.name}
+              </TableCell>
+              <TableCell sx={{ minWidth: "264px" }}>
+                <EditButton onEdit={() => onEdit(product)} />
+                <DeleteButton onDelete={() => onDelete(product)} />
+              </TableCell>
+            </TableRow>
+          ))}
         </TableBody>
       </Table>
       <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
+        rowsPerPageOptions={[10, 25, 50, 100]}
         component="div"
-        count={totalItems}
+        count={count}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}

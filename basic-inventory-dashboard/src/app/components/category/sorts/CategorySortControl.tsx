@@ -5,7 +5,6 @@ import CategorySortFieldControl, {
   CategoryMenuItemProps,
 } from "./CategorySortFieldControl";
 import CategorySortDirectionControl from "./CategorySortDirectionControl";
-import CreateButton from "../../commom/buttons/CreateButton";
 
 interface CategorySortControlProps {
   sortField: CategoryApi["sortField"];
@@ -13,7 +12,6 @@ interface CategorySortControlProps {
   sortDirection: CategoryApi["sortDirection"];
   setSortDirection: (value: CategoryApi["sortDirection"]) => void;
   menuItems: CategoryMenuItemProps[];
-  handleOpenCreateDialog: () => void;
 }
 
 const CategorySortControl: React.FC<CategorySortControlProps> = ({
@@ -22,15 +20,9 @@ const CategorySortControl: React.FC<CategorySortControlProps> = ({
   sortDirection,
   setSortDirection,
   menuItems,
-  handleOpenCreateDialog,
 }) => {
   return (
     <Box display="flex" alignItems="center">
-      <CreateButton
-        handleOpenCreateDialog={handleOpenCreateDialog}
-        object="Categoria"
-      />
-
       <CategorySortFieldControl
         sortField={sortField}
         setSortField={setSortField}

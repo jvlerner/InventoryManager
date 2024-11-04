@@ -10,7 +10,7 @@ import {
   Button,
 } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
-import { Category, categoryMaxSizeCategory } from "@/app/categorias/page";
+import { Category, categoryMaxSize } from "@/app/categorias/page";
 
 interface CategoryCreateDialogProps {
   open: boolean;
@@ -37,7 +37,6 @@ const CategoryCreateDialog: React.FC<CategoryCreateDialogProps> = ({
 
   const onSubmit = (data: Category) => {
     onCreate(data);
-    onClose();
   };
 
   const handleClose = () => {
@@ -54,8 +53,8 @@ const CategoryCreateDialog: React.FC<CategoryCreateDialogProps> = ({
           control={control}
           rules={{
             maxLength: {
-              value: categoryMaxSizeCategory.name,
-              message: `Nome deve ter no máximo ${categoryMaxSizeCategory.name} caracteres`,
+              value: categoryMaxSize.name,
+              message: `Nome deve ter no máximo ${categoryMaxSize.name} caracteres`,
             },
             required: "Nome é obrigatório",
           }}
@@ -77,8 +76,8 @@ const CategoryCreateDialog: React.FC<CategoryCreateDialogProps> = ({
           control={control}
           rules={{
             maxLength: {
-              value: categoryMaxSizeCategory.description,
-              message: `Descrição deve ter no máximo ${categoryMaxSizeCategory.description} caracteres`,
+              value: categoryMaxSize.description,
+              message: `Descrição deve ter no máximo ${categoryMaxSize.description} caracteres`,
             },
           }}
           render={({ field }) => (
@@ -101,7 +100,11 @@ const CategoryCreateDialog: React.FC<CategoryCreateDialogProps> = ({
         <Button onClick={handleClose} color="primary">
           Cancelar
         </Button>
-        <Button onClick={handleSubmit(onSubmit)} color="primary">
+        <Button
+          onClick={handleSubmit(onSubmit)}
+          variant="contained"
+          color="primary"
+        >
           Cadastrar
         </Button>
       </DialogActions>

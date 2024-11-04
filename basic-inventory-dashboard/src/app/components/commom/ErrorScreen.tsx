@@ -12,7 +12,7 @@ const ErrorScreen: React.FC = () => {
       bgcolor="background.default"
       textAlign="center"
     >
-      <Typography variant="h1" color={"info"} marginTop={2}>
+      <Typography variant="h3" color="info" marginTop={2}>
         404 Error
       </Typography>
       <Typography variant="h4" color="white" marginTop={2}>
