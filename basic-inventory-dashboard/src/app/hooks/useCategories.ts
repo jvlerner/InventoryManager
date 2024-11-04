@@ -72,9 +72,6 @@ export const useCategories = ({
   searchQuery,
   sortField,
   sortDirection,
-  handleCloseCreateDialog,
-  handleCloseEditDialog,
-  handleCloseDeleteDialog,
   handleErrorDialog,
   handleSuccessDialog,
 }: UseCategoriesParams) => {
@@ -92,7 +89,6 @@ export const useCategories = ({
     mutationFn: createCategoryApi, // Passa a função da API
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["categories"] }); // Invalida a query de produtos
-      handleCloseCreateDialog();
       handleSuccessDialog("Categoria criada com sucesso.");
     },
     onError: (error: Error) => {
@@ -106,7 +102,6 @@ export const useCategories = ({
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["categories"] }); // Invalida a query de produtos
-      handleCloseEditDialog();
       handleSuccessDialog("Categoria editada com sucesso.");
     },
     onError: (error: Error) => {
@@ -121,7 +116,6 @@ export const useCategories = ({
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["categories"] }); // Invalida a query de produtos
-      handleCloseDeleteDialog();
       handleSuccessDialog("Categoria deletada com sucesso.");
     },
     onError: (error: Error) => {

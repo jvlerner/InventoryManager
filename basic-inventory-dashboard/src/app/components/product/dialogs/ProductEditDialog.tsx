@@ -52,7 +52,7 @@ const ProductEditDialog: React.FC<ProductEditDialogProps> = ({
     sortDirection,
   ];
 
-  const { data, error, isLoading } = useCategories({
+  const { data, isLoading } = useCategories({
     queryKey: queryKey,
     page: page,
     rowsPerPage: rowsPerPage,

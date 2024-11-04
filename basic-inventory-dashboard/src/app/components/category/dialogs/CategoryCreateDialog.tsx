@@ -8,9 +8,11 @@ import {
   DialogTitle,
   TextField,
   Button,
+  IconButton,
 } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 import { Category, categoryMaxSize } from "@/app/categorias/page";
+import CloseIcon from '@mui/icons-material/Close';
 
 interface CategoryCreateDialogProps {
   open: boolean;
@@ -47,7 +49,16 @@ const CategoryCreateDialog: React.FC<CategoryCreateDialogProps> = ({
 
   return (
     <Dialog open={open} onClose={handleClose}>
-      <DialogTitle>Cadastrar Categoria</DialogTitle>
+      <DialogTitle>
+        Cadastrar Categoria
+        <IconButton
+          aria-label="fechar"
+          onClick={handleClose}
+          style={{ position: "absolute", right: 8, top: 8 }}
+        >
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
       <DialogContent>
         <Controller
           name="name"

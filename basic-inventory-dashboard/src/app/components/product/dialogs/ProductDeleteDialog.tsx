@@ -20,6 +20,10 @@ const ProductDeleteDialog: React.FC<ProductDeleteDialogProps> = ({
   onClose,
   onDelete,
 }) => {
+  const handleOnDelete = () => {
+    onDelete();
+    onClose();
+  };
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>Confirmar Exclusão</DialogTitle>
@@ -30,7 +34,7 @@ const ProductDeleteDialog: React.FC<ProductDeleteDialogProps> = ({
         <Button onClick={onClose} color="primary">
           Cancelar
         </Button>
-        <Button onClick={onDelete} color="primary">
+        <Button onClick={handleOnDelete} color="primary">
           Excluir
         </Button>
       </DialogActions>
