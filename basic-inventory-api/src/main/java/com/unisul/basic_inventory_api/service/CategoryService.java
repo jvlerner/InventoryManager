@@ -16,14 +16,16 @@ import java.util.List;
 public class CategoryService {
     @Autowired
     private final CategoryRepository categoryRepository;
-    
+
     public CategoryService(CategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
     }
 
     // Metodo para listar categorias com paginação e busca
-    public CategoryListDTO getPaginatedCategories(int page, int rowsPerPage, String search, String sortField, String sortDirection) {
-        PageRequest pageable = PageRequest.of(page - 1, rowsPerPage, Sort.by(Sort.Direction.fromString(sortDirection), sortField));
+    public CategoryListDTO getPaginatedCategories(int page, int rowsPerPage, String search, String sortField,
+            String sortDirection) {
+        PageRequest pageable = PageRequest.of(page - 1, rowsPerPage,
+                Sort.by(Sort.Direction.fromString(sortDirection), sortField));
         List<Tuple> results = categoryRepository.findCategoriesAndCount(search, pageable);
 
         List<Category> categories = results.stream()
@@ -47,7 +49,7 @@ public class CategoryService {
     // Metodo para obter uma categoria específica
     public Category getCategoryById(int id) {
         return categoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Category not found" + id ));
+                .orElseThrow(() -> new RuntimeException("Category not found" + id));
     }
 
     // Metodo para atualizar uma categoria
@@ -69,7 +71,7 @@ public class CategoryService {
                     categoryRepository.save(category); // Salva a categoria atualizada
                     return true; // Retorna true se a operação for bem-sucedida
                 })
-                .orElseThrow(() -> new RuntimeException("Category not found " + id ));
+                .orElseThrow(() -> new RuntimeException("Category not found " + id));
     }
 
     // Metodo para verificar se uma categoria já existe

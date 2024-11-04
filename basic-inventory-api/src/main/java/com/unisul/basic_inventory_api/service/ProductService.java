@@ -23,8 +23,10 @@ public class ProductService {
     }
 
     // Metodo para listar produtos com paginacao e busca
-    public ProductListDTO getPaginatedProducts(int page, int rowsPerPage, String search, String sortField, String sortDirection) {
-        PageRequest pageable = PageRequest.of(page - 1, rowsPerPage, Sort.by(Sort.Direction.fromString(sortDirection), sortField));
+    public ProductListDTO getPaginatedProducts(int page, int rowsPerPage, String search, String sortField,
+            String sortDirection) {
+        PageRequest pageable = PageRequest.of(page - 1, rowsPerPage,
+                Sort.by(Sort.Direction.fromString(sortDirection), sortField));
         List<Tuple> results = productRepository.findProductsAndCount(search, pageable);
 
         List<Product> products = results.stream()
@@ -37,8 +39,10 @@ public class ProductService {
     }
 
     // Metodo para listar produtos com baixo estoque com paginacao e busca
-    public ProductListDTO getPaginatedProductsLowStock(int page, int rowsPerPage, String search, int quantity, String sortField, String sortDirection) {
-        PageRequest pageable = PageRequest.of(page - 1, rowsPerPage, Sort.by(Sort.Direction.fromString(sortDirection), sortField));
+    public ProductListDTO getPaginatedProductsLowStock(int page, int rowsPerPage, String search, int quantity,
+            String sortField, String sortDirection) {
+        PageRequest pageable = PageRequest.of(page - 1, rowsPerPage,
+                Sort.by(Sort.Direction.fromString(sortDirection), sortField));
         List<Tuple> results = productRepository.findProductsWithCategoriesLowStock(search, quantity, pageable);
 
         List<Product> products = results.stream()

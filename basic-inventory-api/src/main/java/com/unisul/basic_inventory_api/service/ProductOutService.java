@@ -18,15 +18,17 @@ public class ProductOutService {
     @Autowired
     private final ProductOutRepository productOutRepository;
     private final ProductService productService;
-    
+
     public ProductOutService(ProductOutRepository productOutRepository, ProductService productService) {
         this.productOutRepository = productOutRepository;
         this.productService = productService;
     }
 
     // Method to list products with pagination and search
-    public ProductOutListDTO getPaginatedProductsOut(int page, int rowsPerPage, String search, String sortField, String sortDirection) {
-        PageRequest pageable = PageRequest.of(page - 1, rowsPerPage, Sort.by(Sort.Direction.fromString(sortDirection), sortField));
+    public ProductOutListDTO getPaginatedProductsOut(int page, int rowsPerPage, String search, String sortField,
+            String sortDirection) {
+        PageRequest pageable = PageRequest.of(page - 1, rowsPerPage,
+                Sort.by(Sort.Direction.fromString(sortDirection), sortField));
         List<Tuple> results = productOutRepository.findProductsOutAndCount(search, pageable);
 
         List<ProductOut> productsOut = results.stream()
@@ -67,7 +69,6 @@ public class ProductOutService {
         }).orElseThrow(() -> new RuntimeException("Product out not found " + id));
     }
 
-
     // Method to get a specific product out
     public Optional<ProductOut> getProductOutById(int id) {
         return productOutRepository.findById(id);
@@ -79,7 +80,14 @@ public class ProductOutService {
         return productOutRepository.findById(id)
                 .map(productOut -> {
                     productOut.setDeleted(true);
-                    productOutRepository.save(productOut);
+                    int productId = productOut.getProduct().getId();
+                    int quantityChange = productOut.getProduct().getQuantity() + productOut.getQuantity();
+                    try {
+                        productService.updateProductQuantity(productId, quantityChange);
+                        productOutRepository.save(productOut);
+                    } catch (IllegalArgumentException e) {
+                        throw new RuntimeException("Insufficient stock " + productId);
+                    }
                     return true;
                 })
                 .orElseThrow(() -> new RuntimeException("Product out not found " + id));

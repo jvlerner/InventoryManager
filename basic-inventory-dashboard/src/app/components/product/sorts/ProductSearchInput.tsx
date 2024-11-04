@@ -13,7 +13,7 @@ const ProductSearchInput: React.FC<ProductSearchInputProps> = ({
   return (
     <Box display="flex" sx={{ gap: 2, alignItems: "center" }}>
       <TextField
-        label="Pesquisar Produto"
+        label="Pesquisar Nome Produto"
         variant="outlined"
         value={searchQueryHandler}
         onChange={(e) => setSearchQueryHandler(e.target.value)}

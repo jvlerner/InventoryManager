@@ -26,8 +26,10 @@ public class ProductInService {
     }
 
     // Metodo para listar produtos com paginação e busca
-    public ProductInListDTO getPaginatedProductsIn(int page, int rowsPerPage, String search, String sortField, String sortDirection) {
-        PageRequest pageable = PageRequest.of(page - 1, rowsPerPage, Sort.by(Sort.Direction.fromString(sortDirection), sortField));
+    public ProductInListDTO getPaginatedProductsIn(int page, int rowsPerPage, String search, String sortField,
+            String sortDirection) {
+        PageRequest pageable = PageRequest.of(page - 1, rowsPerPage,
+                Sort.by(Sort.Direction.fromString(sortDirection), sortField));
         List<Tuple> results = productInRepository.findProductsInAndCount(search, pageable);
 
         List<ProductIn> productsIn = results.stream()
@@ -81,7 +83,14 @@ public class ProductInService {
         return productInRepository.findById(id)
                 .map(productIn -> {
                     productIn.setDeleted(true);
-                    productInRepository.save(productIn);
+                    int productId = productIn.getProduct().getId();
+                    int quantityChange = productIn.getProduct().getQuantity() - productIn.getQuantity();
+                    try {
+                        productService.updateProductQuantity(productId, quantityChange);
+                        productInRepository.save(productIn);
+                    } catch (IllegalArgumentException e) {
+                        throw new RuntimeException("Insufficient stock " + productId);
+                    }
                     return true;
                 })
                 .orElseThrow(() -> new RuntimeException("Product In not found " + id));

@@ -13,7 +13,7 @@ const CategorySearchInput: React.FC<CategorySearchInputProps> = ({
   return (
     <Box display="flex" sx={{ gap: 2, alignItems: "center" }}>
       <TextField
-        label="Pesquisar Categoria"
+        label="Pesquisar Nome Categoria"
         variant="outlined"
         value={searchQueryHandler}
         onChange={(e) => setSearchQueryHandler(e.target.value)}
