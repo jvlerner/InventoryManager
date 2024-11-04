@@ -17,11 +17,8 @@ export interface UseCategoriesParams {
   searchQuery: string;
   sortField: string;
   sortDirection: string;
-  handleCloseCreateDialog: () => void;
-  handleCloseEditDialog: () => void;
-  handleCloseDeleteDialog: () => void;
-  handleErrorDialog: (message: string) => void;
-  handleSuccessDialog: (message: string) => void;
+  handleErrorDialog?: (message: string) => void;
+  handleSuccessDialog?: (message: string) => void;
 }
 
 const fetchCategories = async (
@@ -78,7 +75,7 @@ export const useCategories = ({
   const queryClient = useQueryClient();
 
   const { data, error, isLoading } = useQuery<CategoriesResponse, Error>({
-    queryKey: [...queryKey], // Adiciona searchQuery à chave da query
+    queryKey: [...queryKey],
     queryFn: async () =>
       fetchCategories(page, rowsPerPage, searchQuery, sortField, sortDirection),
     staleTime: 60 * 1000, // cache
@@ -89,11 +86,15 @@ export const useCategories = ({
     mutationFn: createCategoryApi, // Passa a função da API
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["categories"] }); // Invalida a query de produtos
-      handleSuccessDialog("Categoria criada com sucesso.");
+      if (handleSuccessDialog) {
+        handleSuccessDialog("Categoria criada com sucesso.");
+      }
     },
     onError: (error: Error) => {
       console.log("Error creating category:", error);
-      handleErrorDialog("Não foi possível criar categoria: " + error.message);
+      if (handleErrorDialog) {
+        handleErrorDialog("Não foi possível criar categoria: " + error.message);
+      }
     },
   });
   // Mutação para editar um produto existente
@@ -102,11 +103,17 @@ export const useCategories = ({
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["categories"] }); // Invalida a query de produtos
-      handleSuccessDialog("Categoria editada com sucesso.");
+      if (handleSuccessDialog) {
+        handleSuccessDialog("Categoria editada com sucesso.");
+      }
     },
     onError: (error: Error) => {
       console.log("Error editing category:", error);
-      handleErrorDialog("Não foi possível editar a categoria:" + error.message);
+      if (handleErrorDialog) {
+        handleErrorDialog(
+          "Não foi possível editar a categoria:" + error.message
+        );
+      }
     },
   });
 
@@ -116,13 +123,17 @@ export const useCategories = ({
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["categories"] }); // Invalida a query de produtos
-      handleSuccessDialog("Categoria deletada com sucesso.");
+      if (handleSuccessDialog) {
+        handleSuccessDialog("Categoria deletada com sucesso.");
+      }
     },
     onError: (error: Error) => {
       console.log("Error deleting category:", error);
-      handleErrorDialog(
-        "Não foi possível deletar a categoria: " + error.message
-      );
+      if (handleErrorDialog) {
+        handleErrorDialog(
+          "Não foi possível deletar a categoria: " + error.message
+        );
+      }
     },
   });
 

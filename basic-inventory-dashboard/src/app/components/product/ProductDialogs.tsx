@@ -2,8 +2,8 @@
 import React from "react";
 import ProductCreateDialog from "./dialogs/ProductCreateDialog";
 import ProductEditDialog from "./dialogs/ProductEditDialog";
-import ProductDeleteDialog from "./dialogs/ProductDeleteDialog";
 import { Product } from "@/app/produtos/page";
+import DeleteDialog from "../commom/dialogs/DeleteDialog";
 
 interface ProductDialogsProps {
   openCreateDialog: boolean;
@@ -43,10 +43,11 @@ const ProductDialogs: React.FC<ProductDialogsProps> = ({
         product={selectedProduct!}
         onEdit={handleEditProduct}
       />
-      <ProductDeleteDialog
+      <DeleteDialog
         open={openDeleteDialog}
         onClose={handleCloseDeleteDialog}
         onDelete={handleDeleteProduct}
+        text="este produto"
       />
     </>
   );

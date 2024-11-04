@@ -57,7 +57,7 @@ const ProductTable: React.FC<ProductTableProps> = ({
               <TableCell sx={{ minWidth: "50px" }}>{product.id}</TableCell>
               <TableCell sx={{ minWidth: "250px" }}>{product.name}</TableCell>
               <TableCell sx={{ minWidth: "350px" }}>
-                {product.description ? product.description : "Não possui"}
+                {product.description ? product.description : "Não possui."}
               </TableCell>
               <TableCell style={{ width: "100px" }}>
                 {product.price?.toFixed(2)}

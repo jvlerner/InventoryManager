@@ -10,11 +10,13 @@ import {
   Button,
   FormControl,
   Autocomplete,
+  IconButton,
 } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 import { Product, productMaxSize } from "@/app/produtos/page";
-import { Category, CategoryApi, categoryMaxSize } from "@/app/categorias/page";
+import { CategoryApi, categoryMaxSize } from "@/app/categorias/page";
 import { useCategories } from "@/app/hooks/useCategories";
+import CloseIcon from "@mui/icons-material/Close";
 
 interface ProductCreateDialogProps {
   open: boolean;
@@ -26,7 +28,7 @@ interface FormData {
   name: Product["name"];
   description: Product["description"];
   price: Product["price"];
-  category: Category;
+  category: number | null;
 }
 
 const ProductCreateDialog: React.FC<ProductCreateDialogProps> = ({
@@ -35,7 +37,7 @@ const ProductCreateDialog: React.FC<ProductCreateDialogProps> = ({
   onCreate,
 }) => {
   const page = 0;
-  const rowsPerPage = 20;
+  const rowsPerPage = 25;
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [searchQueryHandler, setSearchQueryHandler] = useState<string>("");
   const sortField: CategoryApi["sortField"] = "name";
@@ -69,12 +71,15 @@ const ProductCreateDialog: React.FC<ProductCreateDialogProps> = ({
       name: "",
       description: "",
       price: undefined,
-      category: undefined,
+      category: null,
     },
   });
 
   const handleInputChange = (value: string) => {
     setSearchQueryHandler(value);
+    if (value.trim() === "") {
+      setSearchQuery("");
+    }
     if (debounceRef.current) {
       clearTimeout(debounceRef.current);
     }
@@ -84,18 +89,18 @@ const ProductCreateDialog: React.FC<ProductCreateDialogProps> = ({
   };
 
   const onSubmit = (formData: FormData) => {
-    if (formData.category.id === null || formData.category.id === undefined) {
-      console.error("Categoria não selecionada");
+    if (formData.category === null) {
+      console.error("Categoria não selecionada"); // ADD handleErrorDialog
       return; // Previne tentar criar um produto sem categoria selecionada
     }
 
     const newProduct: Product = {
       ...formData,
-      category: { id: parseFloat(formData.category.id.toString()) }, // Garantindo que é um número
+      category: { id: formData.category },
     };
 
     onCreate(newProduct);
-    handleClose();
+    reset();
   };
 
   const handleClose = () => {
@@ -105,7 +110,16 @@ const ProductCreateDialog: React.FC<ProductCreateDialogProps> = ({
 
   return (
     <Dialog open={open} onClose={handleClose}>
-      <DialogTitle>Cadastrar Produto</DialogTitle>
+      <DialogTitle>
+        Cadastrar Produto
+        <IconButton
+          aria-label="fechar"
+          onClick={handleClose}
+          style={{ position: "absolute", right: 8, top: 8 }}
+        >
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
       <DialogContent>
         <Controller
           name="name"
@@ -200,13 +214,12 @@ const ProductCreateDialog: React.FC<ProductCreateDialogProps> = ({
               error={!!errors.category}
             >
               <Autocomplete
-                {...field}
                 options={data?.categories || []}
                 getOptionLabel={(option) => option.name || ""}
                 onChange={(event, newValue) => {
                   field.onChange(newValue ? newValue.id : null);
                 }}
-                inputValue={searchQuery} // Manage the input value here
+                inputValue={searchQueryHandler}
                 onInputChange={(event, newInputValue) => {
                   handleInputChange(newInputValue);
                 }}
@@ -221,11 +234,6 @@ const ProductCreateDialog: React.FC<ProductCreateDialogProps> = ({
                 )}
                 loading={isLoading}
                 noOptionsText="Nenhuma categoria encontrada."
-                renderOption={(props, option) => (
-                  <li {...props} key={option.id}>
-                    {option.name}
-                  </li>
-                )}
               />
             </FormControl>
           )}

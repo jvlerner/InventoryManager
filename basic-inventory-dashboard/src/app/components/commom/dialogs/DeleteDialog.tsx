@@ -9,18 +9,20 @@ import {
   Button,
   IconButton,
 } from "@mui/material";
-import CloseIcon from '@mui/icons-material/Close';
+import CloseIcon from "@mui/icons-material/Close";
 
-interface CategoryDeleteDialogProps {
+interface DeleteDialogProps {
   open: boolean;
   onClose: () => void;
   onDelete: () => void;
+  text: string;
 }
 
-const CategoryDeleteDialog: React.FC<CategoryDeleteDialogProps> = ({
+const DeleteDialog: React.FC<DeleteDialogProps> = ({
   open,
   onClose,
   onDelete,
+  text,
 }) => {
   const handleOnDelete = () => {
     onDelete();
@@ -38,9 +40,7 @@ const CategoryDeleteDialog: React.FC<CategoryDeleteDialogProps> = ({
           <CloseIcon />
         </IconButton>
       </DialogTitle>
-      <DialogContent>
-        Tem certeza que deseja excluir esta categoria?
-      </DialogContent>
+      <DialogContent>Tem certeza que deseja excluir {text}?</DialogContent>
       <DialogActions>
         <Button onClick={onClose} color="primary">
           Cancelar
@@ -53,4 +53,4 @@ const CategoryDeleteDialog: React.FC<CategoryDeleteDialogProps> = ({
   );
 };
 
-export default CategoryDeleteDialog;
+export default DeleteDialog;

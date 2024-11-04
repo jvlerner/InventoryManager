@@ -53,7 +53,7 @@ const CategoryTable: React.FC<CategoryTableProps> = ({
               <TableCell sx={{ minWidth: "50px" }}>{category.id}</TableCell>
               <TableCell sx={{ minWidth: "250px" }}>{category.name}</TableCell>
               <TableCell sx={{ minWidth: "350px" }}>
-                {category.description}
+                {category.description ? category.description : "Não possui."}
               </TableCell>
               <TableCell sx={{ minWidth: "264px" }}>
                 <EditButton onEdit={() => onEdit(category)} />

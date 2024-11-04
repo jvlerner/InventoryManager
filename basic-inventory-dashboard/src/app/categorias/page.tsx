@@ -33,7 +33,7 @@ export interface CategoryApi {
   page: number;
   rowsPerPage: number;
   searchQuery: string;
-  sortField: "id" | "name" | "description";
+  sortField: "id" | "name";
   sortDirection: "asc" | "desc";
 }
 
@@ -97,9 +97,6 @@ const CategoryPage: React.FC = () => {
     searchQuery: searchQuery,
     sortField: sortField,
     sortDirection: sortDirection,
-    handleCloseCreateDialog: () => handleCloseCreateDialog,
-    handleCloseEditDialog: () => handleCloseEditDialog,
-    handleCloseDeleteDialog: () => handleCloseDeleteDialog,
     handleErrorDialog: (message: string) => handleOpenErrorDialog(message),
     handleSuccessDialog: (message: string) => handleOpenSuccessDialog(message),
   });
@@ -163,7 +160,6 @@ const CategoryPage: React.FC = () => {
     <div>
       <CategoryPageHeader handleOpenCreateDialog={handleOpenCreateDialog} />
       <CategoryTableHeader
-        handleOpenCreateDialog={handleOpenCreateDialog}
         searchQueryHandler={searchQueryHandler}
         setSearchQueryHandler={handleInputChange}
         setSortDirection={setSortDirection}

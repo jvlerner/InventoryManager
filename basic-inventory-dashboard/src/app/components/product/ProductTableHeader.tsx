@@ -2,7 +2,7 @@
 import React from "react";
 import { Box } from "@mui/material";
 import ProductSortControl from "./sorts/ProductSortControl";
-import ProductSearch from "./sorts/ProductSearch";
+import ProductSearchInput from "./sorts/ProductSearchInput";
 import { ProductApi } from "@/app/produtos/page";
 import { ProductMenuItemProps } from "./sorts/ProductSortFieldControl";
 
@@ -11,10 +11,8 @@ interface ProductHeaderProps {
   setSortField: (value: ProductApi["sortField"]) => void;
   sortDirection: ProductApi["sortDirection"];
   setSortDirection: (value: ProductApi["sortDirection"]) => void;
-  searchHandler: string;
-  setSearchHandler: (value: string) => void;
-  handleSearch: () => void;
-  handleOpenCreateDialog: () => void;
+  searchQueryHandler: string;
+  setSearchQueryHandler: (value: string) => void;
   sortFieldItems: ProductMenuItemProps[];
 }
 
@@ -23,10 +21,8 @@ const ProductHeader: React.FC<ProductHeaderProps> = ({
   setSortField,
   sortDirection,
   setSortDirection,
-  searchHandler,
-  setSearchHandler,
-  handleSearch,
-  handleOpenCreateDialog,
+  searchQueryHandler,
+  setSearchQueryHandler,
   sortFieldItems,
 }) => {
   return (
@@ -45,12 +41,10 @@ const ProductHeader: React.FC<ProductHeaderProps> = ({
         sortDirection={sortDirection}
         sortField={sortField}
         menuItems={sortFieldItems}
-        handleOpenCreateDialog={handleOpenCreateDialog}
       />
-      <ProductSearch
-        handleSearch={handleSearch}
-        searchHandler={searchHandler}
-        setSearchHandler={setSearchHandler}
+      <ProductSearchInput
+        searchQueryHandler={searchQueryHandler}
+        setSearchQueryHandler={setSearchQueryHandler}
       />
     </Box>
   );

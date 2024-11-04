@@ -9,9 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.Arrays;
-import java.util.List;
 
 @RestController
 @RequestMapping("/products")
@@ -34,21 +32,24 @@ public class ProductController {
             @RequestParam(defaultValue = "id") String sortField,
             @RequestParam(defaultValue = "asc") String sortDirection) {
 
-        if (page < 1 || rowsPerPage < 5) {
+        if (page < 1) {
             return ResponseEntity.badRequest().build();
         }
 
-        // Validate sort direction
-        if (!sortDirection.equalsIgnoreCase("asc") && !sortDirection.equalsIgnoreCase("desc")) {
+        if (5 > rowsPerPage || rowsPerPage > 100) {
             return ResponseEntity.badRequest().build();
         }
 
-        List<String> validSortFields = Arrays.asList("id", "name", "price");
-        if (!validSortFields.contains(sortField)) {
+        if (!Arrays.asList("name", "id", "price", "quantity").contains(sortField.toLowerCase())) {
+            return ResponseEntity.badRequest().build();
+        }
+        if (!Arrays.asList("asc", "desc").contains(sortDirection.toLowerCase())) {
             return ResponseEntity.badRequest().build();
         }
 
-        ProductListDTO productList = productService.getPaginatedProducts(page, rowsPerPage, search, sortField, sortDirection);
+        ProductListDTO productList = productService.getPaginatedProducts(page, rowsPerPage, search.toLowerCase(),
+                sortField.toLowerCase(),
+                sortDirection.toLowerCase());
         return ResponseEntity.ok(productList);
     }
 
@@ -85,7 +86,8 @@ public class ProductController {
     public ResponseEntity<Product> updateProduct(@PathVariable int id, @RequestBody Product product) {
         return productService.updateProduct(id, product)
                 .map(ResponseEntity::ok) // Retorna produto atualizado
-                .orElse(ResponseEntity.notFound().build()); // Retorna 404 se não encontrado); // Retorna produto atualizado
+                .orElse(ResponseEntity.notFound().build()); // Retorna 404 se não encontrado); // Retorna produto
+                                                            // atualizado
     }
 
     // Deletar produto (exclusão lógica)

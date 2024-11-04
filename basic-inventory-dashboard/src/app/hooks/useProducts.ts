@@ -17,9 +17,8 @@ export interface UseProductsParams {
   searchQuery: string;
   sortField: string;
   sortDirection: string;
-  handleCloseCreateDialog?: () => void;
-  handleCloseEditDialog?: () => void;
-  handleCloseDeleteDialog?: () => void;
+  handleErrorDialog?: (message: string) => void;
+  handleSuccessDialog?: (message: string) => void;
 }
 
 const fetchProducts = async (
@@ -70,14 +69,13 @@ export const useProducts = ({
   searchQuery,
   sortField,
   sortDirection,
-  handleCloseCreateDialog,
-  handleCloseEditDialog,
-  handleCloseDeleteDialog,
+  handleErrorDialog,
+  handleSuccessDialog,
 }: UseProductsParams) => {
   const queryClient = useQueryClient();
 
   const { data, error, isLoading } = useQuery<ProductsResponse, Error>({
-    queryKey,
+    queryKey: [...queryKey],
     queryFn: () =>
       fetchProducts(page, rowsPerPage, searchQuery, sortField, sortDirection),
     staleTime: 60 * 1000, //cache
@@ -88,10 +86,15 @@ export const useProducts = ({
     mutationFn: createProductApi, // Passa a função da API
     onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ["products"] }); // Invalida a query de produtos
-      (handleCloseCreateDialog || (() => {}))();  // Fecha o diálogo após a criação
+      if (handleSuccessDialog) {
+        handleSuccessDialog("Produto criado com sucesso.");
+      }
     },
     onError: (error: Error) => {
-      console.error("Error creating product:", error);
+      console.log("Error creating product:", error);
+      if (handleErrorDialog) {
+        handleErrorDialog("Não foi possível criar produto: " + error.message);
+      }
     },
   });
   // Mutação para editar um produto existente
@@ -100,10 +103,15 @@ export const useProducts = ({
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey }); // Invalida a query de produtos
-      (handleCloseEditDialog || (() => {}))(); // Fecha o diálogo de edição
+      if (handleSuccessDialog) {
+        handleSuccessDialog("Produto editado com sucesso.");
+      }
     },
     onError: (error: Error) => {
-      console.error("Error editing product:", error);
+      console.log("Error editing product:", error);
+      if (handleErrorDialog) {
+        handleErrorDialog("Não foi possível editar o produto:" + error.message);
+      }
     },
   });
 
@@ -113,10 +121,17 @@ export const useProducts = ({
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey }); // Invalida a query de produtos
-      (handleCloseDeleteDialog || (() => {}))(); // Fecha o diálogo de exclusão
+      if (handleSuccessDialog) {
+        handleSuccessDialog("Produto deletado com sucesso.");
+      }
     },
     onError: (error: Error) => {
-      console.error("Error deleting product:", error);
+      console.log("Error deleting product:", error);
+      if (handleErrorDialog) {
+        handleErrorDialog(
+          "Não foi possível deletar a categoria: " + error.message
+        );
+      }
     },
   });
 

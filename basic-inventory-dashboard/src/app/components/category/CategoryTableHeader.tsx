@@ -12,7 +12,6 @@ interface CategoryTableHeaderProps {
   setSortDirection: (value: CategoryApi["sortDirection"]) => void;
   searchQueryHandler: string;
   setSearchQueryHandler: (value: string) => void;
-  handleOpenCreateDialog: () => void;
   sortFieldItems: CategoryMenuItemProps[];
 }
 
