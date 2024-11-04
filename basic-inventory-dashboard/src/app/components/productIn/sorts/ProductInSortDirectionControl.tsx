@@ -6,20 +6,20 @@ import {
   MenuItem,
   SelectChangeEvent,
 } from "@mui/material";
-import { CategoryApi } from "@/app/categorias/page";
+import { ProductInApi } from "@/app/entradas/page";
 
-interface CategorySortDirectionControlProps {
-  sortDirection: CategoryApi["sortDirection"];
-  setSortDirection: (value: CategoryApi["sortDirection"]) => void;
+interface ProductInSortDirectionControlProps {
+  sortDirection: ProductInApi["sortDirection"];
+  setSortDirection: (value: ProductInApi["sortDirection"]) => void;
 }
 
-const CategorySortDirectionControl: React.FC<
-  CategorySortDirectionControlProps
+const ProductInSortDirectionControl: React.FC<
+  ProductInSortDirectionControlProps
 > = ({ sortDirection, setSortDirection }) => {
   const handleChange = (
-    event: SelectChangeEvent<CategoryApi["sortDirection"]>
+    event: SelectChangeEvent<ProductInApi["sortDirection"]>
   ) => {
-    const newDirection = event.target.value as CategoryApi["sortDirection"];
+    const newDirection = event.target.value as ProductInApi["sortDirection"];
     setSortDirection(newDirection);
   };
 
@@ -42,4 +42,4 @@ const CategorySortDirectionControl: React.FC<
   );
 };
 
-export default CategorySortDirectionControl;
+export default ProductInSortDirectionControl;

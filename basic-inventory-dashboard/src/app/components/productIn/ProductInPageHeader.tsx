@@ -1,13 +1,13 @@
 import React from "react";
 import { Box, Typography } from "@mui/material";
 import CreateButton from "../commom/buttons/CreateButton";
-import InventoryIcon from "@mui/icons-material/Inventory";
+import CallReceivedIcon from "@mui/icons-material/CallReceived";
 
-interface ProductPageHeaderProps {
+interface ProductInPageHeaderProps {
   handleOpenCreateDialog: () => void;
 }
 
-const ProductPageHeader: React.FC<ProductPageHeaderProps> = ({
+const ProductInPageHeader: React.FC<ProductInPageHeaderProps> = ({
   handleOpenCreateDialog,
 }) => {
   return (
@@ -21,7 +21,7 @@ const ProductPageHeader: React.FC<ProductPageHeaderProps> = ({
       }}
     >
       <Typography variant="h4">
-        Produtos <InventoryIcon />
+        Entradas <CallReceivedIcon />
       </Typography>
       <CreateButton
         handleOpenCreateDialog={handleOpenCreateDialog}
@@ -30,4 +30,4 @@ const ProductPageHeader: React.FC<ProductPageHeaderProps> = ({
   );
 };
 
-export default ProductPageHeader;
+export default ProductInPageHeader;

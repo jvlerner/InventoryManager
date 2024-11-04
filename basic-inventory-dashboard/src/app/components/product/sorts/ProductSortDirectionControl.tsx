@@ -26,7 +26,7 @@ const ProductSortDirectionControl: React.FC<
   return (
     <FormControl
       variant="outlined"
-      style={{ margin: "8px", width: "15%", minWidth: "150px" }}
+      style={{ margin: "8px", minWidth: "150px" }}
     >
       <InputLabel id="sort-direction-label">Direção</InputLabel>
       <Select

@@ -13,25 +13,23 @@ import {
   IconButton,
 } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
-import { Product, productMaxSize } from "@/app/produtos/page";
-import { CategoryApi, categoryMaxSize } from "@/app/categorias/page";
-import { useCategories } from "@/app/hooks/useCategories";
+import { ProductIn, productInMaxSize } from "@/app/entradas/page";
+import { useProducts } from "@/app/hooks/useProducts";
 import CloseIcon from "@mui/icons-material/Close";
+import { productMaxSize } from "@/app/produtos/page";
 
-interface ProductCreateDialogProps {
+interface ProductInCreateDialogProps {
   open: boolean;
   onClose: () => void;
-  onCreate: (newProduct: Product) => void;
+  onCreate: (newProductIn: ProductIn) => void;
 }
 
 interface FormData {
-  name: Product["name"];
-  description: Product["description"];
-  price: Product["price"];
-  category: number | null;
+  quantity: ProductIn["quantity"];
+  product: number | null;
 }
 
-const ProductCreateDialog: React.FC<ProductCreateDialogProps> = ({
+const ProductInCreateDialog: React.FC<ProductInCreateDialogProps> = ({
   open,
   onClose,
   onCreate,
@@ -48,13 +46,13 @@ const ProductCreateDialog: React.FC<ProductCreateDialogProps> = ({
     "asc",
   ];
 
-  const { data, isLoading } = useCategories({
+  const { data, isLoading } = useProducts({
     queryKey: queryKey,
     page: 0,
     rowsPerPage: 25,
     searchQuery: searchQuery,
-    sortField: "name",
     sortDirection: "asc",
+    sortField: "name",
   });
 
   const {
@@ -64,10 +62,8 @@ const ProductCreateDialog: React.FC<ProductCreateDialogProps> = ({
     formState: { errors },
   } = useForm<FormData>({
     defaultValues: {
-      name: "",
-      description: "",
-      price: undefined,
-      category: null,
+      quantity: 0,
+      product: null,
     },
   });
 
@@ -85,17 +81,17 @@ const ProductCreateDialog: React.FC<ProductCreateDialogProps> = ({
   };
 
   const onSubmit = (formData: FormData) => {
-    if (formData.category === null) {
-      console.error("Categoria não selecionada"); // ADD handleErrorDialog
-      return; // Previne tentar criar um produto sem categoria selecionada
+    if (formData.product === null) {
+      console.error("Produto não selecionado");
+      return; // Previne tentar criar uma entrada sem produto selecionado
     }
 
-    const newProduct: Product = {
+    const newProductIn: ProductIn = {
       ...formData,
-      category: { id: formData.category },
+      product: { id: formData.product },
     };
 
-    onCreate(newProduct);
+    onCreate(newProductIn);
     reset();
   };
 
@@ -107,7 +103,7 @@ const ProductCreateDialog: React.FC<ProductCreateDialogProps> = ({
   return (
     <Dialog open={open} onClose={handleClose}>
       <DialogTitle>
-        Cadastrar Produto
+        Registrar Entrada de Produto
         <IconButton
           aria-label="fechar"
           onClick={handleClose}
@@ -118,99 +114,49 @@ const ProductCreateDialog: React.FC<ProductCreateDialogProps> = ({
       </DialogTitle>
       <DialogContent>
         <Controller
-          name="name"
+          name="quantity"
           control={control}
           rules={{
-            maxLength: {
-              value: productMaxSize.name,
-              message: `Nome deve ter no máximo ${productMaxSize.name} caracteres`,
-            },
-            required: "Nome é obrigatório",
-          }}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              margin="dense"
-              label="Nome*"
-              type="text"
-              fullWidth
-              variant="outlined"
-              error={!!errors.name}
-              helperText={errors.name ? errors.name.message : ""}
-            />
-          )}
-        />
-        <Controller
-          name="description"
-          control={control}
-          rules={{
-            maxLength: {
-              value: productMaxSize.description,
-              message: `Descrição deve ter no máximo ${productMaxSize.description} caracteres`,
+            required: "Quantidade é obrigatória",
+            min: { value: 1, message: "Quantidade deve ser maior que zero" },
+            max: {
+              value: productInMaxSize.quantity,
+              message:
+                `Quantidade deve ser menor que ${productInMaxSize.quantity}`,
             },
           }}
           render={({ field }) => (
             <TextField
               {...field}
               margin="dense"
-              label="Descrição"
-              type="text"
-              fullWidth
-              variant="outlined"
-              multiline
-              rows={4}
-              error={!!errors.description}
-              helperText={errors.description ? errors.description.message : ""}
-            />
-          )}
-        />
-        <Controller
-          name="price"
-          control={control}
-          rules={{
-            required: "Preço é obrigatório",
-            validate: (value) => {
-              if (value === undefined) {
-                return "Preço é obrigatório";
-              }
-              return (
-                (0 < value && value < productMaxSize.price) ||
-                `Preço deve ser maior que zero e menor que ${productMaxSize.price}`
-              );
-            },
-          }}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              margin="dense"
-              label="Preço*"
+              label="Quantidade*"
               type="number"
               fullWidth
               variant="outlined"
-              error={!!errors.price}
-              helperText={errors.price?.message}
+              error={!!errors.quantity}
+              helperText={errors.quantity ? errors.quantity.message : ""}
             />
           )}
         />
         <Controller
-          name="category"
+          name="product"
           control={control}
           rules={{
+            required: "Produto é obrigatório",
             maxLength: {
-              value: categoryMaxSize.name,
-              message: `No máximo ${categoryMaxSize.name} caracteres`,
+              value: productMaxSize.name,
+              message: `Produto tem máximo ${productMaxSize.name} caracteres`,
             },
-            required: "Categoria é obrigatória",
           }}
           render={({ field }) => (
             <FormControl
               fullWidth
               variant="outlined"
               margin="dense"
-              error={!!errors.category}
+              error={!!errors.product}
             >
               <Autocomplete
-                options={data?.categories || []}
+                options={data?.products || []}
                 getOptionLabel={(option) => option.name || ""}
                 onChange={(event, newValue) => {
                   field.onChange(newValue ? newValue.id : null);
@@ -222,14 +168,14 @@ const ProductCreateDialog: React.FC<ProductCreateDialogProps> = ({
                 renderInput={(params) => (
                   <TextField
                     {...params}
-                    label="Categoria*"
+                    label="Produto*"
                     variant="outlined"
-                    error={!!errors.category}
-                    helperText={errors.category ? errors.category.message : ""}
+                    error={!!errors.product}
+                    helperText={errors.product ? errors.product.message : ""}
                   />
                 )}
                 loading={isLoading}
-                noOptionsText="Nenhuma categoria encontrada."
+                noOptionsText="Nenhum produto encontrado."
               />
             </FormControl>
           )}
@@ -244,11 +190,11 @@ const ProductCreateDialog: React.FC<ProductCreateDialogProps> = ({
           variant="contained"
           color="primary"
         >
-          Cadastrar
+          Registrar
         </Button>
       </DialogActions>
     </Dialog>
   );
 };
 
-export default ProductCreateDialog;
+export default ProductInCreateDialog;

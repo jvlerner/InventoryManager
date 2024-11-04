@@ -32,7 +32,7 @@ const CategorySortFieldControl: React.FC<CategorySortFieldControlProps> = ({
   return (
     <FormControl
       variant="outlined"
-      style={{ margin: "8px", width: "10%", minWidth: "90px" }}
+      style={{ margin: "8px", minWidth: "80px" }}
     >
       <InputLabel id="sort-field-label">Ordenar</InputLabel>
       <Select

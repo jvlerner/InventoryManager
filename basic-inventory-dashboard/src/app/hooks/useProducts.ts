@@ -129,7 +129,7 @@ export const useProducts = ({
       console.log("Error deleting product:", error);
       if (handleErrorDialog) {
         handleErrorDialog(
-          "Não foi possível deletar a categoria: " + error.message
+          "Não foi possível deletar o produto: " + error.message
         );
       }
     },

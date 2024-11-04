@@ -6,34 +6,33 @@ import {
   MenuItem,
   SelectChangeEvent,
 } from "@mui/material";
-import { ProductApi } from "@/app/produtos/page";
+import { ProductInApi } from "@/app/entradas/page";
 
-export interface ProductMenuItemProps {
+export interface ProductInMenuItemProps {
   value: string;
   label: string;
 }
 
-interface ProductSortFieldControlProps {
-  sortField: ProductApi["sortField"];
-  setSortField: (value: ProductApi["sortField"]) => void;
-  menuItems: ProductMenuItemProps[];
+interface ProductInSortFieldControlProps {
+  sortField: ProductInApi["sortField"];
+  setSortField: (value: ProductInApi["sortField"]) => void;
+  menuItems: ProductInMenuItemProps[];
 }
 
-const ProductSortFieldControl: React.FC<ProductSortFieldControlProps> = ({
+const ProductInSortFieldControl: React.FC<ProductInSortFieldControlProps> = ({
   sortField,
   setSortField,
   menuItems,
 }) => {
-  const handleChange = (event: SelectChangeEvent<ProductApi["sortField"]>) => {
-    const newField = event.target.value as ProductApi["sortField"];
+  const handleChange = (
+    event: SelectChangeEvent<ProductInApi["sortField"]>
+  ) => {
+    const newField = event.target.value as ProductInApi["sortField"];
     setSortField(newField);
   };
 
   return (
-    <FormControl
-      variant="outlined"
-      style={{ margin: "8px", minWidth: "140px" }}
-    >
+    <FormControl variant="outlined" style={{ margin: "8px", minWidth: "90px" }}>
       <InputLabel id="sort-field-label">Ordenar</InputLabel>
       <Select
         labelId="sort-field-label"
@@ -51,4 +50,4 @@ const ProductSortFieldControl: React.FC<ProductSortFieldControlProps> = ({
   );
 };
 
-export default ProductSortFieldControl;
+export default ProductInSortFieldControl;

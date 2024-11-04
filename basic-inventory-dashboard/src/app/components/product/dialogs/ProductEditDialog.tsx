@@ -36,29 +36,25 @@ const ProductEditDialog: React.FC<ProductEditDialogProps> = ({
   product,
   onEdit,
 }) => {
-  const page = 0;
-  const rowsPerPage = 20;
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [searchQueryHandler, setSearchQueryHandler] = useState<string>("");
-  const sortField: CategoryApi["sortField"] = "name";
-  const sortDirection: CategoryApi["sortDirection"] = "asc";
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const queryKey: [string, number, number, string, string, string] = [
     "categories",
-    page,
-    rowsPerPage,
+    0,
+    25,
     searchQuery,
-    sortField,
-    sortDirection,
+    "name",
+    "asc",
   ];
 
   const { data, isLoading } = useCategories({
     queryKey: queryKey,
-    page: page,
-    rowsPerPage: rowsPerPage,
+    page: 0,
+    rowsPerPage: 25,
     searchQuery: searchQuery,
-    sortField: sortField,
-    sortDirection: sortDirection,
+    sortField: "name",
+    sortDirection: "asc",
   });
 
   const {
