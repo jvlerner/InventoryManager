@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 import { Product, productMaxSize } from "@/app/produtos/page";
-import { Category, CategoryApi } from "@/app/categorias/page";
+import { Category } from "@/app/categorias/page";
 import { useCategories } from "@/app/hooks/useCategories";
 
 interface ProductEditDialogProps {
@@ -208,7 +208,7 @@ const ProductEditDialog: React.FC<ProductEditDialogProps> = ({
                   options={data?.categories || []}
                   getOptionLabel={(option) => option.name || ""}
                   onChange={(event, newValue) => {
-                    field.onChange(newValue); // Directly set category object
+                    field.onChange(newValue);
                   }}
                   inputValue={searchQueryHandler}
                   onInputChange={(event, newInputValue) => {

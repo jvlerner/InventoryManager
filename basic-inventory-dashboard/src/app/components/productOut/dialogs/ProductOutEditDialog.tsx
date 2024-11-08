@@ -11,25 +11,25 @@ import {
   FormControl,
 } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
-import { ProductIn, productInMaxSize } from "@/app/entradas/page";
+import { ProductOut, productOutMaxSize } from "@/app/saidas/page";
 import { Product } from "@/app/produtos/page";
 
-interface ProductInEditDialogProps {
+interface ProductOutEditDialogProps {
   open: boolean;
   onClose: () => void;
-  productIn: ProductIn; // Entrada de produto a ser editada
-  onEdit: (editedProductIn: ProductIn) => void; // Callback para salvar a entrada editada
+  productOut: ProductOut; // Entrada de produto a ser editada
+  onEdit: (editedProductOut: ProductOut) => void; // Callback para salvar a entrada editada
 }
 
 interface FormData {
-  quantity: ProductIn["quantity"];
+  quantity: ProductOut["quantity"];
   product: Product;
 }
 
-const ProductInEditDialog: React.FC<ProductInEditDialogProps> = ({
+const ProductOutEditDialog: React.FC<ProductOutEditDialogProps> = ({
   open,
   onClose,
-  productIn,
+  productOut,
   onEdit,
 }) => {
   const {
@@ -40,13 +40,13 @@ const ProductInEditDialog: React.FC<ProductInEditDialogProps> = ({
   } = useForm<FormData>();
 
   useEffect(() => {
-    if (productIn) {
+    if (productOut) {
       reset({
-        quantity: productIn.quantity, // Passando a quantidade do productIn
-        product: productIn.product, // Passando o objeto do produto
+        quantity: productOut.quantity, // Passando a quantidade do ProductOut
+        product: productOut.product, // Passando o objeto do produto
       });
     }
-  }, [productIn, reset]);
+  }, [productOut, reset]);
 
   const onSubmit = (formData: FormData) => {
     if (formData.product === null) {
@@ -54,13 +54,13 @@ const ProductInEditDialog: React.FC<ProductInEditDialogProps> = ({
       return; // Previne tentar editar uma entrada sem produto selecionado
     }
 
-    const editedProductIn: ProductIn = {
-      ...productIn, // Preserva os outros dados
+    const editedProductOut: ProductOut = {
+      ...productOut, // Preserva os outros dados
       quantity: formData.quantity,
       product: { id: formData.product.id }, // Atualiza o produto
     };
 
-    onEdit(editedProductIn); // Passa a entrada editada para o pai
+    onEdit(editedProductOut); // Passa a entrada editada para o pai
     handleClose(); // Fecha o diálogo
   };
 
@@ -81,8 +81,8 @@ const ProductInEditDialog: React.FC<ProductInEditDialogProps> = ({
               required: "Quantidade é obrigatória",
               min: { value: 1, message: "Quantidade deve ser maior que zero" },
               max: {
-                value: productInMaxSize.quantity,
-                message: `Quantidade deve ser menor que ${productInMaxSize.quantity}`,
+                value: productOutMaxSize.quantity,
+                message: `Quantidade deve ser menor que ${productOutMaxSize.quantity}`,
               },
             }}
             render={({ field }) => (
@@ -131,4 +131,4 @@ const ProductInEditDialog: React.FC<ProductInEditDialogProps> = ({
   );
 };
 
-export default ProductInEditDialog;
+export default ProductOutEditDialog;

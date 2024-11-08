@@ -13,23 +13,23 @@ import {
   IconButton,
 } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
-import { ProductIn, productInMaxSize } from "@/app/entradas/page";
+import { ProductOut, productOutMaxSize } from "@/app/saidas/page";
 import { useProducts } from "@/app/hooks/useProducts";
 import CloseIcon from "@mui/icons-material/Close";
 import { productMaxSize } from "@/app/produtos/page";
 
-interface ProductInCreateDialogProps {
+interface ProductOutCreateDialogProps {
   open: boolean;
   onClose: () => void;
-  onCreate: (newProductIn: ProductIn) => void;
+  onCreate: (newProductOut: ProductOut) => void;
 }
 
 interface FormData {
-  quantity: ProductIn["quantity"];
+  quantity: ProductOut["quantity"];
   product: number | null;
 }
 
-const ProductInCreateDialog: React.FC<ProductInCreateDialogProps> = ({
+const ProductOutCreateDialog: React.FC<ProductOutCreateDialogProps> = ({
   open,
   onClose,
   onCreate,
@@ -86,12 +86,12 @@ const ProductInCreateDialog: React.FC<ProductInCreateDialogProps> = ({
       return; // Previne tentar criar uma entrada sem produto selecionado
     }
 
-    const newProductIn: ProductIn = {
+    const newProductOut: ProductOut = {
       ...formData,
       product: { id: formData.product },
     };
 
-    onCreate(newProductIn);
+    onCreate(newProductOut);
     handleClose();
   };
 
@@ -120,8 +120,8 @@ const ProductInCreateDialog: React.FC<ProductInCreateDialogProps> = ({
             required: "Quantidade é obrigatória",
             min: { value: 1, message: "Quantidade deve ser maior que zero" },
             max: {
-              value: productInMaxSize.quantity,
-              message: `Quantidade deve ser menor que ${productInMaxSize.quantity}`,
+              value: productOutMaxSize.quantity,
+              message: `Quantidade deve ser menor que ${productOutMaxSize.quantity}`,
             },
           }}
           render={({ field }) => (
@@ -196,4 +196,4 @@ const ProductInCreateDialog: React.FC<ProductInCreateDialogProps> = ({
   );
 };
 
-export default ProductInCreateDialog;
+export default ProductOutCreateDialog;

@@ -182,7 +182,9 @@ const ProductInPage: React.FC = () => {
         sortFieldItems={productInSortFieldItems}
       />
       {isLoading && <LoadingScreen />}
-      {error && <ErrorScreen message="Não foi possível carregar os produtos" />}
+      {error && (
+        <ErrorScreen message="Não foi possível carregar as entradas dos produtos" />
+      )}
       {data && (
         <ProductInTable
           productsIn={data?.products || []}

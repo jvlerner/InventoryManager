@@ -84,7 +84,7 @@ public class ProductInService {
                 .map(productIn -> {
                     productIn.setDeleted(true);
                     int productId = productIn.getProduct().getId();
-                    int quantityChange = productIn.getProduct().getQuantity() - productIn.getQuantity();
+                    int quantityChange = -productIn.getQuantity();
                     try {
                         productService.updateProductQuantity(productId, quantityChange);
                         productInRepository.save(productIn);

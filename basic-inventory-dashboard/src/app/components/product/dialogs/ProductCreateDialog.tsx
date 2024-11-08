@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 import { Product, productMaxSize } from "@/app/produtos/page";
-import { CategoryApi, categoryMaxSize } from "@/app/categorias/page";
+import { categoryMaxSize } from "@/app/categorias/page";
 import { useCategories } from "@/app/hooks/useCategories";
 import CloseIcon from "@mui/icons-material/Close";
 
@@ -96,11 +96,12 @@ const ProductCreateDialog: React.FC<ProductCreateDialogProps> = ({
     };
 
     onCreate(newProduct);
-    reset();
+    handleClose();
   };
 
   const handleClose = () => {
-    reset(); // Reseta os campos do formulário
+    // Resetando o formulário e limpando o campo de pesquisa
+    reset({ name: "", description: "", price: undefined, category: null });
     onClose();
   };
 

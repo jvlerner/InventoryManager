@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 import { Category, categoryMaxSize } from "@/app/categorias/page";
-import CloseIcon from '@mui/icons-material/Close';
+import CloseIcon from "@mui/icons-material/Close";
 
 interface CategoryCreateDialogProps {
   open: boolean;
@@ -39,7 +39,7 @@ const CategoryCreateDialog: React.FC<CategoryCreateDialogProps> = ({
 
   const onSubmit = (data: Category) => {
     onCreate(data);
-    reset();
+    handleClose();
   };
 
   const handleClose = () => {
