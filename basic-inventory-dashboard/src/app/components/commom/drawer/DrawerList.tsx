@@ -23,7 +23,7 @@ const buttons = [
   { text: "Produtos", icon: <InventoryIcon />, url: "/produtos" },
   { text: "Entradas", icon: <CallReceivedIcon />, url: "/entradas" },
   { text: "Saídas", icon: <CallMadeIcon />, url: "/saidas" },
-  { text: "Relatório", icon: <AssessmentIcon />, url: "/relatorios" },
+  { text: "Relatórios", icon: <AssessmentIcon />, url: "/relatorios" },
 ];
 
 export default function DrawerConfigList({ open }: DrawerConfigListProps) {

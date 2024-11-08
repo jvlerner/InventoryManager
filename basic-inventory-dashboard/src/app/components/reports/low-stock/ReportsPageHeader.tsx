@@ -1,8 +1,8 @@
 import React from "react";
 import { Box, Typography } from "@mui/material";
-import AssessmentIcon from "@mui/icons-material/Assessment";
+import TrendingDownIcon from "@mui/icons-material/TrendingDown";
 
-const ReportsPageHeader: React.FC = () => {
+const ReportsLowStockPageHeader: React.FC = () => {
   return (
     <Box
       sx={{
@@ -14,10 +14,10 @@ const ReportsPageHeader: React.FC = () => {
       }}
     >
       <Typography variant="h4">
-        Relatórios <AssessmentIcon />
+        Relatório Baixo Estoque <TrendingDownIcon />
       </Typography>
     </Box>
   );
 };
 
-export default ReportsPageHeader;
+export default ReportsLowStockPageHeader;

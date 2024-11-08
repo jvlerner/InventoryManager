@@ -10,6 +10,7 @@ import {
   CardActionArea,
 } from "@mui/material";
 import WarningIcon from "@mui/icons-material/Warning"; // Ícone de aviso
+import ReportsPageHeader from "../components/reports/ReportsPageHeader";
 
 // Definindo os relatórios
 const reports = [
@@ -24,9 +25,7 @@ const reports = [
 const ReportsPage: React.FC = () => {
   return (
     <Box sx={{ padding: 4 }}>
-      <Typography variant="h4" gutterBottom align="left">
-        Relatórios
-      </Typography>
+      <ReportsPageHeader />
       <Box
         sx={{
           display: "flex",
