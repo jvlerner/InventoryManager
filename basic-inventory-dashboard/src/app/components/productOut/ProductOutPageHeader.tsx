@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Typography } from "@mui/material";
 import CreateButton from "../commom/buttons/CreateButton";
-import CallReceivedIcon from "@mui/icons-material/CallReceived";
+import CallMadeIcon from '@mui/icons-material/CallMade';
 
 interface ProductOutPageHeaderProps {
   handleOpenCreateDialog: () => void;
@@ -21,7 +21,7 @@ const ProductOutPageHeader: React.FC<ProductOutPageHeaderProps> = ({
       }}
     >
       <Typography variant="h4">
-        Entradas <CallReceivedIcon />
+        Saídas <CallMadeIcon />
       </Typography>
       <CreateButton
         handleOpenCreateDialog={handleOpenCreateDialog}

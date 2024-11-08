@@ -82,14 +82,16 @@ export const useProductsIn = ({
     queryKey: [...queryKey],
     queryFn: () =>
       fetchProductsIn(page, rowsPerPage, searchQuery, sortField, sortDirection),
-    staleTime: 60 * 1000, //cache
+    staleTime: 2 * 60 * 1000, //cache
   });
 
   // Mutação para criar um produto
   const createProductIn = useMutation<ProductIn, Error, ProductIn>({
     mutationFn: createProductInApi, // Passa a função da API
     onSuccess: async () => {
-      queryClient.invalidateQueries({ queryKey: ["productsIn"] }); // Invalida a query de produtos
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({ queryKey: ["productsIn"] });
+      queryClient.invalidateQueries({ queryKey: ["productsOut"] });
       if (handleSuccessDialog) {
         handleSuccessDialog("Entrada de produto criado com sucesso.");
       }
@@ -108,7 +110,9 @@ export const useProductsIn = ({
     mutationFn: editProductInApi, // Passa a função da API diretamente
 
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey }); // Invalida a query de produtos
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({ queryKey: ["productsIn"] });
+      queryClient.invalidateQueries({ queryKey: ["productsOut"] });
       if (handleSuccessDialog) {
         handleSuccessDialog("Entrada do produto editada com sucesso.");
       }
@@ -128,7 +132,9 @@ export const useProductsIn = ({
     mutationFn: deleteProductInApi, // Passa a função da API diretamente
 
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey }); // Invalida a query de produtos
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({ queryKey: ["productsIn"] });
+      queryClient.invalidateQueries({ queryKey: ["productsOut"] });
       if (handleSuccessDialog) {
         handleSuccessDialog("Entrada de produto deletada com sucesso.");
       }

@@ -17,7 +17,7 @@ import DeleteButton from "../../commom/buttons/DeleteButton";
 import EditButton from "../../commom/buttons/EditButton";
 
 interface ProductOutTableProps {
-  productsIn: ProductOut[];
+  productsOut: ProductOut[];
   page: number;
   count: number;
   rowsPerPage: number;
@@ -28,7 +28,7 @@ interface ProductOutTableProps {
 }
 
 const ProductOutTable: React.FC<ProductOutTableProps> = ({
-  productsIn,
+  productsOut,
   page,
   rowsPerPage,
   count,
@@ -43,40 +43,37 @@ const ProductOutTable: React.FC<ProductOutTableProps> = ({
         <TableHead>
           <TableRow>
             <TableCell sx={{ fontWeight: 600 }}>ID</TableCell>
-            <TableCell sx={{ fontWeight: 600 }}>Quantidade</TableCell>
             <TableCell sx={{ fontWeight: 600 }}>Data Saida</TableCell>
             <TableCell sx={{ fontWeight: 600 }}>Nome</TableCell>
+            <TableCell sx={{ fontWeight: 600 }}>Quantidade</TableCell>
             <TableCell sx={{ fontWeight: 600 }}>Categoria</TableCell>
             <TableCell sx={{ fontWeight: 600 }}>Total</TableCell>
             <TableCell sx={{ fontWeight: 600, right: 1 }}>Ações</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {productsIn.map((productOut) => (
+          {productsOut.map((productOut) => (
             <TableRow key={productOut.id}>
               <TableCell sx={{ minWidth: "50px" }}>{productOut.id}</TableCell>
-              <TableCell sx={{ minWidth: "70px" }}>
-                {productOut.quantity}
-              </TableCell>
               <TableCell sx={{ minWidth: "80px" }}>
                 {(() => {
-                  if (!productOut.entryDate) {
+                  if (!productOut.exitDate) {
                     return "Data não disponível"; // Mensagem de fallback se a data não estiver definida
                   }
 
-                  const entryDate = new Date(productOut.entryDate);
-                  if (isNaN(entryDate.getTime())) {
+                  const exitDate = new Date(productOut.exitDate);
+                  if (isNaN(exitDate.getTime())) {
                     return "Data inválida"; // Caso a data não seja válida
                   }
 
                   return (
                     <>
-                      {entryDate.toLocaleDateString("pt-BR", {
+                      {exitDate.toLocaleDateString("pt-BR", {
                         day: "2-digit",
                         month: "2-digit",
                         year: "numeric",
                       })}{" "}
-                      {entryDate.toLocaleTimeString("pt-BR", {
+                      {exitDate.toLocaleTimeString("pt-BR", {
                         hour: "2-digit",
                         minute: "2-digit",
                         hour12: false, // Formato de 24 horas
@@ -86,13 +83,16 @@ const ProductOutTable: React.FC<ProductOutTableProps> = ({
                 })()}
               </TableCell>
 
-              <TableCell style={{ width: "250px" }}>
+              <TableCell style={{ width: "350px" }}>
                 {productOut.product.name}
               </TableCell>
-              <TableCell style={{ width: "250px" }}>
+              <TableCell sx={{ minWidth: "150px" }}>
+                {productOut.quantity}
+              </TableCell>
+              <TableCell style={{ width: "350px" }}>
                 {productOut.product.category?.name}
               </TableCell>
-              <TableCell style={{ width: "100px" }}>
+              <TableCell style={{ width: "250px" }}>
                 {productOut.product?.quantity}
               </TableCell>
               <TableCell sx={{ minWidth: "264px" }}>

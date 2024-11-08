@@ -4,13 +4,13 @@ import api from "@/app/config/api";
 import { ProductOut } from "../saidas/page";
 
 // Definindo a interface para a resposta da API
-export interface ProductsInResponse {
+export interface ProductsOutResponse {
   totalItems: number;
   products: ProductOut[];
 }
 
 // Definindo a interface para os parâmetros do hook
-export interface UseProductsInParams {
+export interface UseProductsOutParams {
   queryKey: [string, number, number, string, string, string];
   page: number;
   rowsPerPage: number;
@@ -21,15 +21,15 @@ export interface UseProductsInParams {
   handleSuccessDialog?: (message: string) => void;
 }
 
-const fetchProductsIn = async (
+const fetchProductsOut = async (
   page: number,
   rowsPerPage: number,
   searchQuery: string,
   sortField: string,
   sortDirection: string
-): Promise<ProductsInResponse> => {
+): Promise<ProductsOutResponse> => {
   page = page + 1;
-  const response = await api.get(`/products-in`, {
+  const response = await api.get(`/products-out`, {
     params: {
       page,
       rowsPerPage,
@@ -45,7 +45,7 @@ const fetchProductsIn = async (
 const createProductOutApi = async (
   newProductOut: ProductOut
 ): Promise<ProductOut> => {
-  const response = await api.post<ProductOut>("/products-in", newProductOut);
+  const response = await api.post<ProductOut>("/products-out", newProductOut);
   return response.data; // Retorna o produto criado
 };
 
@@ -75,30 +75,38 @@ export const useProductsOut = ({
   sortDirection,
   handleErrorDialog,
   handleSuccessDialog,
-}: UseProductsInParams) => {
+}: UseProductsOutParams) => {
   const queryClient = useQueryClient();
 
-  const { data, error, isLoading } = useQuery<ProductsInResponse, Error>({
+  const { data, error, isLoading } = useQuery<ProductsOutResponse, Error>({
     queryKey: [...queryKey],
     queryFn: () =>
-      fetchProductsIn(page, rowsPerPage, searchQuery, sortField, sortDirection),
-    staleTime: 60 * 1000, //cache
+      fetchProductsOut(
+        page,
+        rowsPerPage,
+        searchQuery,
+        sortField,
+        sortDirection
+      ),
+    staleTime: 2 * 60 * 1000, //cache
   });
 
   // Mutação para criar um produto
   const createProductOut = useMutation<ProductOut, Error, ProductOut>({
     mutationFn: createProductOutApi, // Passa a função da API
     onSuccess: async () => {
-      queryClient.invalidateQueries({ queryKey: ["productsIn"] }); // Invalida a query de produtos
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({ queryKey: ["productsIn"] });
+      queryClient.invalidateQueries({ queryKey: ["productsOut"] });
       if (handleSuccessDialog) {
-        handleSuccessDialog("Entrada de produto criado com sucesso.");
+        handleSuccessDialog("Saída de produto criado com sucesso.");
       }
     },
     onError: (error: Error) => {
       console.log("Error creating product in:", error);
       if (handleErrorDialog) {
         handleErrorDialog(
-          "Não foi possível criar entrada para o produto: " + error.message
+          "Não foi possível criar saída para o produto: " + error.message
         );
       }
     },
@@ -108,16 +116,18 @@ export const useProductsOut = ({
     mutationFn: editProductOutApi, // Passa a função da API diretamente
 
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey }); // Invalida a query de produtos
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({ queryKey: ["productsIn"] });
+      queryClient.invalidateQueries({ queryKey: ["productsOut"] });
       if (handleSuccessDialog) {
-        handleSuccessDialog("Entrada do produto editada com sucesso.");
+        handleSuccessDialog("Saída do produto editada com sucesso.");
       }
     },
     onError: (error: Error) => {
-      console.log("Error editing product in:", error);
+      console.log("Error editing product out:", error);
       if (handleErrorDialog) {
         handleErrorDialog(
-          "Não foi possível editar a entrada do produto:" + error.message
+          "Não foi possível editar a saída do produto:" + error.message
         );
       }
     },
@@ -128,16 +138,18 @@ export const useProductsOut = ({
     mutationFn: deleteProductOutApi, // Passa a função da API diretamente
 
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey }); // Invalida a query de produtos
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({ queryKey: ["productsIn"] });
+      queryClient.invalidateQueries({ queryKey: ["productsOut"] });
       if (handleSuccessDialog) {
-        handleSuccessDialog("Entrada de produto deletada com sucesso.");
+        handleSuccessDialog("Saída de produto deletada com sucesso.");
       }
     },
     onError: (error: Error) => {
-      console.log("Error deleting  in:", error);
+      console.log("Error deleting product out:", error);
       if (handleErrorDialog) {
         handleErrorDialog(
-          "Não foi possível deletar a a entrada de produto: " + error.message
+          "Não foi possível deletar a a saída de produto: " + error.message
         );
       }
     },

@@ -43,9 +43,9 @@ const ProductInTable: React.FC<ProductInTableProps> = ({
         <TableHead>
           <TableRow>
             <TableCell sx={{ fontWeight: 600 }}>ID</TableCell>
-            <TableCell sx={{ fontWeight: 600 }}>Quantidade</TableCell>
             <TableCell sx={{ fontWeight: 600 }}>Data Entrada</TableCell>
             <TableCell sx={{ fontWeight: 600 }}>Nome</TableCell>
+            <TableCell sx={{ fontWeight: 600 }}>Quantidade</TableCell>
             <TableCell sx={{ fontWeight: 600 }}>Categoria</TableCell>
             <TableCell sx={{ fontWeight: 600 }}>Total</TableCell>
             <TableCell sx={{ fontWeight: 600, right: 1 }}>Ações</TableCell>
@@ -55,9 +55,6 @@ const ProductInTable: React.FC<ProductInTableProps> = ({
           {productsIn.map((productIn) => (
             <TableRow key={productIn.id}>
               <TableCell sx={{ minWidth: "50px" }}>{productIn.id}</TableCell>
-              <TableCell sx={{ minWidth: "70px" }}>
-                {productIn.quantity}
-              </TableCell>
               <TableCell sx={{ minWidth: "80px" }}>
                 {(() => {
                   if (!productIn.entryDate) {
@@ -86,13 +83,16 @@ const ProductInTable: React.FC<ProductInTableProps> = ({
                 })()}
               </TableCell>
 
-              <TableCell style={{ width: "250px" }}>
+              <TableCell style={{ width: "350px" }}>
                 {productIn.product.name}
               </TableCell>
-              <TableCell style={{ width: "250px" }}>
+              <TableCell sx={{ minWidth: "150px" }}>
+                {productIn.quantity}
+              </TableCell>
+              <TableCell style={{ width: "350px" }}>
                 {productIn.product.category?.name}
               </TableCell>
-              <TableCell style={{ width: "100px" }}>
+              <TableCell style={{ width: "250px" }}>
                 {productIn.product?.quantity}
               </TableCell>
               <TableCell sx={{ minWidth: "264px" }}>

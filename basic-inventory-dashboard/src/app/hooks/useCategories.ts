@@ -78,7 +78,7 @@ export const useCategories = ({
     queryKey: [...queryKey],
     queryFn: async () =>
       fetchCategories(page, rowsPerPage, searchQuery, sortField, sortDirection),
-    staleTime: 60 * 1000, // cache
+    staleTime: 2 * 60 * 1000, // cache
   });
 
   // Mutação para criar um produto
@@ -101,8 +101,11 @@ export const useCategories = ({
   const editCategory = useMutation<Category, Error, Category>({
     mutationFn: editCategoryApi, // Passa a função da API diretamente
 
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["categories"] }); // Invalida a query de produtos
+    onSuccess: () => {  // Invalida a query
+      queryClient.invalidateQueries({ queryKey: ["categories"] });
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({ queryKey: ["productsIn"] });
+      queryClient.invalidateQueries({ queryKey: ["productsOut"] });
       if (handleSuccessDialog) {
         handleSuccessDialog("Categoria editada com sucesso.");
       }
@@ -122,7 +125,10 @@ export const useCategories = ({
     mutationFn: deleteCategoryApi, // Passa a função da API diretamente
 
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["categories"] }); // Invalida a query de produtos
+      queryClient.invalidateQueries({ queryKey: ["categories"] });
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({ queryKey: ["productsIn"] });
+      queryClient.invalidateQueries({ queryKey: ["productsOut"] });
       if (handleSuccessDialog) {
         handleSuccessDialog("Categoria deletada com sucesso.");
       }

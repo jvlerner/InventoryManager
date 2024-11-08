@@ -87,7 +87,7 @@ const ProductOutPage: React.FC = () => {
   const handleCloseCreateDialog = () => setOpenCreateDialog(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const queryKey: [string, number, number, string, string, string] = [
-    "productsIn",
+    "productsOut",
     page,
     rowsPerPage,
     searchQuery,
@@ -186,7 +186,7 @@ const ProductOutPage: React.FC = () => {
       )}
       {data && (
         <ProductOutTable
-          productsIn={data?.products || []}
+          productsOut={data?.products || []}
           page={page}
           count={data?.totalItems || 0}
           rowsPerPage={rowsPerPage}
