@@ -1,5 +1,5 @@
 # Usar uma imagem base com Node.js
-FROM node:16 AS builder
+FROM node:22-bullseye AS builder
 
 WORKDIR /app
 
@@ -11,7 +11,7 @@ COPY . .
 
 RUN npm run build
 
-FROM node:16
+FROM node:22-bullseye
 
 WORKDIR /app
 

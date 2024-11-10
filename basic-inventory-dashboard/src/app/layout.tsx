@@ -1,7 +1,7 @@
-import "@/app/styles/globals.css";
-import ContextProviders from "@/app/context";
-import CustomDrawer from "@/app/components/commom/drawer/Drawer";
-import QueryProvider from "./components/commom/QueryProvider";
+import "@/styles/globals.css";
+import ContextProviders from "@/context";
+import CustomDrawer from "@/components/commom/drawer/Drawer";
+import QueryProvider from "@/components/commom/QueryProvider";
 import { CssBaseline } from "@mui/material";
 
 export default function RootLayout({

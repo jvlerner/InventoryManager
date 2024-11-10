@@ -10,7 +10,7 @@ import {
   CardActionArea,
 } from "@mui/material";
 import WarningIcon from "@mui/icons-material/Warning"; // Ícone de aviso
-import ReportsPageHeader from "../components/reports/ReportsPageHeader";
+import ReportsPageHeader from "@/components/reports/ReportsPageHeader";
 
 // Definindo os relatórios
 const reports = [

@@ -1,14 +1,15 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-import LoadingScreen from "@/app/components/commom/screens/LoadingScreen";
-import ErrorScreen from "@/app/components/commom/screens/ErrorScreen";
-import ProductInTableHeader from "../components/productIn/ProductInTableHeader";
-import ProductInTable from "@/app/components/productIn/tables/ProductInTable";
-import ProductInDialogs from "../components/productIn/ProductInDialogs";
-import { useProductsIn } from "../hooks/useProductsIn";
-import ProductInPageHeader from "../components/productIn/ProductInPageHeader";
-import AlertDialog from "../components/commom/dialogs/AlertDialog";
+import LoadingScreen from "@/components/commom/screens/LoadingScreen";
+import ErrorScreen from "@/components/commom/screens/ErrorScreen";
+import ProductInTableHeader from "@/components/productIn/ProductInTableHeader";
+import ProductInTable from "@/components/productIn/tables/ProductInTable";
+import ProductInDialogs from "@/components/productIn/ProductInDialogs";
+import { useProductsIn } from "@/hooks/useProductsIn";
+import ProductInPageHeader from "@/components/productIn/ProductInPageHeader";
+import AlertDialog from "@/components/commom/dialogs/AlertDialog";
+import { productInSortFieldItems } from "@/config/sortFields";
 
 export interface ProductIn {
   id?: number;
@@ -31,17 +32,6 @@ export interface ProductIn {
     available?: boolean;
   };
 }
-
-export const productInMaxSize: {
-  quantity: number;
-} = {
-  quantity: 1000000,
-};
-
-const productInSortFieldItems = [
-  { value: "id", label: "ID" },
-  { value: "quantity", label: "Quantidade" },
-];
 
 export interface ProductInApi {
   page: number;

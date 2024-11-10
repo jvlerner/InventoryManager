@@ -1,16 +1,17 @@
 "use client";
 
-import LoadingScreen from "@/app/components/commom/screens/LoadingScreen";
-import ErrorScreen from "@/app/components/commom/screens/ErrorScreen";
+import LoadingScreen from "@/components/commom/screens/LoadingScreen";
+import ErrorScreen from "@/components/commom/screens/ErrorScreen";
 
 import React, { useRef, useState } from "react";
-import { useCategories } from "../hooks/useCategories";
+import { useCategories } from "@/hooks/useCategories";
 
-import CategoryTable from "@/app/components/category/tables/CategoryTable";
-import CategoryDialogs from "../components/category/CategoryDialogs";
-import CategoryTableHeader from "../components/category/CategoryTableHeader";
-import CategoryPageHeader from "../components/category/CategoryPageHeader";
-import AlertDialog from "../components/commom/dialogs/AlertDialog";
+import CategoryTable from "@/components/category/tables/CategoryTable";
+import CategoryDialogs from "@/components/category/CategoryDialogs";
+import CategoryTableHeader from "@/components/category/CategoryTableHeader";
+import CategoryPageHeader from "@/components/category/CategoryPageHeader";
+import AlertDialog from "@/components/commom/dialogs/AlertDialog";
+import { categorySortFieldItems } from "@/config/sortFields";
 
 export interface Category {
   id?: number;
@@ -18,16 +19,6 @@ export interface Category {
   name?: string | null;
   description?: string | null;
 }
-
-export const categoryMaxSize: { name: number; description: number } = {
-  name: 50,
-  description: 100,
-};
-
-const categorySortFieldItems = [
-  { value: "id", label: "ID" },
-  { value: "name", label: "Nome" },
-];
 
 export interface CategoryApi {
   page: number;

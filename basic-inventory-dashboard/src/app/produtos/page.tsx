@@ -1,14 +1,15 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-import LoadingScreen from "@/app/components/commom/screens/LoadingScreen";
-import ErrorScreen from "@/app/components/commom/screens/ErrorScreen";
-import ProductTableHeader from "../components/product/ProductTableHeader";
-import ProductTable from "@/app/components/product/tables/ProductTable";
-import ProductDialogs from "../components/product/ProductDialogs";
-import { useProducts } from "../hooks/useProducts";
-import ProductPageHeader from "../components/product/ProductPageHeader";
-import AlertDialog from "../components/commom/dialogs/AlertDialog";
+import LoadingScreen from "@/components/commom/screens/LoadingScreen";
+import ErrorScreen from "@/components/commom/screens/ErrorScreen";
+import ProductTableHeader from "@/components/product/ProductTableHeader";
+import ProductTable from "@/components/product/tables/ProductTable";
+import ProductDialogs from "@/components/product/ProductDialogs";
+import { useProducts } from "@/hooks/useProducts";
+import ProductPageHeader from "@/components/product/ProductPageHeader";
+import AlertDialog from "@/components/commom/dialogs/AlertDialog";
+import { productSortFieldItems } from "@/config/sortFields";
 
 export interface Product {
   id?: number;
@@ -25,23 +26,6 @@ export interface Product {
   };
   available?: boolean; // quantity > 0
 }
-
-export const productMaxSize: {
-  name: number;
-  description: number;
-  price: number;
-} = {
-  name: 50,
-  description: 100,
-  price: 999999.99,
-};
-
-const productSortFieldItems = [
-  { value: "id", label: "ID" },
-  { value: "name", label: "Nome" },
-  { value: "price", label: "Preço" },
-  { value: "quantity", label: "Quantidade" },
-];
 
 export interface ProductApi {
   page: number;
