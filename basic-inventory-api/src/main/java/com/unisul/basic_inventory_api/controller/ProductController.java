@@ -30,7 +30,9 @@ public class ProductController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int rowsPerPage,
             @RequestParam(defaultValue = "id") String sortField,
-            @RequestParam(defaultValue = "asc") String sortDirection) {
+            @RequestParam(defaultValue = "asc") String sortDirection,
+            @RequestParam(required = false, defaultValue = "20") int quantity,
+            @RequestParam(required = false, defaultValue = "false") boolean lowStock) {
 
         if (page < 1) {
             return ResponseEntity.badRequest().build();
@@ -46,6 +48,14 @@ public class ProductController {
         if (!Arrays.asList("asc", "desc").contains(sortDirection.toLowerCase())) {
             return ResponseEntity.badRequest().build();
         }
+        if (lowStock) {
+            ProductListDTO productList = productService.getPaginatedProductsLowStock(page, rowsPerPage,
+                    search.toLowerCase(),
+                    quantity,
+                    sortField.toLowerCase(),
+                    sortDirection.toLowerCase());
+            return ResponseEntity.ok(productList);
+        }
 
         ProductListDTO productList = productService.getPaginatedProducts(page, rowsPerPage, search.toLowerCase(),
                 sortField.toLowerCase(),
@@ -58,6 +68,7 @@ public class ProductController {
     @ApiResponse(responseCode = "200", description = "Produto encontrado com sucesso.")
     @ApiResponse(responseCode = "404", description = "Produto não encontrado com o ID fornecido.")
     @GetMapping("/{id}")
+
     public ResponseEntity<Product> getProduct(@PathVariable int id) {
         return productService.getProductById(id)
                 .map(ResponseEntity::ok) // Retorna 200 se encontrado

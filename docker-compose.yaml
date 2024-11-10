@@ -1,16 +1,16 @@
 services:
-  #   view:
-  #     build:
-  #       context: basic-inventory-dashboard/
-  #       dockerfile: Dockerfile
-  #     restart: on-failure
-  #     ports:
-  #       - "3003:3000"
-  #     environment:
-  #       - API_URL=null
-  #     depends_on:
-  #       - api
-  #       - db
+  frontend:
+    build:
+      context: basic-inventory-dashboard/
+      dockerfile: Dockerfile
+    restart: on-failure
+    ports:
+      - "3003:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8080
+    depends_on:
+      - api
+      - db
 
   api:
     build:
