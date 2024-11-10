@@ -1,12 +1,12 @@
 import React from "react";
 import { Box, TextField } from "@mui/material";
 
-interface ProductInSearchInputProps {
+interface ProductOutSearchInputProps {
   searchQueryHandler: string;
   setSearchQueryHandler: (value: string) => void;
 }
 
-const ProductInSearchInput: React.FC<ProductInSearchInputProps> = ({
+const ProductOutSearchInput: React.FC<ProductOutSearchInputProps> = ({
   searchQueryHandler,
   setSearchQueryHandler,
 }) => {
@@ -23,4 +23,4 @@ const ProductInSearchInput: React.FC<ProductInSearchInputProps> = ({
   );
 };
 
-export default ProductInSearchInput;
+export default ProductOutSearchInput;

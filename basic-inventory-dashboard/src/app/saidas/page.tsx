@@ -14,7 +14,7 @@ export interface ProductOut {
   id?: number;
   deleted?: boolean;
   quantity?: number;
-  entryDate?: Date;
+  exitDate?: Date;
   product: {
     id?: number;
     deleted?: boolean;
