@@ -1,0 +1,8 @@
+basic-inventory-dashboard/.next
+basic-inventory-dashboard/node_modules
+basic-inventory-dashboard/.env
+basic-inventory-dashboard/next-end.d.ts
+basic-inventory-api/.idea
+basic-inventory-api/.mvn
+basic-inventory-api/target
+
