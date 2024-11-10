@@ -5,12 +5,14 @@ services:
       dockerfile: Dockerfile
     restart: on-failure
     ports:
-      - "3003:3000"
+      - "3000:3000"
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:8080
+      - NEXT_PUBLIC_API_URL=http://api:8080
     depends_on:
       - api
       - db
+    networks:
+      - basic_inventory_network
 
   api:
     build:
@@ -37,6 +39,8 @@ services:
       - SWAGGER_SHOW_REQUEST_DURATION=true
     depends_on:
       - db
+    networks:
+      - basic_inventory_network
 
   db:
     build:
@@ -51,6 +55,8 @@ services:
       - "3001:3306"
     volumes:
       - db_data:/var/lib/mysql
+    networks:
+      - basic_inventory_network
 
 volumes:
   db_data:
@@ -60,3 +66,7 @@ volumes:
       device: C:\db
       # device: /home/jvlerner/db
       o: bind
+
+networks:
+  basic_inventory_network:
+    driver: bridge

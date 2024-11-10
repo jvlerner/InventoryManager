@@ -3,7 +3,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  baseURL: "http://api:8080", 
   timeout: 15000,
   timeoutErrorMessage: "Timeout of basic-inventory-api, time waiting: 15 seconds"
 });
