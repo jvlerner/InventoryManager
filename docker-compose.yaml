@@ -11,14 +11,11 @@ services:
     depends_on:
       - api
       - db
-    networks:
-      - basic_inventory_network
 
   api:
     build:
       context: basic-inventory-api/
       dockerfile: Dockerfile
-    restart: on-failure
     ports:
       - "3002:8080"
     environment:
@@ -39,8 +36,6 @@ services:
       - SWAGGER_SHOW_REQUEST_DURATION=true
     depends_on:
       - db
-    networks:
-      - basic_inventory_network
 
   db:
     build:
@@ -55,8 +50,6 @@ services:
       - "3001:3306"
     volumes:
       - db_data:/var/lib/mysql
-    networks:
-      - basic_inventory_network
 
 volumes:
   db_data:
@@ -66,7 +59,3 @@ volumes:
       device: C:\db
       # device: /home/jvlerner/db
       o: bind
-
-networks:
-  basic_inventory_network:
-    driver: bridge
