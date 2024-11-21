@@ -76,7 +76,7 @@ const ProductOutPage: React.FC = () => {
     setWarningMessage(message);
     setOpenWarningDialog(true);
   };
-  const handleCloseWarningDialog = () => setOpenSuccessDialog(false);
+  const handleCloseWarningDialog = () => setOpenWarningDialog(false);
 
   const handleOpenErrorDialog = (message: string) => {
     setErrorMessage(message);

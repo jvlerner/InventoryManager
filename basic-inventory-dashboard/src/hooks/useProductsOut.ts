@@ -105,7 +105,7 @@ export const useProductsOut = ({
       if (ProductOut.product.quantity && ProductOut.quantity) {
         const newQuantity = ProductOut.product.quantity - ProductOut.quantity;
         if (newQuantity < 20 && handleWarningDialog) {
-          handleWarningDialog(
+          await handleWarningDialog(
             "Estoque baixo para o produto de ID: " +
               ProductOut.product.id +
               " - Nome: " +
