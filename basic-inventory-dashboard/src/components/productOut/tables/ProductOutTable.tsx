@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { ProductOut } from "@/app/saidas/page";
 import DeleteButton from "../../commom/buttons/DeleteButton";
-import EditButton from "../../commom/buttons/EditButton";
+// import EditButton from "../../commom/buttons/EditButton";
 
 interface ProductOutTableProps {
   productsOut: ProductOut[];
@@ -34,7 +34,7 @@ const ProductOutTable: React.FC<ProductOutTableProps> = ({
   count,
   handleChangePage,
   handleChangeRowsPerPage,
-  onEdit,
+  // onEdit,
   onDelete,
 }) => {
   return (
@@ -96,7 +96,7 @@ const ProductOutTable: React.FC<ProductOutTableProps> = ({
                 {productOut.product?.quantity}
               </TableCell>
               <TableCell sx={{ minWidth: "264px" }}>
-                <EditButton onEdit={() => onEdit(productOut)} />
+                {/* <EditButton onEdit={() => onEdit(productOut)} /> */}
                 <DeleteButton onDelete={() => onDelete(productOut)} />
               </TableCell>
             </TableRow>

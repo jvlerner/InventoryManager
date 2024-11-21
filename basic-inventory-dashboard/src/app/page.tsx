@@ -199,7 +199,6 @@ const HomePage = () => {
           </Card>
         </Box>
       )}
-      ;
     </Box>
   );
 };

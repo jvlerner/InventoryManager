@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { ProductIn } from "@/app/entradas/page";
 import DeleteButton from "../../commom/buttons/DeleteButton";
-import EditButton from "../../commom/buttons/EditButton";
+// import EditButton from "../../commom/buttons/EditButton";
 
 interface ProductInTableProps {
   productsIn: ProductIn[];
@@ -34,7 +34,7 @@ const ProductInTable: React.FC<ProductInTableProps> = ({
   count,
   handleChangePage,
   handleChangeRowsPerPage,
-  onEdit,
+  // onEdit,
   onDelete,
 }) => {
   return (
@@ -96,7 +96,7 @@ const ProductInTable: React.FC<ProductInTableProps> = ({
                 {productIn.product?.quantity}
               </TableCell>
               <TableCell sx={{ minWidth: "264px" }}>
-                <EditButton onEdit={() => onEdit(productIn)} />
+                {/* <EditButton onEdit={() => onEdit(productIn)} /> */}
                 <DeleteButton onDelete={() => onDelete(productIn)} />
               </TableCell>
             </TableRow>
