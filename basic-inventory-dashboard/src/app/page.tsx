@@ -5,7 +5,6 @@ import Typography from "@mui/material/Typography";
 import { useHome } from "@/hooks/useHome";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
-import CircularProgress from "@mui/material/CircularProgress";
 import ErrorScreen from "@/components/commom/screens/ErrorScreen";
 
 import InventoryIcon from "@mui/icons-material/Inventory";
@@ -13,14 +12,10 @@ import CallReceivedIcon from "@mui/icons-material/CallReceived";
 import CallMadeIcon from "@mui/icons-material/CallMade";
 import TurnedInIcon from "@mui/icons-material/TurnedIn";
 import TrendingDownIcon from "@mui/icons-material/TrendingDown";
+import LoadingScreen from "@/components/commom/screens/LoadingScreen";
 
 const HomePage = () => {
   const { homeData, error, isLoading } = useHome();
-
-  if (isLoading) return <CircularProgress />;
-  if (error)
-    return <ErrorScreen message="Não foi possível carregar os dados." />;
-  console.log(homeData);
   return (
     <Box
       sx={{
@@ -33,175 +28,178 @@ const HomePage = () => {
       <Typography variant="h4" gutterBottom>
         Dashboard
       </Typography>
-
-      {/* Total Categories */}
-      <Box
-        sx={{
-          display: "flex",
-          gap: 2,
-          flexWrap: "wrap",
-        }}
-      >
-        <Card
+      {isLoading && <LoadingScreen />}
+      {error && <ErrorScreen message="Não foi possível carregar os dados." />}
+      {homeData && (
+        <Box
           sx={{
             display: "flex",
-            width: "350px",
-            flexDirection: "column",
-            alignItems: "left",
+            gap: 2,
+            flexWrap: "wrap",
           }}
         >
-          <CardContent>
-            <Typography variant="h6" sx={{ marginBottom: 2 }}>
-              Total Categorias
-            </Typography>
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "left",
-                gap: 3,
-              }}
-            >
-              <Typography
-                variant="h2"
-                sx={{ fontWeight: "bold", color: "primary.main" }}
-              >
-                {homeData?.totalCategories || 0}
+          <Card
+            sx={{
+              display: "flex",
+              width: "350px",
+              flexDirection: "column",
+              alignItems: "left",
+            }}
+          >
+            <CardContent>
+              <Typography variant="h6" sx={{ marginBottom: 2 }}>
+                Total Categorias
               </Typography>
-              <TurnedInIcon fontSize="large" />
-            </Box>
-          </CardContent>
-        </Card>
-
-        {/* Total Products */}
-        <Card
-          sx={{
-            display: "flex",
-            width: "350px",
-            flexDirection: "column",
-            alignItems: "left",
-          }}
-        >
-          <CardContent>
-            <Typography variant="h6" sx={{ marginBottom: 2 }}>
-              Total Produtos
-            </Typography>
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "left",
-                gap: 3,
-              }}
-            >
-              <Typography
-                variant="h2"
-                sx={{ fontWeight: "bold", color: "primary.main" }}
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "left",
+                  gap: 3,
+                }}
               >
-                {homeData?.totalProducts || 0}
-              </Typography>
-              <InventoryIcon fontSize="large" />
-            </Box>
-          </CardContent>
-        </Card>
+                <Typography
+                  variant="h2"
+                  sx={{ fontWeight: "bold", color: "primary.main" }}
+                >
+                  {homeData?.totalCategories || 0}
+                </Typography>
+                <TurnedInIcon fontSize="large" />
+              </Box>
+            </CardContent>
+          </Card>
 
-        {/* Total Entries */}
-        <Card
-          sx={{
-            display: "flex",
-            width: "350px",
-            flexDirection: "column",
-            alignItems: "left",
-          }}
-        >
-          <CardContent>
-            <Typography variant="h6" sx={{ marginBottom: 2 }}>
-              Total Entradas
-            </Typography>
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "left",
-                gap: 3,
-              }}
-            >
-              <Typography
-                variant="h2"
-                sx={{ fontWeight: "bold", color: "primary.main" }}
+          {/* Total Products */}
+          <Card
+            sx={{
+              display: "flex",
+              width: "350px",
+              flexDirection: "column",
+              alignItems: "left",
+            }}
+          >
+            <CardContent>
+              <Typography variant="h6" sx={{ marginBottom: 2 }}>
+                Total Produtos
+              </Typography>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "left",
+                  gap: 3,
+                }}
               >
-                {homeData?.totalEntries || 0}
-              </Typography>
-              <CallReceivedIcon fontSize="large" />
-            </Box>
-          </CardContent>
-        </Card>
+                <Typography
+                  variant="h2"
+                  sx={{ fontWeight: "bold", color: "primary.main" }}
+                >
+                  {homeData?.totalProducts || 0}
+                </Typography>
+                <InventoryIcon fontSize="large" />
+              </Box>
+            </CardContent>
+          </Card>
 
-        {/* Total Exits */}
-        <Card
-          sx={{
-            display: "flex",
-            width: "350px",
-            flexDirection: "column",
-            alignItems: "left",
-          }}
-        >
-          <CardContent>
-            <Typography variant="h6" sx={{ marginBottom: 2 }}>
-              Total Saídas
-            </Typography>
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "left",
-                gap: 3,
-              }}
-            >
-              <Typography
-                variant="h2"
-                sx={{ fontWeight: "bold", color: "primary.main" }}
+          {/* Total Entries */}
+          <Card
+            sx={{
+              display: "flex",
+              width: "350px",
+              flexDirection: "column",
+              alignItems: "left",
+            }}
+          >
+            <CardContent>
+              <Typography variant="h6" sx={{ marginBottom: 2 }}>
+                Total Entradas
+              </Typography>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "left",
+                  gap: 3,
+                }}
               >
-                {homeData?.totalExits || 0}
+                <Typography
+                  variant="h2"
+                  sx={{ fontWeight: "bold", color: "primary.main" }}
+                >
+                  {homeData?.totalEntries || 0}
+                </Typography>
+                <CallReceivedIcon fontSize="large" />
+              </Box>
+            </CardContent>
+          </Card>
+
+          {/* Total Exits */}
+          <Card
+            sx={{
+              display: "flex",
+              width: "350px",
+              flexDirection: "column",
+              alignItems: "left",
+            }}
+          >
+            <CardContent>
+              <Typography variant="h6" sx={{ marginBottom: 2 }}>
+                Total Saídas
               </Typography>
-              <CallMadeIcon fontSize="large" />
-            </Box>
-          </CardContent>
-        </Card>
-
-        {/* Total Products Low Stock */}
-        <Card
-          sx={{
-            display: "flex",
-            width: "350px",
-            flexDirection: "column",
-            alignItems: "left",
-          }}
-        >
-          <CardContent>
-            <Typography variant="h6" sx={{ marginBottom: 2 }}>
-              Total de Produtos com Baixo Estoque
-            </Typography>
-
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "left",
-                gap: 3,
-              }}
-            >
-              <Typography
-                variant="h2"
-                sx={{ fontWeight: "bold", color: "primary.main" }}
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "left",
+                  gap: 3,
+                }}
               >
-                {homeData?.totalProductsLowStock || 0}
+                <Typography
+                  variant="h2"
+                  sx={{ fontWeight: "bold", color: "primary.main" }}
+                >
+                  {homeData?.totalExits || 0}
+                </Typography>
+                <CallMadeIcon fontSize="large" />
+              </Box>
+            </CardContent>
+          </Card>
+
+          {/* Total Products Low Stock */}
+          <Card
+            sx={{
+              display: "flex",
+              width: "350px",
+              flexDirection: "column",
+              alignItems: "left",
+            }}
+          >
+            <CardContent>
+              <Typography variant="h6" sx={{ marginBottom: 2 }}>
+                Total de Produtos com Baixo Estoque
               </Typography>
-              <TrendingDownIcon fontSize="large" />
-            </Box>
-          </CardContent>
-        </Card>
-      </Box>
+
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "left",
+                  gap: 3,
+                }}
+              >
+                <Typography
+                  variant="h2"
+                  sx={{ fontWeight: "bold", color: "primary.main" }}
+                >
+                  {homeData?.totalProductsLowStock || 0}
+                </Typography>
+                <TrendingDownIcon fontSize="large" />
+              </Box>
+            </CardContent>
+          </Card>
+        </Box>
+      )}
+      ;
     </Box>
   );
 };
