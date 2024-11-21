@@ -43,6 +43,7 @@ export interface ProductOutApi {
 
 const ProductOutPage: React.FC = () => {
   const [openSuccessDialog, setOpenSuccessDialog] = useState<boolean>(false);
+  const [openWarningDialog, setOpenWarningDialog] = useState<boolean>(false);
   const [openErrorDialog, setOpenErrorDialog] = useState<boolean>(false);
   const [openCreateDialog, setOpenCreateDialog] = useState<boolean>(false);
   const [openEditDialog, setOpenEditDialog] = useState<boolean>(false);
@@ -59,6 +60,9 @@ const ProductOutPage: React.FC = () => {
   const [successMessage, setSuccessMessage] = useState<string>(
     "Sucesso ao realizar operação."
   );
+  const [warningMessage, setWarningMessage] = useState<string>(
+    "O produto está com estoque baixo."
+  );
   const [errorMessage, setErrorMessage] = useState<string>(
     "Erro ao realizar operação."
   );
@@ -67,6 +71,12 @@ const ProductOutPage: React.FC = () => {
     setOpenSuccessDialog(true);
   };
   const handleCloseSuccessDialog = () => setOpenSuccessDialog(false);
+
+  const handleOpenWarningDialog = (message: string) => {
+    setWarningMessage(message);
+    setOpenWarningDialog(true);
+  };
+  const handleCloseWarningDialog = () => setOpenSuccessDialog(false);
 
   const handleOpenErrorDialog = (message: string) => {
     setErrorMessage(message);
@@ -100,6 +110,7 @@ const ProductOutPage: React.FC = () => {
     sortField: sortField,
     sortDirection: sortDirection,
     handleErrorDialog: (message: string) => handleOpenErrorDialog(message),
+    handleWarningDialog: (message: string) => handleOpenWarningDialog(message),
     handleSuccessDialog: (message: string) => handleOpenSuccessDialog(message),
   });
 
@@ -206,6 +217,12 @@ const ProductOutPage: React.FC = () => {
         message={errorMessage}
         onClose={handleCloseErrorDialog}
         open={openErrorDialog}
+      />
+      <AlertDialog
+        type="warning"
+        message={warningMessage}
+        onClose={handleCloseWarningDialog}
+        open={openWarningDialog}
       />
       <AlertDialog
         type="success"

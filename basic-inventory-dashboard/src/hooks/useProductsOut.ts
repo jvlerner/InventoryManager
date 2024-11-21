@@ -19,6 +19,7 @@ export interface UseProductsOutParams {
   sortDirection: string;
   handleErrorDialog?: (message: string) => void;
   handleSuccessDialog?: (message: string) => void;
+  handleWarningDialog?: (message: string) => void;
 }
 
 const fetchProductsOut = async (
@@ -75,6 +76,7 @@ export const useProductsOut = ({
   sortDirection,
   handleErrorDialog,
   handleSuccessDialog,
+  handleWarningDialog,
 }: UseProductsOutParams) => {
   const queryClient = useQueryClient();
 
@@ -94,14 +96,27 @@ export const useProductsOut = ({
   // Mutação para criar um produto
   const createProductOut = useMutation<ProductOut, Error, ProductOut>({
     mutationFn: createProductOutApi, // Passa a função da API
-    onSuccess: async () => {
+    onSuccess: async (ProductOut) => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
       queryClient.invalidateQueries({ queryKey: ["productsIn"] });
       queryClient.invalidateQueries({ queryKey: ["productsOut"] });
-      queryClient.invalidateQueries({ queryKey: ["productsLow"] }); 
-      if (handleSuccessDialog) {
-        handleSuccessDialog("Saída de produto criado com sucesso.");
-      }
+      queryClient.invalidateQueries({ queryKey: ["productsLow"] });
+      if (ProductOut.product.quantity && ProductOut.quantity) {
+        const newQuantity = ProductOut.product.quantity - ProductOut.quantity;
+        if (newQuantity < 20 && handleWarningDialog) {
+          handleWarningDialog(
+            "Estoque baixo para o produto de ID: " +
+              ProductOut.product.id +
+              " - Nome: " +
+              ProductOut.product.name +
+              " - Quantidade: " +
+              newQuantity
+          );
+          if (handleSuccessDialog) {
+            handleSuccessDialog("Saída de produto criado com sucesso.");
+          }
+        }
+      }      
     },
     onError: (error: Error) => {
       console.log("Error creating product in:", error);
@@ -120,7 +135,7 @@ export const useProductsOut = ({
       queryClient.invalidateQueries({ queryKey: ["products"] });
       queryClient.invalidateQueries({ queryKey: ["productsIn"] });
       queryClient.invalidateQueries({ queryKey: ["productsOut"] });
-      queryClient.invalidateQueries({ queryKey: ["productsLow"] }); 
+      queryClient.invalidateQueries({ queryKey: ["productsLow"] });
       if (handleSuccessDialog) {
         handleSuccessDialog("Saída do produto editada com sucesso.");
       }
@@ -143,7 +158,7 @@ export const useProductsOut = ({
       queryClient.invalidateQueries({ queryKey: ["products"] });
       queryClient.invalidateQueries({ queryKey: ["productsIn"] });
       queryClient.invalidateQueries({ queryKey: ["productsOut"] });
-      queryClient.invalidateQueries({ queryKey: ["productsLow"] }); 
+      queryClient.invalidateQueries({ queryKey: ["productsLow"] });
       if (handleSuccessDialog) {
         handleSuccessDialog("Saída de produto deletada com sucesso.");
       }
