@@ -17,6 +17,7 @@ import { ProductOut } from "@/app/saidas/page";
 import { useProducts } from "@/hooks/useProducts";
 import CloseIcon from "@mui/icons-material/Close";
 import { productMaxSize, productOutMaxSize } from "@/config/maxSize";
+import { Product } from "@/app/produtos/page";
 
 interface ProductOutCreateDialogProps {
   open: boolean;
@@ -26,7 +27,7 @@ interface ProductOutCreateDialogProps {
 
 interface FormData {
   quantity: ProductOut["quantity"];
-  product: number | null;
+  product: Product | null;
 }
 
 const ProductOutCreateDialog: React.FC<ProductOutCreateDialogProps> = ({
@@ -83,14 +84,14 @@ const ProductOutCreateDialog: React.FC<ProductOutCreateDialogProps> = ({
   const onSubmit = (formData: FormData) => {
     if (formData.product === null) {
       console.error("Produto não selecionado");
-      return; // Previne tentar criar uma entrada sem produto selecionado
+      return;
     }
 
     const newProductOut: ProductOut = {
       ...formData,
-      product: { id: formData.product },
+      product: formData.product,
     };
-
+    
     onCreate(newProductOut);
     handleClose();
   };
@@ -158,7 +159,7 @@ const ProductOutCreateDialog: React.FC<ProductOutCreateDialogProps> = ({
                 options={data?.products || []}
                 getOptionLabel={(option) => option.name || ""}
                 onChange={(event, newValue) => {
-                  field.onChange(newValue ? newValue.id : null);
+                  field.onChange(newValue ? newValue : null);
                 }}
                 inputValue={searchQueryHandler}
                 onInputChange={(event, newInputValue) => {

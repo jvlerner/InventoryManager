@@ -101,6 +101,7 @@ export const useProductsOut = ({
       queryClient.invalidateQueries({ queryKey: ["productsIn"] });
       queryClient.invalidateQueries({ queryKey: ["productsOut"] });
       queryClient.invalidateQueries({ queryKey: ["productsLow"] });
+      console.log(ProductOut.product.quantity + " - " + ProductOut.quantity)
       if (ProductOut.product.quantity && ProductOut.quantity) {
         const newQuantity = ProductOut.product.quantity - ProductOut.quantity;
         if (newQuantity < 20 && handleWarningDialog) {
